@@ -165,7 +165,7 @@ ez_import = function(file_path){
 
 # Run the function to load data
 ```{r}
-ez_import("./")
+ez_import(getwd())
 ```
 
 # display() will also show image in "Viewer" tab
