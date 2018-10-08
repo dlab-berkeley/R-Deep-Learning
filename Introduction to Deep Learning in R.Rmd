@@ -1,0 +1,246 @@
+---
+title: "Introdurction to Deep Learning in R"
+author: "Evan"
+date: "10/4/2018"
+output: html_document
+---
+
+Should we set up datahub for this workshops? Seems like there could be a lot of install issues... Are there any known dependency issues?
+
+# Install Keras
+```{r}
+# Be sure to unhashtag lines 14 and 16 to properly run (hashtagged for knitting purposes)
+
+# install.packages("keras")
+library(keras)
+# install_keras()
+
+# source activate r-tensorflow
+# source deactivate
+```
+
+# Install other packages?
+```{r}
+# ? dplyr, ggplot, caret, SuperLearner (can we ensemble images? that would be cool), etc...
+
+library(dplyr)
+library(EBImage)
+library(ggplot2)
+
+```
+
+# Keras vignette
+[located here](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html)
+Load and split data
+```{r}
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+```
+
+# Reshape, rescale, one-hot encode
+```{r}
+# reshape
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+
+# rescale
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+# one-hot encode
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+```
+
+# Define the model
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 10, activation = 'softmax')
+summary(model)
+```
+
+# Compile model with loss function, optimizer, and metrics
+```{r}
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+```
+
+# Train and evaluate
+```{r}
+# Watch the model build epoch by epoch
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+```
+
+# Plot history via ggplot
+Why do people like such ugly ggplots?
+```{r}
+plot(history)
+```
+
+# Evaluate performance on the test data
+```{r}
+model %>% evaluate(x_test, y_test)
+```
+
+# Humans and dogs
+### The data
+Load a folder of human and dog images from the `data` folder of the workshop materials and define the vector of `image_names` to be populated in a blank list named `images_list`. These free images were downloaded from [Burst](https://burst.shopify.com/):
+
+### Easy data importation
+Loading image data and standardizing features for each image can be intimidating. Fortunately, we have written a for-loop that does everything for you. Just make sure you set your working directory to the `data` folder inside of the reposistory that you downloaded for this workshop.  
+
+> **From the RStudio toolbar, click "Session" --> "Set Working Directory" --> "Choose Directory" to set your working directory.** A diagoglue box will appear - just click the "data" folder and "open" to proceed.  
+
+Write a for-loop that imports the images, standardizes their sizes, prints summary information for each, and plots each image. This loop is stored instide the `ez_import` function. This function takes no arguments and accomplishes the following:  
+
+1. Imports images from the working directory  
+2. Resize images to a standard size  
+3. Adds a header for the summary information for each image  
+4. Plots each image  
+```{r}
+# Define ez_import function
+ez_import = function(file_path){
+  
+  file_path = file_path
+  
+  # Store file names in a vector
+  images = as.character(list.files(file_path))
+  
+  # Create a blank list to be appended
+  images_list = list()
+  
+  # Build the for-loop
+  for (i in 1:length(dir())) {
+    
+    # Import images
+    images_list[[i]] = EBImage::readImage(images[i])
+    
+    # Resize images (e.g., 224 x 224 dpi)
+    images_list[[i]] = EBImage::resize(images_list[[i]], w = 224, h = 224)
+    
+    # Convert to grayscale
+    images_list[[i]] = EBImage::channel(images_list[[i]], mode = "gray")
+    
+    # Name each image in the output for reference
+    print(paste("image #", i, "-", images[[i]]))
+    
+    # Print six-number summaries (descriptive statistics)
+    print(summary(images_list[[i]]))
+    
+    # Display color profile values
+    print(images_list[[i]])
+    
+    # Plot each image. Click left and right arrows in plot tab to view.
+    plot(images_list[[i]])
+    
+    # Separate output with a blank line
+    cat("\n")
+    
+    # Assign raw image data for each image
+    assign("image_data", images_list, 
+           envir = globalenv())
+    
+    # Assign binary sparse matrices for each image
+    data2 = array(as.numeric(unlist(image_data)), dim = c(length(dir()), 224, 224))
+    data = ifelse(data2 > 0.5, 1, 0)
+    assign("binary_data", data, envir = globalenv())
+}
+}
+```
+
+# Run the function to load data
+```{r}
+ez_import("./")
+```
+
+# display() will also show image in "Viewer" tab
+```{r}
+display(image_data[[1]])
+
+# or
+
+plot(image_data[[1]])
+```
+
+# training/testing on this small dataset... 
+### Split data
+```{r}
+# Choose the middle 30 images as the training data
+x_train = binary_data[11:40,,]
+(y_train = c(rep("dog", 15), rep("human", 15)))
+(y_train = ifelse(y_train == "dog", 1, 0))
+
+# Choose the first 10 dogs and last 10 humans as the test data
+x_test = binary_data[c(1:10, 41:50),,]
+(y_test = c(rep("dog", 10), rep("human", 10)))
+(y_test = ifelse(y_test == "dog", 1, 0))
+```
+
+### Reshape sparse matrices to arrays
+```{r}
+x_train = array_reshape(x_train, c(nrow(x_train), 224*224))
+x_test = array_reshape(x_test, c(nrow(x_test), 224*224))
+
+# rescale
+x_train = x_train / 255
+x_test = x_test / 255
+
+# 
+y_train <- to_categorical(y_train, 2)
+y_test <- to_categorical(y_test, 2)
+```
+
+# Define the model
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 200, activation = 'relu', input_shape = c(50176)) %>% 
+  layer_dropout(rate = 0.5) %>% 
+  layer_dense(units = 50, activation = 'relu') %>%
+  layer_dropout(rate = 0.25) %>%
+  layer_dense(units = 2, activation = 'sigmoid')
+summary(model)
+```
+
+```{r}
+set.seed(1)
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+```
+
+```{r}
+set.seed(1)
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 10, 
+  validation_split = 0.2
+)
+```
+
+```{r}
+plot(history) + theme_bw()
+```
+
+```{r}
+model %>% evaluate(x_test, y_test)
+```
+
+# Repeat on biomedical image dataset... (coming soon)
