@@ -114,6 +114,8 @@ Write a for-loop that imports the images, standardizes their sizes, prints summa
 4. Plots each image  
 ```{r}
 # Define ez_import function
+
+# for now, file_path can only be set to getwd(), so just be sure to set your working directory to the data folder first! 
 ez_import = function(file_path){
   
   file_path = file_path
@@ -209,7 +211,7 @@ y_test <- to_categorical(y_test, 2)
 ```{r}
 model <- keras_model_sequential() 
 model %>% 
-  layer_dense(units = 200, activation = 'relu', input_shape = c(50176)) %>% 
+  layer_dense(units = 200, activation = 'relu', input_shape = 50176) %>% 
   layer_dropout(rate = 0.5) %>% 
   layer_dense(units = 50, activation = 'relu') %>%
   layer_dropout(rate = 0.25) %>%
