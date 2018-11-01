@@ -13,7 +13,7 @@ Should we set up datahub for this workshops? Seems like there could be a lot of 
 
 Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
 
-```{r eval = FALSE}
+```{r install, eval = FALSE}
 
 # Install keras
 install.packages("keras")
@@ -32,12 +32,14 @@ if (grepl("version 3\\.5\\.", R.version.string) {
   source("https://bioconductor.org/biocLite.R")
   biocLite("EBImage")
 }
+
+# Install other packages
+# ? dplyr, ggplot, caret, SuperLearner (can we ensemble images? that would be cool), etc...
 ```
 
-## Install other packages?
+## Load packages
 
-```{r}
-# ? dplyr, ggplot, caret, SuperLearner (can we ensemble images? that would be cool), etc...
+```{r load_packages}
 
 library(keras)
 library(dplyr)
@@ -51,6 +53,7 @@ library(ggplot2)
 
 [located here](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html)
 Load and split data
+
 ```{r}
 mnist <- dataset_mnist()
 x_train <- mnist$train$x
@@ -75,7 +78,8 @@ y_train <- to_categorical(y_train, 10)
 y_test <- to_categorical(y_test, 10)
 ```
 
-# Define the model
+## Define the model
+
 ```{r}
 model <- keras_model_sequential() 
 model %>% 
@@ -87,7 +91,8 @@ model %>%
 summary(model)
 ```
 
-# Compile model with loss function, optimizer, and metrics
+## Compile model with loss function, optimizer, and metrics
+
 ```{r}
 model %>% compile(
   loss = 'categorical_crossentropy',
@@ -96,7 +101,8 @@ model %>% compile(
 )
 ```
 
-# Train and evaluate
+## Train and evaluate
+
 ```{r}
 # Watch the model build epoch by epoch
 set.seed(1)
@@ -107,7 +113,7 @@ history <- model %>% fit(
 )
 ```
 
-# Plot history via ggplot
+## Plot history via ggplot
 
 Why do people like such ugly ggplots?
 
@@ -115,13 +121,13 @@ Why do people like such ugly ggplots?
 plot(history) + theme_minimal()
 ```
 
-# Evaluate performance on the test data
+## Evaluate performance on the test data
 
 ```{r}
 model %>% evaluate(x_test, y_test)
 ```
 
-# Humans and dogs
+## Humans and dogs
 
 ### The data
 
@@ -141,11 +147,12 @@ Write a for-loop that imports the images, standardizes their sizes, prints summa
 2. Resize images to a standard size  
 3. Adds a header for the summary information for each image  
 4. Plots each image  
+
 ```{r}
 # Define ez_import function
 
 # for now, file_path can only be set to getwd(), so just be sure to set your working directory to the data folder first! 
-ez_import = function(file_path){
+ez_import = function(file_path) {
   
   file_path = file_path
   
@@ -194,16 +201,18 @@ ez_import = function(file_path){
     data = ifelse(data2 > 0.5, 1, 0)
     # CK: also should compile into a list.
     assign("binary_data", data, envir = globalenv())
-}
+  }
 }
 ```
 
-# Run the function to load data
+## Run the function to load data
+
 ```{r}
 ez_import(getwd())
 ```
 
 ## display() will also show image in "Viewer" tab
+
 ```{r}
 display(image_data[[1]])
 
@@ -229,6 +238,7 @@ x_test = binary_data[c(1:10, 41:50),,]
 ```
 
 ### Reshape sparse matrices to arrays
+
 ```{r}
 x_train = array_reshape(x_train, c(nrow(x_train), 224*224))
 x_test = array_reshape(x_test, c(nrow(x_test), 224*224))
@@ -242,7 +252,8 @@ y_train <- to_categorical(y_train, 2)
 y_test <- to_categorical(y_test, 2)
 ```
 
-# Define the model
+## Define the model
+
 ```{r}
 model <- keras_model_sequential() 
 model %>% 
