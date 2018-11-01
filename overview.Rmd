@@ -9,7 +9,7 @@ Should we set up datahub for this workshops? Seems like there could be a lot of 
 
 **CK: I haven't used datahub, what does it entail?**
 
-# Install dependencies
+## Install dependencies
 
 Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
 
@@ -293,3 +293,7 @@ model %>% evaluate(x_test, y_test)
 ## Repeat on biomedical image dataset
 
 (coming soon)
+
+## Resources
+
+(Add links)
