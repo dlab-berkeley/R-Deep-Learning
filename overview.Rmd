@@ -1,5 +1,5 @@
 ---
-title: "Introdurction to Deep Learning in R"
+title: "Introduction to Deep Learning in R"
 author: "Evan"
 date: "10/4/2018"
 output: html_document
@@ -7,29 +7,48 @@ output: html_document
 
 Should we set up datahub for this workshops? Seems like there could be a lot of install issues... Are there any known dependency issues?
 
-# Install Keras
-```{r}
-# Be sure to unhashtag lines 14 and 16 to properly run (hashtagged for knitting purposes)
+**CK: I haven't used datahub, what does it entail?**
 
-# install.packages("keras")
-library(keras)
-# install_keras()
+# Install dependencies
+
+Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
+
+```{r eval = FALSE}
+
+# Install keras
+install.packages("keras")
+keras::install_keras()
 
 # source activate r-tensorflow
 # source deactivate
+
+# Customize EBImage installation to R version.
+if (grepl("version 3\\.5\\.", R.version.string) {
+  # R >= 3.5
+  install.packages("BiocManager")
+  BiocManager::install("EBImage")
+} else {
+  # R < 3.5
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("EBImage")
+}
 ```
 
-# Install other packages?
+## Install other packages?
+
 ```{r}
 # ? dplyr, ggplot, caret, SuperLearner (can we ensemble images? that would be cool), etc...
 
+library(keras)
 library(dplyr)
+# Installed via bioconductor above, not CRAN.
 library(EBImage)
 library(ggplot2)
 
 ```
 
-# Keras vignette
+## Keras vignette
+
 [located here](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html)
 Load and split data
 ```{r}
@@ -40,7 +59,8 @@ x_test <- mnist$test$x
 y_test <- mnist$test$y
 ```
 
-# Reshape, rescale, one-hot encode
+## Reshape, rescale, one-hot encode
+
 ```{r}
 # reshape
 x_train <- array_reshape(x_train, c(nrow(x_train), 784))
@@ -79,6 +99,7 @@ model %>% compile(
 # Train and evaluate
 ```{r}
 # Watch the model build epoch by epoch
+set.seed(1)
 history <- model %>% fit(
   x_train, y_train, 
   epochs = 30, batch_size = 128, 
@@ -87,24 +108,32 @@ history <- model %>% fit(
 ```
 
 # Plot history via ggplot
+
 Why do people like such ugly ggplots?
+
 ```{r}
-plot(history)
+plot(history) + theme_minimal()
 ```
 
 # Evaluate performance on the test data
+
 ```{r}
 model %>% evaluate(x_test, y_test)
 ```
 
 # Humans and dogs
+
 ### The data
+
 Load a folder of human and dog images from the `data` folder of the workshop materials and define the vector of `image_names` to be populated in a blank list named `images_list`. These free images were downloaded from [Burst](https://burst.shopify.com/):
 
-### Easy data importation
+### Easy data import
+
 Loading image data and standardizing features for each image can be intimidating. Fortunately, we have written a for-loop that does everything for you. Just make sure you set your working directory to the `data` folder inside of the reposistory that you downloaded for this workshop.  
 
 > **From the RStudio toolbar, click "Session" --> "Set Working Directory" --> "Choose Directory" to set your working directory.** A diagoglue box will appear - just click the "data" folder and "open" to proceed.  
+
+*CK: we should not change the working directory, instead use a relative file path like "data/blah.png".*
 
 Write a for-loop that imports the images, standardizes their sizes, prints summary information for each, and plots each image. This loop is stored instide the `ez_import` function. This function takes no arguments and accomplishes the following:  
 
@@ -125,6 +154,7 @@ ez_import = function(file_path){
   images_list = list()
   
   # Build the for-loop
+  # CK: dir() should be passed as a function argument, not used within the function.
   for (i in 1:length(dir())) {
     
     # Import images
@@ -152,12 +182,15 @@ ez_import = function(file_path){
     cat("\n")
     
     # Assign raw image data for each image
+    # CK: this is not a good practice, instead should compile results into a
+    # list and return that.
     assign("image_data", images_list, 
            envir = globalenv())
     
     # Assign binary sparse matrices for each image
     data2 = array(as.numeric(unlist(image_data)), dim = c(length(dir()), 224, 224))
     data = ifelse(data2 > 0.5, 1, 0)
+    # CK: also should compile into a list.
     assign("binary_data", data, envir = globalenv())
 }
 }
@@ -168,7 +201,7 @@ ez_import = function(file_path){
 ez_import(getwd())
 ```
 
-# display() will also show image in "Viewer" tab
+## display() will also show image in "Viewer" tab
 ```{r}
 display(image_data[[1]])
 
@@ -177,8 +210,10 @@ display(image_data[[1]])
 plot(image_data[[1]])
 ```
 
-# training/testing on this small dataset... 
+## Training/testing on this small dataset
+
 ### Split data
+
 ```{r}
 # Choose the middle 30 images as the training data
 x_train = binary_data[11:40,,]
@@ -218,7 +253,6 @@ summary(model)
 ```
 
 ```{r}
-set.seed(1)
 model %>% compile(
   loss = 'categorical_crossentropy',
   optimizer = optimizer_rmsprop(),
@@ -243,4 +277,6 @@ plot(history) + theme_bw()
 model %>% evaluate(x_test, y_test)
 ```
 
-# Repeat on biomedical image dataset... (coming soon)
+## Repeat on biomedical image dataset
+
+(coming soon)
