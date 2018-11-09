@@ -1,13 +1,9 @@
 ---
 title: "Introduction to Deep Learning in R"
-author: "Evan"
+author: "Evan and Chris"
 date: "10/4/2018"
 output: html_document
 ---
-
-Should we set up datahub for this workshops? Seems like there could be a lot of install issues... Are there any known dependency issues?
-
-**CK: I haven't used datahub, what does it entail?**
 
 ## Install dependencies
 
@@ -51,6 +47,7 @@ library(ggplot2)
 Load and split data
 
 ```{r}
+# This line requires a working internet connection to download the data the first time.
 mnist <- dataset_mnist()
 x_train <- mnist$train$x
 y_train <- mnist$train$y
@@ -65,13 +62,25 @@ y_test <- mnist$test$y
 x_train <- array_reshape(x_train, c(nrow(x_train), 784))
 x_test <- array_reshape(x_test, c(nrow(x_test), 784))
 
+# Check dimensions of x.
+dim(x_train)
+dim(x_test)
+
 # rescale
 x_train <- x_train / 255
 x_test <- x_test / 255
 
-# one-hot encode
+# Convert categorical vector into a one-hot encoded matrix.
 y_train <- to_categorical(y_train, 10)
 y_test <- to_categorical(y_test, 10)
+
+# Check dimensions of new y matrices.
+dim(y_train)
+dim(y_test)
+
+# Review percentage of obs with each digit label.
+round(colMeans(y_train), 3)
+round(colMeans(y_test), 3)
 ```
 
 ## Define the model
@@ -111,8 +120,6 @@ history <- model %>% fit(
 
 ## Plot history via ggplot
 
-Why do people like such ugly ggplots?
-
 ```{r}
 plot(history) + theme_minimal()
 ```
@@ -131,11 +138,7 @@ Load a folder of human and dog images from the `data` folder of the workshop mat
 
 ### Easy data import
 
-Loading image data and standardizing features for each image can be intimidating. Fortunately, we have written a for-loop that does everything for you. Just make sure you set your working directory to the `data` folder inside of the reposistory that you downloaded for this workshop.  
-
-> **From the RStudio toolbar, click "Session" --> "Set Working Directory" --> "Choose Directory" to set your working directory.** A diagoglue box will appear - just click the "data" folder and "open" to proceed.  
-
-*CK: we should not change the working directory, instead use a relative file path like "data/blah.png".*
+Loading image data and standardizing features for each image can be intimidating. Fortunately, we have written a function that does everything for you.
 
 Write a for-loop that imports the images, standardizes their sizes, prints summary information for each, and plots each image. This loop is stored instide the `ez_import` function. This function takes no arguments and accomplishes the following:  
 
@@ -144,7 +147,7 @@ Write a for-loop that imports the images, standardizes their sizes, prints summa
 3. Adds a header for the summary information for each image  
 4. Plots each image  
 
-NOTE: before running, you must create an ~/.Renviron file by:
+NOTE: before running, if using R 3.5 on MacOS you must create an ~/.Renviron file by:
 1. open terminal  
 2. cd  
 3. touch .Renviron  
@@ -152,26 +155,22 @@ NOTE: before running, you must create an ~/.Renviron file by:
 5. R_MAX_VSIZE=100Gb  
 6. Click Session --> Restart R  
 See [here](https://stackoverflow.com/a/52612921) for help
-```{r}
-# Define ez_import function
 
-# any file path can be accepted now
-
+```{r ez_import}
 ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, verbose = FALSE) {
   
   # Store file names in a vector
-  images = list.files(file_path, full.names = T)
+  images = list.files(file_path, full.names = TRUE)
   
   # Create a blank list to be appended
   images_list = list()
   
-  # Build the for-loop
   for (i in seq_along(images)) {
     
     # Import images
     images_list[[i]] = EBImage::readImage(images[i])
     
-    # Resize images (e.g., 224 x 224 dpi)
+    # Resize images (e.g., 224 x 224 size)
     images_list[[i]] = EBImage::resize(images_list[[i]], w = width, h = height)
     
     # Convert to grayscale
@@ -202,8 +201,7 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
   sparse_matrix = ifelse(create_array > 0.5, 1, 0)
 
   # Display number of images processed
-  cat("images processed:", length(images),
-      "\n")
+  cat("images processed:", length(images), "\n")
     
   # Save output
   results = list(
@@ -219,8 +217,7 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
 ## Run the function to load data
 
 ```{r}
-# ez_import(getwd())
-ez_import("data", verbose = T, 256, 256)
+ez_import("data", verbose = TRUE, 256, 256)
 ```
 
 ## display() will also show image in "Viewer" tab
