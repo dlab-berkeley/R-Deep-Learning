@@ -203,10 +203,10 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
     
   # Assign binary sparse matrices for each image
   create_array = array(as.numeric(unlist(images_list)), dim = c(length(images), width, height))
-  sparse_matrix = ifelse(create_array > 0.5, 1, 0)
+  sparse_matrix = as.integer(create_array > 0.5)
 
   # Display number of images processed
-  cat("images processed:", length(images), "\n")
+  cat("Images processed:", length(images), "\n")
     
   # Save output
   result = list(
@@ -224,17 +224,17 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
 ```{r}
 width = 96
 height = 96
-result = ez_import("data", verbose = F, width = width, height = height)
+result = ez_import("data", verbose = FALSE, width = width, height = height)
 ```
 
 ## display() will also show image in "Viewer" tab
 
 ```{r}
-display(image_data[[1]])
+display(result$images[[1]])
 
 # or
 
-plot(image_data[[1]])
+plot(result$images[[1]])
 ```
 
 ## Training/testing on this small dataset
@@ -243,20 +243,19 @@ plot(image_data[[1]])
 
 ```{r}
 # Choose the middle 30 images as the training data
-x_train = result$sparse[11:40,,]
+x_train = result$sparse[11:40, , ]
 (y_train = c(rep("dog", 15), rep("human", 15)))
-(y_train = ifelse(y_train == "dog", 1, 0))
+(y_train = as.integer(y_train == "dog"))
 
 # Choose the first 10 dogs and last 10 humans as the test data
-x_test = result$sparse[c(1:10, 41:50),,]
+x_test = result$sparse[c(1:10, 41:50), , ]
 (y_test = c(rep("dog", 10), rep("human", 10)))
-(y_test = ifelse(y_test == "dog", 1, 0))
+(y_test = as.integer(y_test == "dog"))
 ```
 
 ### Reshape sparse matrices to arrays
 
 ```{r}
-library(reticulate)
 x_train = array_reshape(x_train, c(nrow(x_train), width * height))
 x_test = array_reshape(x_test, c(nrow(x_test), width * height))
 
@@ -304,6 +303,9 @@ plot(history) + theme_bw()
 ```
 
 ```{r}
+# CK: getting an error on this currently.
+# "Error in py_call_impl(callable, dots$args, dots$keywords) : 
+# ValueError: Error when checking target: expected dense_27 to have 2 dimensions, but got array with shape (20, 2, 2)"
 model %>% evaluate(x_test, y_test)
 ```
 
