@@ -144,10 +144,19 @@ Write a for-loop that imports the images, standardizes their sizes, prints summa
 3. Adds a header for the summary information for each image  
 4. Plots each image  
 
+NOTE: before running, you must create an ~/.Renviron file by:
+1. open terminal  
+2. cd  
+3. touch .Renviron  
+4. open .Renviron  
+5. R_MAX_VSIZE=100Gb  
+6. Click Session --> Restart R  
+See [here](https://stackoverflow.com/a/52612921) for help
 ```{r}
 # Define ez_import function
 
-# for now, file_path can only be set to getwd(), so just be sure to set your working directory to the data folder first! 
+# any file path can be accepted now
+
 ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, verbose = FALSE) {
   
   # Store file names in a vector
