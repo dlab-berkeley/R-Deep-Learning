@@ -167,18 +167,18 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
     
     # Convert to grayscale
     if (to_grayscale) {
-    images_list[[i]] = EBImage::channel(images_list[[i]], mode = "gray")
+      images_list[[i]] = EBImage::channel(images_list[[i]], mode = "gray")
     }
     
     # Name each image in the output for reference
     if (verbose) {
-    cat("image #", i, "-", images[[i]],
-        "\n")
+      cat("image #", i, "-", images[[i]],
+          "\n")
     }
     
-        # Display color profile values
+    # Display color profile values
     if (verbose) {
-    print(images_list[[i]])
+      print(images_list[[i]])
     }
     
     # Plot each image. Click left and right arrows in plot tab to view.
@@ -188,17 +188,21 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
     gc()
   }
     
-    # Assign binary sparse matrices for each image
-    create_array = array(as.numeric(unlist(images_list)), dim = c(length(images), width, height))
-    sparse_matrix = ifelse(create_array > 0.5, 1, 0)
+  # Assign binary sparse matrices for each image
+  create_array = array(as.numeric(unlist(images_list)), dim = c(length(images), width, height))
+  sparse_matrix = ifelse(create_array > 0.5, 1, 0)
 
+  # Display number of images processed
+  cat("images processed:", length(images),
+      "\n")
+    
   # Save output
   results = list(
     images = images_list,
     array = create_array, 
     sparse = sparse_matrix)
     
-    return(results)
+  return(results)
   
 }
 ```
@@ -207,7 +211,7 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
 
 ```{r}
 # ez_import(getwd())
-ez_import("data", verbose = T, 96, 96)
+ez_import("data", verbose = T, 256, 256)
 ```
 
 ## display() will also show image in "Viewer" tab
