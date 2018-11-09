@@ -19,11 +19,8 @@ Run this chunk manually to install once. It will not be run when one clicks "kni
 install.packages("keras")
 keras::install_keras()
 
-# source activate r-tensorflow
-# source deactivate
-
 # Customize EBImage installation to R version.
-if (grepl("version 3\\.5\\.", R.version.string) {
+if (grepl("version 3\\.5\\.", R.version.string)) {
   # R >= 3.5
   install.packages("BiocManager")
   BiocManager::install("EBImage")
@@ -33,8 +30,7 @@ if (grepl("version 3\\.5\\.", R.version.string) {
   biocLite("EBImage")
 }
 
-# Install other packages
-# ? dplyr, ggplot, caret, SuperLearner (can we ensemble images? that would be cool), etc...
+
 ```
 
 ## Load packages
@@ -152,63 +148,66 @@ Write a for-loop that imports the images, standardizes their sizes, prints summa
 # Define ez_import function
 
 # for now, file_path can only be set to getwd(), so just be sure to set your working directory to the data folder first! 
-ez_import = function(file_path) {
-  
-  file_path = file_path
+ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, verbose = FALSE) {
   
   # Store file names in a vector
-  images = as.character(list.files(file_path))
+  images = list.files(file_path, full.names = T)
   
   # Create a blank list to be appended
   images_list = list()
   
   # Build the for-loop
-  # CK: dir() should be passed as a function argument, not used within the function.
-  for (i in 1:length(dir())) {
+  for (i in seq_along(images)) {
     
     # Import images
     images_list[[i]] = EBImage::readImage(images[i])
     
     # Resize images (e.g., 224 x 224 dpi)
-    images_list[[i]] = EBImage::resize(images_list[[i]], w = 224, h = 224)
+    images_list[[i]] = EBImage::resize(images_list[[i]], w = width, h = height)
     
     # Convert to grayscale
+    if (to_grayscale) {
     images_list[[i]] = EBImage::channel(images_list[[i]], mode = "gray")
+    }
     
     # Name each image in the output for reference
-    print(paste("image #", i, "-", images[[i]]))
+    if (verbose) {
+    cat("image #", i, "-", images[[i]],
+        "\n")
+    }
     
-    # Print six-number summaries (descriptive statistics)
-    print(summary(images_list[[i]]))
-    
-    # Display color profile values
+        # Display color profile values
+    if (verbose) {
     print(images_list[[i]])
+    }
     
     # Plot each image. Click left and right arrows in plot tab to view.
     plot(images_list[[i]])
     
-    # Separate output with a blank line
-    cat("\n")
-    
-    # Assign raw image data for each image
-    # CK: this is not a good practice, instead should compile results into a
-    # list and return that.
-    assign("image_data", images_list, 
-           envir = globalenv())
+    # Garbage collection
+    gc()
+  }
     
     # Assign binary sparse matrices for each image
-    data2 = array(as.numeric(unlist(image_data)), dim = c(length(dir()), 224, 224))
-    data = ifelse(data2 > 0.5, 1, 0)
-    # CK: also should compile into a list.
-    assign("binary_data", data, envir = globalenv())
-  }
+    create_array = array(as.numeric(unlist(images_list)), dim = c(length(images), width, height))
+    sparse_matrix = ifelse(create_array > 0.5, 1, 0)
+
+  # Save output
+  results = list(
+    images = images_list,
+    array = create_array, 
+    sparse = sparse_matrix)
+    
+    return(results)
+  
 }
 ```
 
 ## Run the function to load data
 
 ```{r}
-ez_import(getwd())
+# ez_import(getwd())
+ez_import("data", verbose = T, 96, 96)
 ```
 
 ## display() will also show image in "Viewer" tab
