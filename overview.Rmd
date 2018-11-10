@@ -11,14 +11,17 @@ Run this chunk manually to install once. It will not be run when one clicks "kni
 
 ```{r install, eval = FALSE}
 
-# Install keras
+# Install keras package
 devtools::install_github("rstudio/keras")
-keras::install_keras()
-
 # or
-
 install.packages("keras")
+
+# Then run install_keras() function to install anaconda python, tensorflow, and keras
 keras::install_keras()
+# Or if you have a GPU and have followed these instructions:
+# https://tensorflow.rstudio.com/tools/local_gpu.html
+# NOTE: tensorflow seems to require CUDA 9.0 currently; 9.2 for example will not work.
+# keras::install_keras(tensorflow = "gpu")
 
 # Customize EBImage installation to R version.
 if (grepl("version 3\\.5\\.", R.version.string)) {
@@ -40,6 +43,7 @@ if (grepl("version 3\\.5\\.", R.version.string)) {
 
 library(keras)
 library(dplyr)
+library(tensorflow)
 # Installed via bioconductor above, not CRAN.
 library(EBImage)
 library(ggplot2)
@@ -185,8 +189,7 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
     
     # Name each image in the output for reference
     if (verbose) {
-      cat("image #", i, "-", images[[i]],
-          "\n")
+      cat("image #", i, "-", images[[i]], "\n")
     }
     
     # Display color profile values
