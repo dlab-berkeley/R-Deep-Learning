@@ -227,7 +227,8 @@ ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, 
 ```{r}
 width = 96
 height = 96
-result = ez_import("data", verbose = FALSE, width = width, height = height)
+result = ez_import("data-raw/dog-person", verbose = FALSE,
+                   width = width, height = height)
 ```
 
 ## display() will also show image in "Viewer" tab
