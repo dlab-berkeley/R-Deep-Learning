@@ -22,6 +22,11 @@ install.packages("cowplot")
 ```{r load_packages}
 
 library(keras)
+# Set the seed immediately after loading keras library.
+# More info on reproducibility here:
+# https://keras.rstudio.com/articles/faq.html#how-can-i-obtain-reproducible-results-using-keras-during-development
+use_session_with_seed(1, disable_gpu = FALSE, disable_parallel_cpu = FALSE)
+
 library(dplyr)
 library(ggplot2)
 library(magick)
@@ -42,8 +47,10 @@ if (!file.exists(local_file)) {
   download.file("https://github.com/paras42/Hello_World_Deep_Learning/raw/9921a12c905c00a88898121d5dc538e3b524e520/Open_I_abd_vs_CXRs.zip", local_file)
 }
 
-# Unzip the local file into the data-raw directory.
-unzip(local_file, exdir = "data-raw")
+# Unzip the local file into the data-raw directory, if we haven't already.
+if (!file.exists("data-raw/Open_I_abd_vs_CXRs")) {
+  unzip(local_file, exdir = "data-raw")
+}  
 ```
 
 ## Import images
@@ -95,9 +102,10 @@ ggdraw() + draw_image(train_files[2]) + ggtitle("2nd image") + theme_minimal() +
 
 ```{r}
 # Dimensions of our images.
-img_width = img_height = 299
-batch_size = 5
+img_width = img_height = 299L
+batch_size = 5L
 
+# TODO: move data augmentation to a later section.
 train_datagen =
   keras::image_data_generator(rescale = 1 / 255,
                               shear_range = 0.2,
@@ -106,6 +114,11 @@ train_datagen =
                               width_shift_range = 0.2,
                               height_shift_range = 0.2,
                               horizontal_flip = TRUE)
+
+# TODO: examine 1 generated image.
+#train_datagen$flow(dirs$train, batch_size = 1)
+
+train_datagen = keras::image_data_generator(rescale = 1/255)
 
 val_datagen = keras::image_data_generator(rescale = 1/255)
 
@@ -123,7 +136,7 @@ val_gen =
 
 # This will download the inception weights the first time it is run (~84 MB)
 base_model = keras::application_inception_v3(include_top = FALSE,
-                                             input_shape = c(img_width, img_height, 3))
+                                             input_shape = c(img_width, img_height, 3L))
 # Outputs an 8x8x2048 tensor.
 base_model$output_shape
 ?application_inception_v3
@@ -144,32 +157,44 @@ freeze_weights(base_model)
 
 # compile the model (should be done *after* setting layers to non-trainable)
 #model %>% compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy')
-model %>% compile(optimizer = "adam", loss = "binary_crossentropy", metrics = "accuracy")
+#model %>% compile(optimizer = "adam", loss = "binary_crossentropy", metrics = "accuracy")
+model %>% compile(optimizer = optimizer_adam(#lr = 0.00001,
+                                             lr = 0.0001,
+                                             beta_1 = 0.9,
+                                             beta_2 = 0.999, epsilon = 1e-08,
+                                             decay = 0.0),
+                  loss = loss_binary_crossentropy,
+                  metrics = "accuracy")
+
+(num_train_samples = length(train_files))
+num_validation_samples = 10L
+epochs = 20L
 ```
 
 ## Fit model
 
 ```{r fit_model}
 
-(num_train_samples = length(train_files))
-num_validation_samples = 10
-epochs = 20
-epochs = 1
-
-# train the model on the new data for a few epochs
-# CK: this is currently hanging in R - investigating.
+# Train the model on the new data for a few epochs
+# CK: this is currently hanging in R on windows - investigating. Works on Mac tho.
 # - Not due to GPU vs. CPU.
 # To check:
 # - training data generator
 # - ???
-history = model %>% fit_generator(train_gen,
-                                  steps_per_epoch = as.integer(num_train_samples / batch_size),
-                                  epochs = epochs,
-                                  NULL)
-# temporarily turning off these lines until the basic version works.
-                                  #validation_data = val_gen,
-                                  #validation_steps = as.integer(num_validation_samples / batch_size))
+history = model %>%
+  fit_generator(train_gen,
+                steps_per_epoch = as.integer(num_train_samples / batch_size),
+                epochs = epochs,
+                validation_data = val_gen,
+                validation_steps = as.integer(num_validation_samples / batch_size))
 
+# Review fitting history.
+plot(history)
+```
+
+## Predict on test data
+
+```{r predict_test}
 ```
 
 ## Add more materials
