@@ -1,0 +1,182 @@
+---
+title: "R for Deep Learning"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Install dependencies
+
+One this chunk once manually if needed. It won't be executed when knitting the file or selecting "run all chunks".
+
+```{r install_deps, eval = FALSE}
+install.packages("magick")
+install.packages("cowplot")
+
+```
+
+## Load packages
+
+```{r load_packages}
+
+library(keras)
+library(dplyr)
+library(ggplot2)
+library(magick)
+library(cowplot)
+# Gives us the tf object for certain manipulations.
+library(tensorflow)
+
+```
+
+## Download imaging data
+
+```{r download_data}
+local_file = "medical_images.zip"
+
+# Download the zip file if we don't already have it in our working directory.
+# It is 13.5 MB in size.
+if (!file.exists(local_file)) {
+  download.file("https://github.com/paras42/Hello_World_Deep_Learning/raw/9921a12c905c00a88898121d5dc538e3b524e520/Open_I_abd_vs_CXRs.zip", local_file)
+}
+
+# Unzip the local file into the data-raw directory.
+unzip(local_file, exdir = "data-raw")
+```
+
+## Import images
+
+```{r import_images}
+# Organize our directories into a list.
+dirs = list(base = "data-raw/Open_I_abd_vs_CXRs/")
+
+# Don't include a "/" at the end of these, because list.files() will add later.
+dirs$train = paste0(dirs$base, "TRAIN")
+dirs$val = paste0(dirs$base, "VAL")
+
+# How many images are in each directory?
+
+# Images are organized into two subdirectories (1 per type of image), so
+# we set recursive = TRUE to go into each of the subdirectories.
+length((train_files = list.files(dirs$train, recursive = TRUE, full.names = TRUE)))
+
+# Review the first two file elements. Both are abdominal xrays (note the subdirectory).
+train_files[1:2]
+
+# Plot it with ggplot + cowplot + magick packages.
+ggdraw() + draw_image(train_files[1])
+
+# Plot the second image also, this time adding a title and removing extra items.
+ggdraw() + draw_image(train_files[2]) + ggtitle("2nd image") + theme_minimal() +
+  theme(axis.text = element_blank(), panel.grid = element_blank())
+
+###
+# Challenge: plot the third image and put the filename in the title.
+# Bonus hint: basename() will remove all directories from a file path.
+###
+
+
+
+
+(image = tf$read_file(train_files[1]) %>% tf$image$decode_png())
+
+###
+# Challenge: how many files are in the validation directory?
+###
+# Uncomment this line and fill in the appropriate function arguments:
+# length(list.files(_____, _____, _____))
+
+
+```
+
+## Setup model
+
+```{r}
+# Dimensions of our images.
+img_width = img_height = 299
+batch_size = 5
+
+train_datagen =
+  keras::image_data_generator(rescale = 1 / 255,
+                              shear_range = 0.2,
+                              zoom_range = 0.2,
+                              rotation_range = 20,
+                              width_shift_range = 0.2,
+                              height_shift_range = 0.2,
+                              horizontal_flip = TRUE)
+
+val_datagen = keras::image_data_generator(rescale = 1/255)
+
+train_gen =
+  train_datagen$flow_from_directory(dirs$train,
+                                    target_size = c(img_width, img_height),
+                                    batch_size = batch_size,
+                                    class_mode = "binary")
+
+val_gen =
+  val_datagen$flow_from_directory(dirs$val,
+                                  target_size = c(img_width, img_height),
+                                  batch_size = batch_size,
+                                  class_mode = "binary")
+
+# This will download the inception weights the first time it is run (~84 MB)
+base_model = keras::application_inception_v3(include_top = FALSE,
+                                             input_shape = c(img_width, img_height, 3))
+# Outputs an 8x8x2048 tensor.
+base_model$output_shape
+?application_inception_v3
+
+# Add custom layer to inception.
+model_top = base_model$output %>%
+  layer_global_average_pooling_2d() %>%
+  layer_dense(units = 256, activation = "relu") %>%
+  layer_dropout(0.5) %>%
+  layer_dense(units = 1, activation = "sigmoid")
+
+# this is the model we will train
+model = keras_model(inputs = base_model$input, outputs = model_top)
+
+# first: train only the top layers (which were randomly initialized)
+# i.e. freeze all convolutional InceptionV3 layers
+freeze_weights(base_model)
+
+# compile the model (should be done *after* setting layers to non-trainable)
+#model %>% compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy')
+model %>% compile(optimizer = "adam", loss = "binary_crossentropy", metrics = "accuracy")
+```
+
+## Fit model
+
+```{r fit_model}
+
+(num_train_samples = length(train_files))
+num_validation_samples = 10
+epochs = 20
+epochs = 1
+
+# train the model on the new data for a few epochs
+# CK: this is currently hanging in R - investigating.
+# - Not due to GPU vs. CPU.
+# To check:
+# - training data generator
+# - ???
+history = model %>% fit_generator(train_gen,
+                                  steps_per_epoch = as.integer(num_train_samples / batch_size),
+                                  epochs = epochs,
+                                  NULL)
+# temporarily turning off these lines until the basic version works.
+                                  #validation_data = val_gen,
+                                  #validation_steps = as.integer(num_validation_samples / batch_size))
+
+```
+
+## Add more materials
+
+Ideally text classification, time series (waveform), and maybe neural style transer.
+
+
+## Acknowledgements
+
+Material drawn from (https://github.com/paras42/Hello_World_Deep_Learning) and (https://keras.rstudio.com).
