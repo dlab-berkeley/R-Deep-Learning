@@ -176,11 +176,6 @@ epochs = 20L
 ```{r fit_model}
 
 # Train the model on the new data for a few epochs
-# CK: this is currently hanging in R on windows - investigating. Works on Mac tho.
-# - Not due to GPU vs. CPU.
-# To check:
-# - training data generator
-# - ???
 history = model %>%
   fit_generator(train_gen,
                 steps_per_epoch = as.integer(num_train_samples / batch_size),
