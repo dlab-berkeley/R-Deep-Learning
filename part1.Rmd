@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Deep Learning in R"
-author: "Evan and Chris"
-date: "10/4/2018"
+author: "D-Lab"
+date: "11/24/2018"
 output: html_document
 ---
 
@@ -145,91 +145,6 @@ model %>% evaluate(x_test, y_test)
 
 Load a folder of human and dog images from the `data` folder of the workshop materials and define the vector of `image_names` to be populated in a blank list named `images_list`. These free images were downloaded from [Burst](https://burst.shopify.com/):
 
-### Easy data import
-
-Loading image data and standardizing features for each image can be intimidating. Fortunately, we have written a function that does everything for you.
-
-Write a for-loop that imports the images, standardizes their sizes, prints summary information for each, and plots each image. This loop is stored instide the `ez_import` function. This function takes no arguments and accomplishes the following:  
-
-1. Imports images from the working directory  
-2. Resize images to a standard size  
-3. Adds a header for the summary information for each image  
-4. Plots each image  
-
-NOTE: before running, if using R 3.5 on MacOS you must create an ~/.Renviron file by:
-1. open terminal  
-2. cd  
-3. touch .Renviron  
-4. open .Renviron  
-5. R_MAX_VSIZE=100Gb  
-6. Click Session --> Restart R  
-See [here](https://stackoverflow.com/a/52612921) for help
-
-```{r ez_import}
-ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, verbose = FALSE) {
-  
-  # Store file names in a vector
-  images = list.files(file_path, full.names = TRUE)
-  
-  # Create a blank list to be appended
-  images_list = list()
-  
-  for (i in seq_along(images)) {
-    
-    # Import images
-    images_list[[i]] = EBImage::readImage(images[i])
-    
-    # Resize images (e.g., 224 x 224 size)
-    images_list[[i]] = EBImage::resize(images_list[[i]], w = width, h = height)
-    
-    # Convert to grayscale
-    if (to_grayscale) {
-      images_list[[i]] = EBImage::channel(images_list[[i]], mode = "gray")
-    }
-    
-    # Name each image in the output for reference
-    if (verbose) {
-      cat("image #", i, "-", images[[i]], "\n")
-    }
-    
-    # Display color profile values
-    if (verbose) {
-      print(images_list[[i]])
-    }
-    
-    # Plot each image. Click left and right arrows in plot tab to view.
-    plot(images_list[[i]])
-    
-    # Garbage collection
-    gc()
-  }
-    
-  # Assign binary sparse matrices for each image
-  create_array = array(as.numeric(unlist(images_list)), dim = c(length(images), width, height))
-  sparse_matrix = as.integer(create_array > 0.5)
-
-  # Display number of images processed
-  cat("Images processed:", length(images), "\n")
-    
-  # Save output
-  result = list(
-    images = images_list,
-    array = create_array, 
-    sparse = sparse_matrix)
-    
-  return(result)
-  
-}
-```
-
-## Run the function to load data
-
-```{r}
-width = 96
-height = 96
-result = ez_import("data-raw/dog-person", verbose = FALSE,
-                   width = width, height = height)
-```
 
 ## display() will also show image in "Viewer" tab
 
