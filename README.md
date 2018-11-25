@@ -4,8 +4,7 @@ This is the repository for D-Lab’s Introduction to Deep Learning in R workshop
 
 ## Objectives
 
-Convey the basics of deep learning in R using keras on a dataset consisting of # of “X” images. 
-Students are empowered with a general grasp of deep learning, example code that they can modify, a working computational environment, and resources for further study.
+Convey the basics of deep learning in R using keras on image datasets. Students are empowered with a general grasp of deep learning, example code that they can modify, a working computational environment, and resources for further study.
 
 ## Content outline
 
