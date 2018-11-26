@@ -39,7 +39,7 @@ library(tensorflow)
 ## Download imaging data
 
 ```{r download_data}
-local_file = "medical_images.zip"
+local_file = "data-raw/medical_images.zip"
 
 # Download the zip file if we don't already have it in our working directory.
 # It is 13.5 MB in size.
