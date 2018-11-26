@@ -1,4 +1,4 @@
-# Deep-Learning-in-R
+# Deep Learning in R
 
 This is the repository for D-Lab’s Introduction to Deep Learning in R workshop.
 
@@ -48,8 +48,6 @@ highly recommended but not required.
 
 Browse resources listed on the [D-Lab Machine Learning Working Group repository](https://github.com/dlab-berkeley/MachineLearningWG). Scroll down to see code examples in R and Python, books, courses at UC Berkeley, online classes, and other resources and groups to help you along your machine learning journey!  
 
-
-## References
 * D-Lab [Machine Learning Working Group](http://dlab.berkeley.edu/working-groups/machine-learning-working-group-0)
 
 * Websites
