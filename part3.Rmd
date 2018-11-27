@@ -192,6 +192,14 @@ plot(history)
 ```{r predict_test}
 ```
 
+## Google Cloud ML
+
+Run this first installation chunk manually.
+
+```{r cloud_install, eval = FALSE}
+
+```
+
 ## Add more materials
 
 Ideally text classification, time series (waveform), and maybe neural style transer.
