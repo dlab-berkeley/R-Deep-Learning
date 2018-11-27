@@ -1,5 +1,5 @@
 cloudml:
-  data_dir: "gs://medical-images-data"
+  base_data_dir: "gs://medical-images-data/Open_I_abd_vs_CXRs/"
 
 trainingInput:
   scaleTier: CUSTOM

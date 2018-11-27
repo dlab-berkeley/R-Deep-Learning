@@ -5,7 +5,7 @@ library(cloudml)
 # See https://tensorflow.rstudio.com/tools/cloudml/articles/tuning.html#preparing-your-script
 my_flags = tfruns::flags(
   # Data directories
-  flag_string("base_dir", "data-raw/Open_I_abd_vs_CXRs/"),
+  flag_string("base_data_dir", "data-raw/Open_I_abd_vs_CXRs/"),
 
   # Neural architecture
   flag_integer("dense_units1", 128),
@@ -15,9 +15,13 @@ my_flags = tfruns::flags(
   flag_numeric("learning_rate", 0.0001)
 )
 
+dirs = list()
+
 # Don't include a "/" at the end of these, because list.files() will add later.
-dirs$train = cloudml::gs_data_dir_local(paste0(my_flags$base_dir, "TRAIN"))
-dirs$val = cloudml::gs_data_dir_local(paste0(my_flags$base_dir, "VAL"))
+dirs$train = cloudml::gs_data_dir_local(paste0(my_flags$base_data_dir, "TRAIN"))
+dirs$val = cloudml::gs_data_dir_local(paste0(my_flags$base_data_dir, "VAL"))
+
+length((train_files = list.files(dirs$train, recursive = TRUE, full.names = TRUE)))
 
 # Dimensions of our images.
 img_width = img_height = 299L
