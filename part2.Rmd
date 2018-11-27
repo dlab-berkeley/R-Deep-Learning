@@ -10,31 +10,7 @@ output: html_document
 
 ### The data
 
-Load a folder of human and dog images from the `data` folder of the workshop materials and define the vector of `image_names` to be populated in a blank list named `images_list`. These free images were downloaded from [Burst](https://burst.shopify.com/):
-
-
-### Easy data import
-
-Loading image data and standardizing features for each image can be intimidating. Fortunately, we have written a function that does everything for you.
-
-Write a for-loop that imports the images, standardizes their sizes, prints summary information for each, and plots each image. This loop is stored instide the `ez_import` function. This function takes no arguments and accomplishes the following:  
-  
-1. Imports images from the working directory  
-2. Resize images to a standard size  
-3. Adds a header for the summary information for each image  
-4. Plots each image  
-
-NOTE: before running, if using R 3.5 on MacOS you must create an ~/.Renviron file by:
-  1. open terminal  
-2. cd  
-3. touch .Renviron  
-4. open .Renviron  
-5. R_MAX_VSIZE=100Gb  
-6. Click Session --> Restart R  
-See [here](https://stackoverflow.com/a/52612921) for help
-
-
-Look at raw images
+Load a folder of human and dog images from the `data-raw` folder of the workshop materials and define the vector of `image_names` to be populated in a blank list named `images_list`. These free images were downloaded from [Burst](https://burst.shopify.com/):
 
 Load code
 ```{r}

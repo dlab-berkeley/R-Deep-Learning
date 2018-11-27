@@ -27,19 +27,6 @@ keras::install_keras()
 # https://tensorflow.rstudio.com/tools/local_gpu.html
 # NOTE: tensorflow seems to require CUDA 9.0 currently; 9.2 for example will not work.
 # keras::install_keras(tensorflow = "gpu")
-
-# Customize EBImage installation to R version.
-if (grepl("version 3\\.5\\.", R.version.string)) {
-  # R >= 3.5
-  install.packages("BiocManager")
-  BiocManager::install("EBImage")
-} else {
-  # R < 3.5
-  source("https://bioconductor.org/biocLite.R")
-  biocLite("EBImage")
-}
-
-
 ```
 
 ## Load packages
@@ -51,8 +38,6 @@ library(cowplot)
 library(keras)
 library(dplyr)
 library(tensorflow)
-# Installed via bioconductor above, not CRAN.
-library(EBImage)
 library(ggplot2)
 
 ```
