@@ -1,0 +1,66 @@
+---
+title: Introduction to Deep Learning in R
+author: "D-Lab"
+date: "Fall 2018"
+output:
+  revealjs::revealjs_presentation:
+    transition: fade
+    self_contained: false
+    reveal_plugins: ["chalkboard"]
+    theme: serif
+    highlight: tango
+    center: true
+width: 1200
+
+---
+
+----
+
+## Download the workshop materials 
+
+1) Download the workshiop materials: https://github.com/dlab-berkeley/Machine-Learning-in-R  
+
+2) Download R > 3.5: https://cloud.r-project.org/  
+
+3) Download RStudio Desktop Open Source License FREE: https://www.rstudio.com/products/rstudio/download/
+
+----
+
+## Workshop Goals
+1. Introduction
+2. MNIST handwritten digit example  
+3. Repeat on a dogs-humans folder of images  
+4. Biomedical example  
+5. NLP example? 
+
+----
+
+## R, RStudio, and Keras
+- _R_ is the programming language  
+- _RStudio_ is the IDE that greatly enhances R's functionality
+- _Keras_ is the main deep learning package
+
+
+----
+
+## ANN Layers
+- _Input:_
+- _Output:_
+- _Hidden:_
+
+----
+
+## Batch size
+- _Batch size_ is 
+
+----
+
+## Functions
+- _Loss:_  
+- _Activation:_  
+- _Optimization:_  
+
+----
+
+
+----

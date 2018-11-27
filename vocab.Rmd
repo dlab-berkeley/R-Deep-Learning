@@ -1,0 +1,14 @@
+---
+title: "Deep Learning Vocabulary"
+output: html_document
+---
+
+- **Keras** is the main deep learning/neural network API package that we will use. Keras calls functions from Python and can run seamlessly on CPUs and GPUs, has streamlined syntax, supports all types of neural network modelling, and runs on the TensorFlow backend by default.  
+
+- **MNIST** the 70,000 28x28 pixel handwritten digit image database from the Modified National Institutes of Standards and Technology. The numbers 0 through 9 are included and each image contains a label that tells us which each digit actually is.  
+
+- **R** is an interactive programming language and environment for statistical computing that provides the user with a large number of built-in statistical and data visualization features as well as user-defined software packages and functions.  
+- **RStudio** is the graphical user interface (GUI) / integrated development environmnet (IDE) that greatly enhances R's functionality for statistical programming. It allows the user to create dynamic documents, software packages, applications, direct interface to GitHub, and even other programming languages.  
+
+
+
