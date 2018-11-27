@@ -155,16 +155,17 @@ model = keras_model(inputs = base_model$input, outputs = model_top)
 # i.e. freeze all convolutional InceptionV3 layers
 freeze_weights(base_model)
 
-# compile the model (should be done *after* setting layers to non-trainable)
-#model %>% compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy')
-#model %>% compile(optimizer = "adam", loss = "binary_crossentropy", metrics = "accuracy")
-model %>% compile(optimizer = optimizer_adam(#lr = 0.00001,
-                                             lr = 0.0001,
-                                             beta_1 = 0.9,
-                                             beta_2 = 0.999, epsilon = 1e-08,
-                                             decay = 0.0),
-                  loss = loss_binary_crossentropy,
-                  metrics = "accuracy")
+# Compile the model (should be done *after* setting layers to non-trainable)
+model %>%
+  compile(optimizer =
+            optimizer_adam(#lr = 0.00001,
+                           lr = 0.0001,
+                           beta_1 = 0.9,
+                           beta_2 = 0.999, epsilon = 1e-08,
+                           decay = 0.0),
+          # Or can use string version: loss = "binary_crossentropy".
+          loss = loss_binary_crossentropy,
+          metrics = "accuracy")
 
 (num_train_samples = length(train_files))
 num_validation_samples = 10L
@@ -192,13 +193,6 @@ plot(history)
 ```{r predict_test}
 ```
 
-## Google Cloud ML
-
-Run this first installation chunk manually.
-
-```{r cloud_install, eval = FALSE}
-
-```
 
 ## Add more materials
 
