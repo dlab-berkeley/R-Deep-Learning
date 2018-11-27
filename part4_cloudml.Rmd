@@ -16,7 +16,9 @@ the Tensorflow Cloud ML [getting started page](https://tensorflow.rstudio.com/to
 
 ```{r cloud_install, eval = FALSE}
 install.packages("cloudml")
-# Note: this will run a bunch of stuff in the Terminal and require you to press
+
+# Install Google Cloud SDK.
+# This will run a bunch of stuff in the Terminal and require you to press
 # enter and then possibly opt-in to usage reporting.
 cloudml::gcloud_install()
 
@@ -24,7 +26,7 @@ cloudml::gcloud_install()
 
 
 
-```{r}
+```{r check_install}
 library(cloudml)
 # Carefully review any errors messages here. This will report if you still
 # need to setup billing for a project, or if the Machine Learning Engine API
@@ -35,7 +37,7 @@ job_status()
 
 Create the bucket and copy our local files
 
-```{r}
+```{r setup_data}
 gcloud_terminal()
 # synchronize a bucket and a local directory
 dirs$base
@@ -45,8 +47,13 @@ gs_copy(dirs$base, "gs://medical-images-data", recursive = TRUE)
 #gs_rsync("gs://medical-images-data", dirs$base)
 ```
 
-```{r}
-# May need to manually install revealjs due to slides.Rmd
-# Current error: Error in eval(parse(text = format$name)) : object 'html' not found
-job = cloudml_train("cloudml_train.R", flags = "cloudml_tuning.yml")
+```{r submit_job}
+# May need to manually install revealjs on local computer due to slides.Rmd.
+
+# This will take a long time the first time due to installation of packages, etc.
+# Every package that is successfully installed is re-used in future runs, so this
+# speeds up, even if it takes a few iterations to run successfully.
+job = cloudml_train("cloudml_train.R", flags = "cloudml_tuning.yml",
+                    # True will "collect job when training is complete". See ?cloudml_train
+                    collect = TRUE)
 ```
