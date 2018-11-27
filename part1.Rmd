@@ -1,11 +1,16 @@
 ---
-title: "Introduction to Deep Learning in R"
+title: "Introduction to Deep Learning in R - Part 1"
 author: "D-Lab"
 date: "11/24/2018"
 output: html_document
 ---
 
-## Install dependencies
+## Introduction
+(Slideshow presentation)
+
+Goals
+
+## Install packages
 
 Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
 
@@ -38,9 +43,11 @@ if (grepl("version 3\\.5\\.", R.version.string)) {
 ```
 
 ## Load packages
+Now that we have installed the necessary packages, library them so that R can utilize their functionalities
 
 ```{r load_packages}
 
+library(cowplot)
 library(keras)
 library(dplyr)
 library(tensorflow)
@@ -50,14 +57,18 @@ library(ggplot2)
 
 ```
 
-## Keras vignette
+## MNIST handwritten digit example
+Jump in! The first example will consist of a walkthrough of the Keras vignette [located here](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html).  
 
-[located here](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html)
-Load and split data
+Let's look at 70,000 handwritten digit images from the [Modified National Institute of Standards and Technology database](https://en.wikipedia.org/wiki/MNIST_database) (MNIST). 
 
 ```{r}
 # This line requires a working internet connection to download the data the first time.
 mnist <- dataset_mnist()
+
+# How many images are in our training and test sets? What are their pixel dimensions? 
+
+# Define our x and y variables for the training and test sets. 
 x_train <- mnist$train$x
 y_train <- mnist$train$y
 x_test <- mnist$test$x
@@ -65,6 +76,10 @@ y_test <- mnist$test$y
 ```
 
 ## Reshape, rescale, one-hot encode
+
+The `array_reshape` function allows us to reshape a three-dimensional array like those foudn in our `mnist` dataset into matrices. Our 28x28 pixel images will become vectors with length $28*28 = 784$. 
+
+-dimensional array. This is critical since we want to turn our matrices 
 
 ```{r}
 # reshape
@@ -74,7 +89,10 @@ x_test <- array_reshape(x_test, c(nrow(x_test), 784))
 # Check dimensions of x.
 dim(x_train)
 dim(x_test)
+```
 
+Then, grayscale values that range from between 0 to 255 are scaled 
+```{r}
 # rescale
 x_train <- x_train / 255
 x_test <- x_test / 255
@@ -136,181 +154,5 @@ plot(history) + theme_minimal()
 ## Evaluate performance on the test data
 
 ```{r}
-model %>% evaluate(x_test, y_test)
-```
-
-## Humans and dogs
-
-### The data
-
-Load a folder of human and dog images from the `data` folder of the workshop materials and define the vector of `image_names` to be populated in a blank list named `images_list`. These free images were downloaded from [Burst](https://burst.shopify.com/):
-
-
-### Easy data import
-
-Loading image data and standardizing features for each image can be intimidating. Fortunately, we have written a function that does everything for you.
-
-Write a for-loop that imports the images, standardizes their sizes, prints summary information for each, and plots each image. This loop is stored instide the `ez_import` function. This function takes no arguments and accomplishes the following:  
-  
-1. Imports images from the working directory  
-2. Resize images to a standard size  
-3. Adds a header for the summary information for each image  
-4. Plots each image  
-
-NOTE: before running, if using R 3.5 on MacOS you must create an ~/.Renviron file by:
-  1. open terminal  
-2. cd  
-3. touch .Renviron  
-4. open .Renviron  
-5. R_MAX_VSIZE=100Gb  
-6. Click Session --> Restart R  
-See [here](https://stackoverflow.com/a/52612921) for help
-
-```{r ez_import}
-ez_import = function(file_path, width = 224, height = 224, to_grayscale = TRUE, verbose = FALSE) {
-  
-  # Store file names in a vector
-  images = list.files(file_path, full.names = TRUE)
-  
-  # Create a blank list to be appended
-  images_list = list()
-  
-  for (i in seq_along(images)) {
-    
-    # Import images
-    images_list[[i]] = EBImage::readImage(images[i])
-    
-    # Resize images (e.g., 224 x 224 size)
-    images_list[[i]] = EBImage::resize(images_list[[i]], w = width, h = height)
-    
-    # Convert to grayscale
-    if (to_grayscale) {
-      images_list[[i]] = EBImage::channel(images_list[[i]], mode = "gray")
-    }
-    
-    # Name each image in the output for reference
-    if (verbose) {
-      cat("image #", i, "-", images[[i]], "\n")
-    }
-    
-    # Display color profile values
-    if (verbose) {
-      print(images_list[[i]])
-    }
-    
-    # Plot each image. Click left and right arrows in plot tab to view.
-    plot(images_list[[i]])
-    
-    # Garbage collection
-    gc()
-  }
-  
-  # Assign binary sparse matrices for each image
-  create_array = array(as.numeric(unlist(images_list)), dim = c(length(images), width, height))
-  sparse_matrix = ifelse(create_array > 0.5, 1, 0)
-  
-  # Display number of images processed
-  cat("Images processed:", length(images), "\n")
-  
-  # Save output
-  result = list(
-    images = images_list,
-    array = create_array, 
-    sparse = sparse_matrix)
-  
-  return(result)
-  
-}
-```
-
-## Run the function to load data
-
-```{r}
-width = 96
-height = 96
-result = ez_import("./data-raw/dog-person", verbose = FALSE,
-                   width = width, height = height)
-```
-
-## display() will also show image in "Viewer" tab
-
-```{r}
-display(result$images[[1]])
-
-# or
-
-plot(result$images[[1]])
-```
-
-
-## Training/testing on this small dataset
-
-### Split data
-
-```{r}
-# Choose the middle 30 images as the training data
-x_train = result$sparse[11:40, , ]
-(y_train = c(rep("dog", 15), rep("human", 15)))
-(y_train = as.integer(y_train == "dog"))
-
-# Choose the first 10 dogs and last 10 humans as the test data
-x_test = result$sparse[c(1:10, 41:50), , ]
-(y_test = c(rep("dog", 10), rep("human", 10)))
-(y_test = as.integer(y_test == "dog"))
-```
-
-### Reshape sparse matrices to arrays
-
-```{r}
-x_train = array_reshape(x_train, c(nrow(x_train), width * height))
-x_test = array_reshape(x_test, c(nrow(x_test), width * height))
-
-# rescale
-x_train = x_train / 255
-x_test = x_test / 255
-
-# 
-y_train <- to_categorical(y_train, 2)
-y_test <- to_categorical(y_test, 2)
-```
-
-## Define the model
-
-```{r}
-model <- keras_model_sequential() 
-model %>% 
-  layer_dense(units = 200, activation = 'relu', input_shape = height * width) %>% 
-  layer_dropout(rate = 0.5) %>% 
-  layer_dense(units = 50, activation = 'relu') %>%
-  layer_dropout(rate = 0.25) %>%
-  layer_dense(units = 2, activation = 'sigmoid')
-summary(model)
-```
-
-```{r}
-model %>% compile(
-  loss = 'categorical_crossentropy',
-  optimizer = optimizer_rmsprop(),
-  metrics = c('accuracy')
-)
-```
-
-```{r}
-set.seed(1)
-history <- model %>% fit(
-  x_train, y_train, 
-  epochs = 30, batch_size = 10, 
-  validation_split = 0.2
-)
-```
-
-```{r}
-plot(history) + theme_bw()
-```
-
-```{r}
-# CK: getting an error on this currently.
-# "Error in py_call_impl(callable, dots$args, dots$keywords) : 
-# ValueError: Error when checking target: expected dense_27 to have 2 dimensions, but got array with shape (20, 2, 2)"
 model %>% evaluate(x_test, y_test)
 ```
