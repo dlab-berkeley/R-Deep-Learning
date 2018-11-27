@@ -31,7 +31,7 @@ img_width = img_height = 28L
 batch_size = 5L
 (num_train_samples = length(list.files(train_path, recursive = T)))
 num_validation_samples = 10L
-epochs = 50L
+epochs = 30L
 
 train_datagen = keras::image_data_generator(rescale = 1/255)
 
@@ -105,5 +105,9 @@ plot(history) + theme_bw()
 # CK: getting an error on this currently.
 # "Error in py_call_impl(callable, dots$args, dots$keywords) : 
 # ValueError: Error when checking target: expected dense_27 to have 2 dimensions, but got array with shape (20, 2, 2)"
+
+# EM error: Error in py_call_impl(callable, dots$args, dots$keywords) : 
+#   ValueError: Error when checking input: expected flatten_1_input to have 4 dimensions, but got array with shape (10000, 784) 
+
 model %>% evaluate(x_test, y_test)
 ```
