@@ -1,0 +1,27 @@
+cloudml:
+  data_dir: "gs://medical-images-data"
+
+trainingInput:
+  scaleTier: CUSTOM
+  masterType: standard_gpu
+  hyperparameters:
+    goal: MAXIMIZE
+    hyperparameterMetricTag: acc
+    maxTrials: 10
+    maxParallelTrials: 2
+    params:
+      - parameterName: dropout1
+        type: DOUBLE
+        minValue: 0.1
+        maxValue: 0.8
+        scaleType: UNIT_LINEAR_SCALE
+      - parameterName: dense_units1
+        type: INTEGER
+        minValue: 10
+        maxValue: 512
+        scaleType: UNIT_LINEAR_SCALE
+      - parameterName: learning_rate
+        type: DOUBLE
+        minValue: 0.00001
+        maxValue: 0.1
+        scaleType: UNIT_LOG_SCALE

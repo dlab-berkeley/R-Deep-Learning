@@ -1,0 +1,52 @@
+---
+title: "Cloud ML"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Google Cloud ML
+
+First go to (https://console.cloud.google.com/), create a new project, and enable the "Machine Learning Engine" API for that project.
+
+Then run this first installation chunk manually. For more information please review
+the Tensorflow Cloud ML [getting started page](https://tensorflow.rstudio.com/tools/cloudml/articles/getting_started.html). Bonus: this page has a link to apply for an additional $200 in credit specifically for R users (takes ~2 business days to get approved).
+
+```{r cloud_install, eval = FALSE}
+install.packages("cloudml")
+# Note: this will run a bunch of stuff in the Terminal and require you to press
+# enter and then possibly opt-in to usage reporting.
+cloudml::gcloud_install()
+
+```
+
+
+
+```{r}
+library(cloudml)
+# Carefully review any errors messages here. This will report if you still
+# need to setup billing for a project, or if the Machine Learning Engine API
+# still needs to be enabled for this project.
+job_status()
+
+```
+
+Create the bucket and copy our local files
+
+```{r}
+gcloud_terminal()
+# synchronize a bucket and a local directory
+dirs$base
+# This bucket exists in the project we've specified when setting up cloudml
+# copy from a local directory to a bucket
+gs_copy(dirs$base, "gs://medical-images-data", recursive = TRUE)
+#gs_rsync("gs://medical-images-data", dirs$base)
+```
+
+```{r}
+# May need to manually install revealjs due to slides.Rmd
+# Current error: Error in eval(parse(text = format$name)) : object 'html' not found
+job = cloudml_train("cloudml_train.R", flags = "cloudml_tuning.yml")
+```
