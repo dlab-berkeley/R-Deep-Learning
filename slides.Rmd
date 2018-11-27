@@ -60,8 +60,13 @@ class: left
 
 ---
 
+class: center
+
 # What is an artificial neural network? 
 
+```{r, out.width = "600px", echo = F}
+knitr::include_graphics("slide_img/ann.png")
+```
 
 ---
 
