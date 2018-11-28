@@ -101,4 +101,5 @@ class: center
 knitr::include_graphics("slide_img/deep.png")
 ```
 
+(images courtesy of [Qingkai Kong](http://qingkaikong.blogspot.com/))
 ---
