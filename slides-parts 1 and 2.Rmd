@@ -60,6 +60,10 @@ class: left
 
 ### A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
 
+### This can be applied to numeric, categorical, image, text, and time-series data. 
+
+### For images, the neural networks convert the image to a matrix of pixel values. So, it is useful to think of images as giant matrices! 
+
 ---
 
 class: center
@@ -101,5 +105,11 @@ class: center
 knitr::include_graphics("slide_img/deep.png")
 ```
 
-(images courtesy of [Qingkai Kong](http://qingkaikong.blogspot.com/))
 ---
+
+# Moving parts
+
+
+---
+
+(images courtesy of [Qingkai Kong](http://qingkaikong.blogspot.com/))

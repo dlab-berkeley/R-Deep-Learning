@@ -6,9 +6,8 @@ output: html_document
 ---
 
 ## Introduction
-(Slideshow presentation)
 
-Goals
+See the "slides.html" file. 
 
 ## Install packages
 
@@ -30,6 +29,7 @@ keras::install_keras()
 ```
 
 ## Load packages
+
 Now that we have installed the necessary packages, library them so that R can utilize their functionalities
 
 ```{r load_packages}
@@ -43,9 +43,10 @@ library(ggplot2)
 ```
 
 ## MNIST handwritten digit example
+
 Jump in! The first example will consist of a walkthrough of the Keras vignette [located here](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html).  
 
-Let's look at 70,000 handwritten digit images from the [Modified National Institute of Standards and Technology database](https://en.wikipedia.org/wiki/MNIST_database) (MNIST). 
+Let's look at 70,000 handwritten digit images from the [Modified National Institute of Standards and Technology database](https://en.wikipedia.org/wiki/MNIST_database) (MNIST).  
 
 ```{r}
 # This line requires a working internet connection to download the data the first time.
@@ -67,16 +68,19 @@ The `array_reshape` function allows us to reshape a three-dimensional array like
 -dimensional array. This is critical since we want to turn our matrices 
 
 ```{r}
+height = 28
+width = 28
+
 # reshape
-x_train <- array_reshape(x_train, c(nrow(x_train), 784))
-x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+x_train <- array_reshape(x_train, c(nrow(x_train), height * width))
+x_test <- array_reshape(x_test, c(nrow(x_test), height * width))
 
 # Check dimensions of x.
 dim(x_train)
 dim(x_test)
 ```
 
-Then, grayscale values that range from between 0 to 255 are scaled 
+Then, grayscale pixel values that range from between 0 (black end of the color spectrum) to 255 (white end of the color spectrum) are scaled to values between 0 and 1. The model uses this binary matrix 
 ```{r}
 # rescale
 x_train <- x_train / 255
