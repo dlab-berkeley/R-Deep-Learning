@@ -2,7 +2,7 @@
 
 This is the repository for D-Lab’s Introduction to Deep Learning in R workshop.
 
-[![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/dlab-berkeley/Deep-Learning-in-R/master?urlpath=rstudio)kl
+[![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/dlab-berkeley/Deep-Learning-in-R/master?urlpath=rstudio)
 
 ## Objectives
 
