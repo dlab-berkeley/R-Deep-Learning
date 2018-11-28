@@ -63,9 +63,7 @@ y_test <- mnist$test$y
 
 ## Reshape, rescale, one-hot encode
 
-The `array_reshape` function allows us to reshape a three-dimensional array like those foudn in our `mnist` dataset into matrices. Our 28x28 pixel images will become vectors with length $28*28 = 784$. 
-
--dimensional array. This is critical since we want to turn our matrices 
+The `array_reshape` function allows us to reshape a three-dimensional array like those foudn in our `mnist` dataset into matrices. Our 28x28 pixel images will become arrays/vectors with length $28*28 = 784$. 
 
 ```{r}
 height = 28
@@ -80,7 +78,7 @@ dim(x_train)
 dim(x_test)
 ```
 
-Then, grayscale pixel values that range from between 0 (black end of the color spectrum) to 255 (white end of the color spectrum) are scaled to values between 0 and 1. The model uses this binary matrix 
+Then, grayscale pixel values that range from between 0 (black end of the color spectrum) to 255 (white end of the color spectrum) are scaled to values between 0 and 1. The model uses this binary matrix to help determine the shape of the image from a pixelated perspective. 
 ```{r}
 # rescale
 x_train <- x_train / 255

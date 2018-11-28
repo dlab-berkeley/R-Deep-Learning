@@ -5,6 +5,7 @@ author: "D-Lab"
 date: "Nov 28, 2018 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
+    css: ["robot"]
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -58,11 +59,11 @@ class: left
 
 # What is deep learning? (short definition)
 
-### A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
+### - A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
 
-### These models can be applied to numeric, categorical, image, text, and time-series data. 
+### - These models can be applied to numeric, categorical, image, text, and time-series data. 
 
-### For images, neural networks convert the image to a matrix of pixel values. Therefore it is useful to think of images as giant matrices! 
+### - For images, neural networks convert the image to a matrix of pixel values. Therefore it is useful to think of images as giant matrices! 
 
 ---
 
@@ -81,7 +82,7 @@ class: center
 
 # What is an activation function?
 
-```{r, out.width = "450px", echo = F}
+```{r, out.width = "500px", echo = F}
 knitr::include_graphics("slide_img/actfun.png")
 ```
 
@@ -89,21 +90,42 @@ knitr::include_graphics("slide_img/actfun.png")
 
 class: center
 
----
-
-class: center
-
 # What makes a neural network "deep"?
 
-```{r, out.width = "600px", echo = F}
+```{r, out.width = "700px", echo = F}
 knitr::include_graphics("slide_img/deep.png")
 ```
 
 ---
+# So how does it work? 
+1. Supervised neural networks require an **input** layer called comprised of "features" that is used to produce our estimated **output** of the actual image.  
 
-# Moving parts
+2. This input layer is initialized with randomized weights and a bias term of "1" is added. 
 
+3. The products of these input features and their weights are summed and then transformed. This summed value is passed through an activation function to determine the threshold if our prediction should be classified as a 0 or a 1. A learning rate is also be specified. 
+
+4. Error is computed as target value minus our estimation. The weights delta metric (how much the errors should change) is calculated as the error times the slope of the point on the activation function times the vector of input features. 
+
+5. This vector of original weights is added to the updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.  
+
+6. With deep networks, the process also takes places between **hidden layers**, or nonlinear transformations, connected to the layers before and after them. They are referred to as "hidden" because they are not our final output. 
 
 ---
 
-(images courtesy of [Qingkai Kong](http://qingkaikong.blogspot.com/))
+# Acknowledgements  
+Allaire JJ. 2017. [keras for R](https://blog.rstudio.com/2017/09/05/keras-for-r/)
+
+Allaire JJ, Chollet F. 2018. keras: R interface to 'Keras'.
+- https://keras.rstudio.com
+
+- https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html
+
+Dancho M. 2018. [Deep learning with keras to predict customer churn.](https://blogs.rstudio.com/tensorflow/posts/2018-01-11-keras-customer-churn/)
+
+[Getting started](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html) with keras: Overview vignette. 
+
+Lakhani, P. 2018. [Hello_World_Deep_Learning.](https://github.com/paras42/Hello_World_Deep_Learning)
+
+[View the resouces listed](https://github.com/dlab-berkeley/Deep-Learning-in-R/blob/master/README.md) in this repository's readme file. 
+
+Images [courtesy of Qingkai Kong.](http://qingkaikong.blogspot.com/)
