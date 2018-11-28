@@ -45,6 +45,11 @@ dirs$base
 # copy from a local directory to a bucket
 gs_copy(dirs$base, "gs://medical-images-data", recursive = TRUE)
 #gs_rsync("gs://medical-images-data", dirs$base)
+
+# Remove our local medical-images-data so that we don't waste time copying it
+# to Google Cloud every time we submit a job.
+unlink("data-raw/medical_images.zip")
+unlink("data-raw/Open_I_abd_vs_CXRs", recursive = TRUE)
 ```
 
 ```{r submit_job}
@@ -56,4 +61,12 @@ gs_copy(dirs$base, "gs://medical-images-data", recursive = TRUE)
 job = cloudml_train("cloudml_train.R", flags = "cloudml_tuning.yml",
                     # True will "collect job when training is complete". See ?cloudml_train
                     collect = TRUE)
+```
+
+```{r review_job}
+# List past runs.
+ls_runs()
+
+# Review latest run.
+view_run()
 ```
