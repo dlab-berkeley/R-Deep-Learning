@@ -29,7 +29,7 @@ class: left, middle
 
 ### 1) Download the workshiop materials: https://github.com/dlab-berkeley/Machine-Learning-in-R  
 
-### 2) Download R > 3.5: https://cloud.r-project.org/  
+### 2) Download R >= 3.4: https://cloud.r-project.org/  
 
 ### 3) Download RStudio Desktop Open Source License FREE: https://www.rstudio.com/products/rstudio/download/
 
