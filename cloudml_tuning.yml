@@ -3,10 +3,17 @@ cloudml:
 
 trainingInput:
   scaleTier: CUSTOM
+  # See machine types here:
+  # https://cloud.google.com/ml-engine/docs/tensorflow/machine-types#machine_type_table
   masterType: standard_gpu
+  #masterType: standard_p100
+  #masterType: cloud_tpu
   hyperparameters:
-    goal: MAXIMIZE
-    hyperparameterMetricTag: acc
+    #goal: MAXIMIZE
+    goal: MINIMIZE
+    # See https://tensorflow.rstudio.com/tools/cloudml/articles/tuning.html#optimization-metrics
+    # hyperparameterMetricTag: acc
+    hyperparameterMetricTag: val_loss
     maxTrials: 10
     maxParallelTrials: 2
     params:
