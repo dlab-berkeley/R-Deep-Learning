@@ -47,7 +47,7 @@ class: left
 
 ---
 
-# What is deep learning? (long definition)
+# What is deep learning? (long)
 
 #### Deep Learning allows "computers to learn from experience and understand the world in terms of a hierarchy of concepts, with each concept deﬁned through its relation to simpler concepts. By gathering knowledge from experience, this approach avoids the need for human operators to formally specify all the knowledge that the computer needs.  
 
@@ -57,7 +57,7 @@ class: left
 
 ---
 
-# What is deep learning? (short definition)
+# What is deep learning? (short)
 
 ### - A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
 
@@ -97,18 +97,24 @@ knitr::include_graphics("slide_img/deep.png")
 ```
 
 ---
+
 # So how does it work? 
-1. Supervised neural networks require "features", or an **input layer** of data that is used to produce our estimated **output layer**, or estimation of an actual image.  
 
-2. This input layer is initialized with a vector of randomized weights and a bias term of "1" is added. 
+#### 1. Supervised neural networks require "features", or an **input layer** of data that is used to produce our estimated **output layer**, or estimated classification of an actual image.  
 
-3. The products of these input features and their weights are summed and  transformed. This summed value is passed through an activation function to determine the threshold if our prediction should be classified as a 0 or a 1. A learning rate is also be specified. 
+#### 2. This input layer is initialized with a vector of randomized weights and a bias term of "1" is added. 
 
-4. Error is computed as target value minus our estimation. The weights delta metric (how much the errors should change) is calculated as the error times the slope of the point on the activation function times the vector of input features. 
+#### 3. The products of these input features and their weights are summed and  transformed. This summed value is passed through an activation function to determine the threshold if our prediction should be classified as a 0 or a 1. A learning rate is also be specified. 
 
-5. The vector of original weights is added to the updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.  
+---
 
-6. With deep networks, the process also takes places between **hidden layers**, or areas of nonlinear transformations connected only to the layers before and after them. They are referred to as "hidden" because they are not show as the final output. 
+# So how does it work? 
+
+#### 4. Error is computed as target value minus our estimation. The weights delta metric (how much the errors should change) is calculated as the error times the slope of the point on the activation function times the vector of input features. 
+
+#### 5. The vector of original weights is added to the vector of updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.  
+
+#### 6. With deep networks, the process also takes places between **hidden layers**, or areas of nonlinear transformations connected only to the layers before and after them. They are referred to as "hidden" because they are not show as the final output. 
 
 ---
 

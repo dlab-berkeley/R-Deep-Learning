@@ -4,8 +4,7 @@
     <title>Introduction to Deep Learning in R</title>
     <meta charset="utf-8">
     <meta name="author" content="D-Lab" />
-    <link href="libs/remark-css/default.css" rel="stylesheet" />
-    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <link href="libs/remark-css/robot.css" rel="stylesheet" />
   </head>
   <body>
     <textarea id="source">
@@ -50,7 +49,7 @@ class: left
 
 ---
 
-# What is deep learning? (long definition)
+# What is deep learning? (long)
 
 #### Deep Learning allows "computers to learn from experience and understand the world in terms of a hierarchy of concepts, with each concept deﬁned through its relation to simpler concepts. By gathering knowledge from experience, this approach avoids the need for human operators to formally specify all the knowledge that the computer needs.  
 
@@ -60,9 +59,13 @@ class: left
 
 ---
 
-# What is deep learning? (short definition)
+# What is deep learning? (short)
 
-### A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
+### - A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
+
+### - These models can be applied to numeric, categorical, image, text, and time-series data. 
+
+### - For images, neural networks convert the image to a matrix of pixel values. Therefore it is useful to think of images as giant matrices! 
 
 ---
 
@@ -79,15 +82,7 @@ class: center
 
 # What is an activation function?
 
-&lt;img src="slide_img/actfun.png" width="450px" /&gt;
-
----
-
-class: center
-
-# Multilayer perceptron
-
-&lt;img src="slide_img/multi.png" width="600px" /&gt;
+&lt;img src="slide_img/actfun.png" width="500px" /&gt;
 
 ---
 
@@ -95,9 +90,47 @@ class: center
 
 # What makes a neural network "deep"?
 
-&lt;img src="slide_img/deep.png" width="600px" /&gt;
+&lt;img src="slide_img/deep.png" width="700px" /&gt;
 
 ---
+
+# So how does it work? 
+
+#### 1. Supervised neural networks require "features", or an **input layer** of data that is used to produce our estimated **output layer**, or estimated classification of an actual image.  
+
+#### 2. This input layer is initialized with a vector of randomized weights and a bias term of "1" is added. 
+
+#### 3. The products of these input features and their weights are summed and  transformed. This summed value is passed through an activation function to determine the threshold if our prediction should be classified as a 0 or a 1. A learning rate is also be specified. 
+
+---
+
+# So how does it work? 
+
+#### 4. Error is computed as target value minus our estimation. The weights delta metric (how much the errors should change) is calculated as the error times the slope of the point on the activation function times the vector of input features. 
+
+#### 5. The vector of original weights is added to the updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.  
+
+#### 6. With deep networks, the process also takes places between **hidden layers**, or areas of nonlinear transformations connected only to the layers before and after them. They are referred to as "hidden" because they are not show as the final output. 
+
+---
+
+# Acknowledgements  
+Allaire JJ. 2017. [keras for R](https://blog.rstudio.com/2017/09/05/keras-for-r/)
+
+Allaire JJ, Chollet F. 2018. keras: R interface to 'Keras'.
+- https://keras.rstudio.com
+
+- https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html
+
+Dancho M. 2018. [Deep learning with keras to predict customer churn.](https://blogs.rstudio.com/tensorflow/posts/2018-01-11-keras-customer-churn/)
+
+[Getting started](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html) with keras: Overview vignette. 
+
+Lakhani, P. 2018. [Hello_World_Deep_Learning.](https://github.com/paras42/Hello_World_Deep_Learning)
+
+[View the resouces listed](https://github.com/dlab-berkeley/Deep-Learning-in-R/blob/master/README.md) in this repository's readme file. 
+
+Images [courtesy of Qingkai Kong.](http://qingkaikong.blogspot.com/)
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
