@@ -94,15 +94,17 @@ class: center
 
 ---
 # So how does it work? 
-1. Supervised neural networks require input data called "features" and are used to produce our estimation of the actual image.  
+1. Supervised neural networks require "features", or an **input layer** of data that is used to produce our estimated **output layer**, or estimation of the actual image.  
 
-2. These features are input to the neural network and are initialized with randomized weights. The products of these features and their weights are summed and then transformed.  
+2. This input layer is initialized with a vector of randomized weights and a bias term of "1" is added. 
 
-3. This summed value is passed through an activation function to determine if our prediction should be classified as a 0 or a 1. 
+3. The products of these input features and their weights are summed and  transformed. This summed value is passed through an activation function to determine the threshold if our prediction should be classified as a 0 or a 1. A learning rate is also be specified. 
 
-4. Error is computed as target value minus our estimation. The weights delta metric (how much the errors should change) is calculated as the error times the slope of the activation function times the input features. 
+4. Error is computed as target value minus our estimation. The weights delta metric (how much the errors should change) is calculated as the error times the slope of the point on the activation function times the vector of input features. 
 
-5. This vector of original weights is added to the updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.  
+5. The vector of original weights is added to the updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.  
+
+6. With deep networks, the process also takes places between **hidden layers**, or nonlinear transformations, connected to the layers before and after them. They are referred to as "hidden" because they are not show as the final output. 
 
 ---
 
