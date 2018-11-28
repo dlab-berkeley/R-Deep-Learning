@@ -18,11 +18,13 @@ Convey the basics of deep learning in R using keras on image datasets. Students 
   * Defining moving parts of a deep learning model 
   * Understanding a loss function, activation function, and metrics
   * Performance evaluation
-* Part 1
+* Part 1-2
   * MNIST 0-9 hand-written digit example 
   * Dogs or humans?
-* Part 2
-  * 
+* Part 3-4
+  * Pre-trained models + fine-tuning
+  * X-ray classification: abdominal vs. chest classification
+  * Google Cloud Machine Learning
 
 ## Prerequisites
 
@@ -40,13 +42,11 @@ Convey the basics of deep learning in R using keras on image datasets. Students 
 Please bring a laptop with the following:
 
 * [R version](https://cloud.r-project.org/)
-3.5 or greater
+3.4 or greater
 * [RStudio integrated development environment (IDE)](https://www.rstudio.com/products/rstudio/download/#download) is
 highly recommended but not required.
 
 ## Resources
-
-Browse resources listed on the [D-Lab Machine Learning Working Group repository](https://github.com/dlab-berkeley/MachineLearningWG). Scroll down to see code examples in R and Python, books, courses at UC Berkeley, online classes, and other resources and groups to help you along your machine learning journey!  
 
 * D-Lab [Machine Learning Working Group](http://dlab.berkeley.edu/working-groups/machine-learning-working-group-0)
 
@@ -57,9 +57,9 @@ Browse resources listed on the [D-Lab Machine Learning Working Group repository]
 * Massive open online courses
     * [fast.ai - Practical Deep Learning for Coders](https://course.fast.ai/)
     * [Kaggle Deep Learning](https://www.kaggle.com/learn/deep-learning)
-    * [Google Machine Learning Crash Course]()
+    * [Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course/)
     * [See this](https://developers.google.com/machine-learning/crash-course/fitter/graph) sweet interactive learning rate tool
-    * Also [see this information about seeds](https://tools.google.com/seedbank/seeds)
+    * [Google seedbank examples](https://tools.google.com/seedbank/seeds)
     * [DeepLearning.ai](https://www.deeplearning.ai/)
 
 * Stanford
@@ -69,7 +69,6 @@ Browse resources listed on the [D-Lab Machine Learning Working Group repository]
     * CS 224n - [Natural Language Processing with Deep Learning](http://web.stanford.edu/class/cs224n/)
 
 * Berkeley
-    * D-Lab [Machine Learning Working Group repository](https://github.com/dlab-berkeley/MachineLearningWG)
     * Machine Learning at Berkeley [ML@B](https://ml.berkeley.edu/)
     * CS [189/289A](https://people.eecs.berkeley.edu/~jrs/189/)
 
