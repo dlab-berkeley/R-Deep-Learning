@@ -89,12 +89,6 @@ knitr::include_graphics("slide_img/actfun.png")
 
 class: center
 
-# Multilayer perceptron
-
-```{r, out.width = "600px", echo = F}
-knitr::include_graphics("slide_img/multi.png")
-```
-
 ---
 
 class: center

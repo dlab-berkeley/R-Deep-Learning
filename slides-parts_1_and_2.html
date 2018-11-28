@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Introduction to Deep Learning in R</title>
+    <meta charset="utf-8">
+    <meta name="author" content="D-Lab" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Introduction to Deep Learning in R
+### D-Lab
+### Nov 28, 2018 (updated: 2018-11-27)
+
+---
+
+
+
+
+class: center, middle
+
+# "It’s tough to make predictions, especially about the future." -Yogi Berra
+
+---
+
+class: left, middle
+
+# Download the workshop materials 
+
+### 1) Download the workshiop materials: https://github.com/dlab-berkeley/Machine-Learning-in-R  
+
+### 2) Download R &gt; 3.5: https://cloud.r-project.org/  
+
+### 3) Download RStudio Desktop Open Source License FREE: https://www.rstudio.com/products/rstudio/download/
+
+---
+
+class: left
+
+# Workshop Goals
+
+### Introduction  
+### Part 1. MNIST handwritten digit classification example  
+### Part 2. Dogs-humans example  
+### Part 3. Biomedical example  
+### Part 4. Cloud example
+
+---
+
+# What is deep learning? (long definition)
+
+#### Deep Learning allows "computers to learn from experience and understand the world in terms of a hierarchy of concepts, with each concept deﬁned through its relation to simpler concepts. By gathering knowledge from experience, this approach avoids the need for human operators to formally specify all the knowledge that the computer needs.  
+
+#### The hierarchy of concepts enables the computer to learn complicated concepts bybuilding them out of simpler ones. If we draw a graph showing how these concepts are built on top of each other, the graph is deep, with many layers. For this reason, we call this approach to AI deep learning."  
+
+#### (https://www.deeplearningbook.org/contents/intro.html, pp. 1-2)
+
+---
+
+# What is deep learning? (short definition)
+
+### A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
+
+### This can be applied to numeric, categorical, image, text, and time-series data. 
+
+### For images, the neural networks convert the image to a matrix of pixel values. So, it is useful to think of images as giant matrices! 
+
+---
+
+class: center
+
+# What is an artificial neural network? 
+
+"Perceptron"
+&lt;img src="slide_img/ann.png" width="600px" /&gt;
+
+---
+
+class: center
+
+# What is an activation function?
+
+&lt;img src="slide_img/actfun.png" width="450px" /&gt;
+
+---
+
+class: center
+
+# Multilayer perceptron
+
+&lt;img src="slide_img/multi.png" width="600px" /&gt;
+
+---
+
+class: center
+
+# What makes a neural network "deep"?
+
+&lt;img src="slide_img/deep.png" width="600px" /&gt;
+
+---
+
+# Moving parts
+
+
+---
+
+(images courtesy of [Qingkai Kong](http://qingkaikong.blogspot.com/))
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
