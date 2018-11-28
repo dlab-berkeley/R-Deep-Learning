@@ -12,7 +12,7 @@ trainingInput:
     #goal: MAXIMIZE
     goal: MINIMIZE
     # See https://tensorflow.rstudio.com/tools/cloudml/articles/tuning.html#optimization-metrics
-    # hyperparameterMetricTag: acc
+    # Other good option: val_acc
     hyperparameterMetricTag: val_loss
     maxTrials: 10
     maxParallelTrials: 2

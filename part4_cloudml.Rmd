@@ -14,6 +14,8 @@ First go to (https://console.cloud.google.com/), create a new project, and enabl
 Then run this first installation chunk manually. For more information please review
 the Tensorflow Cloud ML [getting started page](https://tensorflow.rstudio.com/tools/cloudml/articles/getting_started.html). Bonus: this page has a link to apply for an additional $200 in credit specifically for R users (takes ~2 business days to get approved).
 
+Side note: [HIPAA compliance information is available here](https://cloud.google.com/security/compliance/hipaa/).
+
 ```{r cloud_install, eval = FALSE}
 install.packages("cloudml")
 
@@ -67,6 +69,9 @@ job = cloudml_train("cloudml_train.R", flags = "cloudml_tuning.yml",
 # List past runs.
 ls_runs()
 
-# Review latest run.
+# Text-based summary of latest run.
+latest_run()
+
+# Visual summary of latest run.
 view_run()
 ```

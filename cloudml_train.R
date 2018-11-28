@@ -3,6 +3,7 @@ library(cloudml)
 
 # Define hyperparameters for future optimization.
 # See https://tensorflow.rstudio.com/tools/cloudml/articles/tuning.html#preparing-your-script
+# And https://tensorflow.rstudio.com/tools/training_flags.html
 my_flags = tfruns::flags(
   # Data directories
   flag_string("base_data_dir", "data-raw/Open_I_abd_vs_CXRs/"),
