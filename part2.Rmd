@@ -26,6 +26,7 @@ length(train_images)
 length(val_images)
 
 # Plot the first training image, and the first validation image
+library(cowplot)
 ggdraw() + draw_image(train_images[1])
 ggdraw() + draw_image(val_images[1])
 ```
@@ -91,7 +92,9 @@ val_gen =
 Define the model! Refer back to part1 if you need help remembering what the parameters are and what your arguments should be :) 
 
 ```{r}
-model <- keras_model_sequential() 
+library(dplyr) # %>% come from here
+library(keras) # layer_flatten, layer_dense, layer_dropout
+model <- keras::keras_model_sequential() 
 
 model %>% 
   
@@ -152,9 +155,9 @@ plot(history) + theme_bw()
 ```
 
 ## Challenge 1
-Why were our loss and accuracy metrics so jumpy? What are the differences between training and validation datasets? What could be done to improve model performance do you think? 
+Why were our loss and accuracy metrics so jumpy? Is this model any good? What are the differences between training and validation datasets? What might be done to improve our predictions? 
 
 ## Challenge 2 (take home)
-Can you recapitulate what you learned in parts 1 and 2 and repeat this process on the [FashionMNIST](https://www.kaggle.com/zalando-research/fashionmnist/home) dataset? 
+Recapitulate what you learned in parts 1 and 2 and fit a deep neural network on the [FashionMNIST](https://www.kaggle.com/zalando-research/fashionmnist/home) dataset. How are these data stored? Are they actual images? How can we read them into keras in R? 
 
 
