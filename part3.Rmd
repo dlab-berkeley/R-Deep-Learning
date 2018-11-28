@@ -29,8 +29,6 @@ use_session_with_seed(1, disable_gpu = FALSE, disable_parallel_cpu = FALSE)
 
 library(dplyr)
 library(ggplot2)
-library(magick)
-library(cowplot)
 # Gives us the tf object for certain manipulations.
 library(tensorflow)
 
@@ -71,6 +69,14 @@ length((train_files = list.files(dirs$train, recursive = TRUE, full.names = TRUE
 
 # Review the first two file elements. Both are abdominal xrays (note the subdirectory).
 train_files[1:2]
+```
+
+## Plot Images
+
+```{r plot_images, eval = TRUE}
+
+# Requires cowplot
+library(cowplot)
 
 # Plot it with ggplot + cowplot + magick packages.
 ggdraw() + draw_image(train_files[1])
@@ -83,9 +89,6 @@ ggdraw() + draw_image(train_files[2]) + ggtitle("2nd image") + theme_minimal() +
 # Challenge: plot the third image and put the filename in the title.
 # Bonus hint: basename() will remove all directories from a file path.
 ###
-
-
-
 
 (image = tf$read_file(train_files[1]) %>% tf$image$decode_png())
 
@@ -100,8 +103,8 @@ ggdraw() + draw_image(train_files[2]) + ggtitle("2nd image") + theme_minimal() +
 
 ## Setup model
 
-```{r}
-# Dimensions of our images.
+```{r setup_model}
+# Dimensions of our images as expected by the neural architecture.
 img_width = img_height = 299L
 batch_size = 5L
 
@@ -141,25 +144,35 @@ base_model = keras::application_inception_v3(include_top = FALSE,
 base_model$output_shape
 ?application_inception_v3
 
+summary(base_model)
+
+# first: train only the top layers (which were randomly initialized)
+# i.e. freeze all convolutional InceptionV3 layers
+# This is not working - possible bug in RStudio's Keras package.
+freeze_weights(base_model)
+
 # Add custom layer to inception.
 model_top = base_model$output %>%
   layer_global_average_pooling_2d() %>%
   layer_dense(units = 256, activation = "relu") %>%
-  layer_dropout(0.5) %>%
+  layer_dropout(0.7) %>%
   layer_dense(units = 1, activation = "sigmoid")
 
 # this is the model we will train
 model = keras_model(inputs = base_model$input, outputs = model_top)
 
-# first: train only the top layers (which were randomly initialized)
-# i.e. freeze all convolutional InceptionV3 layers
-freeze_weights(base_model)
+length(model$layers)
+
+# Manually freeze the original inception layers, just train the last 3 layers.
+freeze_weights(model, 1, length(model$layers) - 3)
+summary(model)
 
 # Compile the model (should be done *after* setting layers to non-trainable)
 model %>%
   compile(optimizer =
-            optimizer_adam(#lr = 0.00001,
-                           lr = 0.0001,
+            optimizer_adam(lr = 0.00001,
+                           #lr = 0.0002,
+                           #lr = 0.0001,
                            beta_1 = 0.9,
                            beta_2 = 0.999, epsilon = 1e-08,
                            decay = 0.0),

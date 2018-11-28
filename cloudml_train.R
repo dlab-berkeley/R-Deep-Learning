@@ -10,10 +10,10 @@ my_flags = tfruns::flags(
 
   # Neural architecture
   flag_integer("dense_units1", 128),
-  flag_numeric("dropout1", 0.5),
+  flag_numeric("dropout1", 0.7),
   
   # Optimizer
-  flag_numeric("learning_rate", 0.0001)
+  flag_numeric("learning_rate", 0.00001)
 )
 
 dirs = list()
@@ -63,7 +63,11 @@ model = keras_model(inputs = base_model$input, outputs = model_top)
 
 # first: train only the top layers (which were randomly initialized)
 # i.e. freeze all convolutional InceptionV3 layers
+# This is not working - appears to be a bug in RStudio Keras.
 freeze_weights(base_model)
+
+# Manually freeze the original inception layers, just train the last 3 layers.
+freeze_weights(model, 1, length(model$layers) - 3)
 
 model %>%
   compile(optimizer =
@@ -80,6 +84,7 @@ num_validation_samples = 10L
 epochs = 20L
 
 ## Fit model
+cat("Beginning model training.\n")
 
 # Train the model on the new data for a few epochs
 history = model %>%

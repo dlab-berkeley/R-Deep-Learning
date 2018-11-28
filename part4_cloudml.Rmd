@@ -55,7 +55,7 @@ unlink("data-raw/Open_I_abd_vs_CXRs", recursive = TRUE)
 ```
 
 ```{r submit_job}
-# May need to manually install revealjs on local computer due to slides.Rmd.
+# May need to manually install revealjs, xaringan on local computer due to slides.Rmd.
 
 # This will take a long time the first time due to installation of packages, etc.
 # Every package that is successfully installed is re-used in future runs, so this
