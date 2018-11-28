@@ -2,6 +2,8 @@
 
 This is the repository for D-Lab’s Introduction to Deep Learning in R workshop.
 
+[![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/dlab-berkeley/Deep-Learning-in-R/master?urlpath=rstudio)kl
+
 ## Objectives
 
 Convey the basics of deep learning in R using keras on image datasets. Students are empowered with a general grasp of deep learning, example code that they can modify, a working computational environment, and resources for further study.
