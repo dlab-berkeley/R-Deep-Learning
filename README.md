@@ -42,7 +42,7 @@ Convey the basics of deep learning in R using keras on image datasets. Students 
 Please bring a laptop with the following:
 
 * [R version](https://cloud.r-project.org/)
-3.5 or greater
+3.4 or greater
 * [RStudio integrated development environment (IDE)](https://www.rstudio.com/products/rstudio/download/#download) is
 highly recommended but not required.
 
