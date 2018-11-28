@@ -103,6 +103,8 @@ ggdraw() + draw_image(train_files[2]) + ggtitle("2nd image") + theme_minimal() +
 
 ## Setup data and core model
 
+We are using Inception v3 to jump-start our deep learning, but [many others are available in Keras](https://keras.rstudio.com/articles/applications.html).
+
 ```{r setup_model}
 # Dimensions of our images as expected by the neural architecture.
 img_width = img_height = 299L
