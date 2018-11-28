@@ -6,22 +6,20 @@ output: html_document
 ---
 
 ## Introduction
-(Slideshow presentation)
 
-Goals
+Review the [slides]("https://github.com/dlab-berkeley/Deep-Learning-in-R/blob/master/slides.html") to get onboarded! 
 
 ## Install packages
 
 Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
 
 ```{r install, eval = FALSE}
-
 # Install keras package
 devtools::install_github("rstudio/keras")
 # or
 install.packages("keras")
 
-# Then run install_keras() function to install anaconda python, tensorflow, and keras
+# Then run install_keras() function to install anaconda python, tensorflow, and keras.
 keras::install_keras()
 # Or if you have a GPU and have followed these instructions:
 # https://tensorflow.rstudio.com/tools/local_gpu.html
@@ -30,29 +28,29 @@ keras::install_keras()
 ```
 
 ## Load packages
+
 Now that we have installed the necessary packages, library them so that R can utilize their functionalities
 
 ```{r load_packages}
-
 library(cowplot)
 library(keras)
 library(dplyr)
 library(tensorflow)
 library(ggplot2)
-
 ```
 
 ## MNIST handwritten digit example
+
 Jump in! The first example will consist of a walkthrough of the Keras vignette [located here](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html).  
 
-Let's look at 70,000 handwritten digit images from the [Modified National Institute of Standards and Technology database](https://en.wikipedia.org/wiki/MNIST_database) (MNIST). 
+Let's look at 70,000 handwritten digit images from the [Modified National Institute of Standards and Technology database](https://en.wikipedia.org/wiki/MNIST_database) (MNIST).  
 
 ```{r}
 # This line requires a working internet connection to download the data the first time.
 mnist <- dataset_mnist()
+```
 
-# How many images are in our training and test sets? What are their pixel dimensions? 
-
+```{r}
 # Define our x and y variables for the training and test sets. 
 x_train <- mnist$train$x
 y_train <- mnist$train$y
@@ -60,29 +58,46 @@ x_test <- mnist$test$x
 y_test <- mnist$test$y
 ```
 
+## Challenge 1
+How many images are in `x_train`, `y_train`, and `x_test`, and `y_test`? What are their pixel dimensions? How can you find out? 
+
 ## Reshape, rescale, one-hot encode
 
-The `array_reshape` function allows us to reshape a three-dimensional array like those foudn in our `mnist` dataset into matrices. Our 28x28 pixel images will become vectors with length $28*28 = 784$. 
-
--dimensional array. This is critical since we want to turn our matrices 
+### X variables
+The `array_reshape` function allows us to reshape a three-dimensional array like those foudn in our `mnist` dataset into matrices. Our 28x28 pixel images will become arrays/vectors with length $28*28 = 784$. 
 
 ```{r}
-# reshape
-x_train <- array_reshape(x_train, c(nrow(x_train), 784))
-x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+height = 28
+width = 28
+
+# Reshape
+x_train <- array_reshape(x_train, c(nrow(x_train), height * width))
+x_test <- array_reshape(x_test, c(nrow(x_test), height * width))
 
 # Check dimensions of x.
 dim(x_train)
 dim(x_test)
 ```
 
-Then, grayscale values that range from between 0 to 255 are scaled 
+## Challenge 2
+Now now many dimensions are `x_train` and `x_test`?
+
+### Gray rescale
+
+Grayscale pixel values that range from between 0 (black end of the color spectrum) to 255 (white end of the color spectrum) are scaled to values between 0 and 1. The model will use these binary matrices to help determine the shape of the image from a pixelated perspective. 
+
 ```{r}
 # rescale
 x_train <- x_train / 255
 x_test <- x_test / 255
+```
 
-# Convert categorical vector into a one-hot encoded matrix.
+### Y variables
+
+We also want to convert our y outcome vector to a one-hot encoded binary matrix. We specify 10 because we have 10 numbers (0 thru 9). Type `?to_categorical` to learn more. 
+
+```{r}
+# Convert our outcome and specify 10 possible classes.
 y_train <- to_categorical(y_train, 10)
 y_test <- to_categorical(y_test, 10)
 
@@ -90,38 +105,63 @@ y_test <- to_categorical(y_test, 10)
 dim(y_train)
 dim(y_test)
 
-# Review percentage of obs with each digit label.
+# Review percentage of obervationss with each digit label.
 round(colMeans(y_train), 3)
 round(colMeans(y_test), 3)
 ```
 
+Or, see the data in its entirety of 0's and 1's. How do the dimensions of these matrices relate to your `dim` calls above? 
+```{r eval = F}
+View(y_train)
+View(y_test)
+```
+
 ## Define the model
+
+Now we can define the model! We just want to build a linear stack of layers. The `units` parameter defines how many nodes we should have in each layer. `input_shape` allows us to define the image dimensions. The `activation` parameter allows us to pass in the name of an activationi function as the argument.  
+
+See `?keras_model_sequential` to learn more.
 
 ```{r}
 model <- keras_model_sequential() 
+
 model %>% 
+  
+  # INPUT LAYER
+  # layer_dense allows us to add a layer! What parameters are we specifying?
+  
   layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  
   layer_dropout(rate = 0.4) %>% 
+  
+  # HIDDEN LAYER 
   layer_dense(units = 128, activation = 'relu') %>%
+  
   layer_dropout(rate = 0.3) %>%
+  
+  # OUTPUT LAYER
   layer_dense(units = 10, activation = 'softmax')
+
 summary(model)
 ```
 
 ## Compile model with loss function, optimizer, and metrics
+Recall that loss and optimizer functions work in tandem to tell us how wrong our predictions are.  
 
+We define "categorical_crossentropy" as our loss function since we are dealing with multilevel classification, and "optimizer_rmsprop()" as our optimizer because it might perform a little bit better than gradient descent with momentum. What does the `lr` parameter do? We also select "accuracy" as our metric to produce simple classification rates for our outcomes.
 ```{r}
 model %>% compile(
   loss = 'categorical_crossentropy',
-  optimizer = optimizer_rmsprop(),
+  optimizer = optimizer_rmsprop(lr = 0.001),
   metrics = c('accuracy')
 )
 ```
 
 ## Train and evaluate
+Now we can train the model using `fit`! Here, we can just pass in our X and Y variables along with the other hyperparameters.  
 
+Watch the model build epoch by epoch. 
 ```{r}
-# Watch the model build epoch by epoch
 set.seed(1)
 history <- model %>% fit(
   x_train, y_train, 
@@ -129,6 +169,14 @@ history <- model %>% fit(
   validation_split = 0.2
 )
 ```
+
+### Interpreting the plot
+
+**loss**: loss is the mean of the average loss across each batch of training data. We expect that the loss for earlier batches is higher than that for later batches because the model _should_ be learning over time.  hope that the later batches of data have lower losses.  
+
+**acc**: is the training accuracy.  
+
+**val_loss** and **val_acc** are the loss and accuracy for the test data. 
 
 ## Plot history via ggplot
 
@@ -140,4 +188,8 @@ plot(history) + theme_minimal()
 
 ```{r}
 model %>% evaluate(x_test, y_test)
+# The model works pretty well! 
 ```
+
+## Challenge 3
+Write down the steps you followed to run this model from start to finish. 
