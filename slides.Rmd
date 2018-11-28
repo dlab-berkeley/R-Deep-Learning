@@ -27,7 +27,7 @@ class: left, middle
 
 # Download the workshop materials 
 
-### 1) Download the workshiop materials: https://github.com/dlab-berkeley/Machine-Learning-in-R  
+### 1) Download the workshiop materials: https://github.com/dlab-berkeley/Deep-Learning-in-R
 
 ### 2) Download R >= 3.4: https://cloud.r-project.org/  
 
