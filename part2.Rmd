@@ -7,7 +7,7 @@ output: html_document
 
 ## Humans and dogs
 
-The MNIST dataset is a fun way to get your feet wet, but real images can require a bit more preprocessing to ensure that they are formatted correctly for input into keras. Let's try another example with some folders of images! 
+The MNIST dataset is a fun way to get your feet wet, but real images can require a bit more preprocessing to ensure that they are formatted correctly for input into keras. Let's try another example with some folders of images!
 
 ### The data
 
@@ -32,7 +32,7 @@ ggdraw() + draw_image(val_images[1])
 ```
 
 ### Define model characteristics
-Now, we want to define some of the characteristics outside of our model. This way, we can just pass in the same variable instead of a value each time. 
+Now, we want to define some of the characteristics outside of our model. This way, we can just pass in the same variable instead of a value each time.
 ```{r}
 # Define image width and height as 96 pixels
 img_width = img_height = 256L
@@ -46,15 +46,15 @@ batch_size = 5L
 # Define the number of images in our validation dataset to use (10)
 num_validation_samples = 10L
 
-# Define the number of full passes of the model 
+# Define the number of full passes of the model
 epochs = 30L
 ```
 
-With these setup variables defined we can now focus on actually building the model. `image_data_generator` performs a bunch of data augmentation. We will just use the `rescale` parameter to scale our data to what will essentially become a bunch of binary matrices - one for each image. 
+With these setup variables defined we can now focus on actually building the model. `image_data_generator` performs a bunch of data augmentation. We will just use the `rescale` parameter to scale our data to what will essentially become a bunch of binary matrices - one for each image.
 
-See `?image_data_generator` to learn more. 
+See `?image_data_generator` to learn more.
 ```{r}
-# Transform our training data to rescaled values of 
+# Transform our training data to rescaled values of
 train_datagen = keras::image_data_generator(rescale = 1/255)
 
 # Transform our validation data
@@ -89,33 +89,33 @@ val_gen =
 ```
 
 ## Define the model
-Define the model! Refer back to part1 if you need help remembering what the parameters are and what your arguments should be :) 
+Define the model! Refer back to part1 if you need help remembering what the parameters are and what your arguments should be :)
 
 ```{r}
 library(dplyr) # %>% come from here
 library(keras) # layer_flatten, layer_dense, layer_dropout
-model <- keras::keras_model_sequential() 
+model <- keras::keras_model_sequential()
 
-model %>% 
-  
+model %>%
+
   # INPUT LAYER
   # layer_flatten will turn our 3D array into a one-dimensional one
   # Note: we did not have to do this in part1 because the data were already flattened
   layer_flatten(input_shape = c(img_width, img_height, 1)) %>%
-  
+
   # INPUT LAYER
   # layer_dense allows us to actually add the input layer. What parameters are we specifying?
-  layer_dense(units = 20, activation = 'relu', input_shape = c(img_width, img_height)) %>% 
-  
-  # INPUT LAYER 
+  layer_dense(units = 20, activation = 'relu', input_shape = c(img_width, img_height)) %>%
+
+  # INPUT LAYER
   # layer_dropout allows us to apply regularization to our model and can apply to all layers
-  layer_dropout(rate = 0.1) %>% 
-  
-  # HIDDEN LAYER 
+  layer_dropout(rate = 0.1) %>%
+
+  # HIDDEN LAYER
   layer_dense(units = 20, activation = 'relu') %>%
-  
+
   layer_dropout(rate = 0.05) %>%
-  
+
   # OUTPUT LAYER
   layer_dense(units = 1, activation = 'sigmoid')
 
@@ -124,7 +124,7 @@ summary(model)
 
 ### Defining the output metrics
 
-We can use the generic `compile` function to specify our loss and optimizer functions and our classification metrics. 
+We can use the generic `compile` function to specify our loss and optimizer functions and our classification metrics.
 
 ```{r}
 model %>% compile(
@@ -136,7 +136,7 @@ model %>% compile(
 
 ### Train the model and evaluate its performance on new data
 
-Note that we have to use `fit_generator` to fit our model this time because we are also using the custom `flow_from_directory` function rather than the simpler format of part1. 
+Note that we have to use `fit_generator` to fit our model this time because we are also using the custom `flow_from_directory` function rather than the simpler format of part1.
 
 ```{r}
 history = model %>%
@@ -155,9 +155,7 @@ plot(history) + theme_bw()
 ```
 
 ## Challenge 1
-Why were our loss and accuracy metrics so jumpy? Is this model any good? What are the differences between training and validation datasets? What might be done to improve our predictions? 
+Why were our loss and accuracy metrics so jumpy? Is this model any good? What are the differences between training and validation datasets? What might be done to improve our predictions?
 
 ## Challenge 2 (take home)
-Recapitulate what you learned in parts 1 and 2 and fit a deep neural network on the [FashionMNIST](https://www.kaggle.com/zalando-research/fashionmnist/home) dataset. How are these data stored? Are they actual images? How can we read them into keras in R? 
-
-
+Recapitulate what you learned in parts 1 and 2 and fit a deep neural network on the [FashionMNIST](https://keras.io/datasets/#fashion-mnist-database-of-fashion-articles) dataset. How are these data stored? Are they actual images? How can we read them into keras in R? 
