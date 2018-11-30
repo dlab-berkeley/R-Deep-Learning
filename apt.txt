@@ -1,1 +1,3 @@
 imagemagick
+python-pip
+python-virtualenv
