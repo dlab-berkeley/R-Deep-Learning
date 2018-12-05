@@ -2,7 +2,7 @@
 title: "Introduction to Deep Learning in R"
 subtitle: ""
 author: "D-Lab - Chris Kennedy and Evan Muzzall"
-date: "Nov 28, 2018 (updated: `r Sys.Date()`)"
+date: "Dec 14, 2018 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: ["robot"]
@@ -20,6 +20,37 @@ options(htmltools.dir.version = FALSE)
 class: center, middle
 
 # "It’s tough to make predictions, especially about the future." -Yogi Berra
+
+---
+
+# Software requirements
+
+[Click here](https://github.com/dlab-berkeley/Deep-Learning-in-R) to download the workshiop materials
+  * Click green “Clone or Download” button
+  * Click “Download Zip”
+  * Extract this zip file to your desktop
+
+Git users use bash to git clone: `$ git clone git@github.com:dlab-berkeley/Deep-Learning-in-R.git`
+
+[Install R 3.4 or greater](https://cloud.r-project.org/)   
+
+[Install Rstudio](https://www.rstudio.com/products/rstudio/download/)  
+
+[Install Anaconda Python (3.7+)](https://www.anaconda.com/download/#macos) if you have not already done so. Use default options.  
+
+---
+
+# [Install keras] by typing in RStudio script/console:
+
+`devtools::install_github("rstudio/keras")`  
+`install.packages("keras")`  
+`keras::install_keras()`  
+
+Install key additional packages
+Image Magick
+install.packages("magick")
+library(magick)
+(MacOS Homebrew or Linux users, see extra install info here)
 
 ---
 
