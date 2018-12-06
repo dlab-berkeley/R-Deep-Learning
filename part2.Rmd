@@ -5,17 +5,18 @@ date: "11/26/2018"
 output: html_document
 ---
 
-## Humans and dogs
+## Dogs and humans
 
 The MNIST dataset is a fun way to get your feet wet, but real images can require a bit more preprocessing to ensure that they are formatted correctly for input into keras. Let's try another example with some folders of images!
 
 ### The data
 
-Load a folder of human and dog images from the `data-raw` folder of the workshop materials. First, we want to define the file paths of our already split training and validation (aka test data) image folders. These free images were downloaded from [Burst](https://burst.shopify.com/).
+Load a folder of dog-human images from the `data-raw` folder in the workshop materials. First, we want to define the file paths of our already split training and validation (aka test data) image folders. We manually selected 600 training and 100 test images from the excellent [Stanford Dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/) and [INRIA Person](http://pascal.inrialpes.fr/data/human/) image databases. 
+
 ```{r}
 # Specify the file paths for our training and validation (aka test) data
-train_path = "data-raw/dog-person/TRAIN"
-val_path = "data-raw/dog-person/VAL"
+train_path = "data-raw/dog-human/TRAIN"
+val_path = "data-raw/dog-human/VAL"
 
 # Define two more variables as the actual names of the files
 train_images = list.files(train_path, full.names = T, recursive = T)
@@ -35,29 +36,29 @@ ggdraw() + draw_image(val_images[1])
 Now, we want to define some of the characteristics outside of our model. This way, we can just pass in the same variable instead of a value each time.
 ```{r}
 # Define image width and height as 96 pixels
-img_width = img_height = 256L
+img_width = img_height = 96L
 
-# Define our batch size, or number of training observations for each epoch, as 5
-batch_size = 5L
+# Define our batch size, or number of training observations for each epoch, as 150
+batch_size = 150L
 
-# Define the number of images in our training dataset to be used (34)
+# Define the number of images in our training dataset to be used (600)
 (num_train_samples = length(list.files(train_path, recursive = T)))
 
 # Define the number of images in our validation dataset to use (10)
-num_validation_samples = 10L
+num_validation_samples = 25L
 
 # Define the number of full passes of the model
 epochs = 30L
 ```
 
-With these setup variables defined we can now focus on actually building the model. `image_data_generator` performs a bunch of data augmentation. We will just use the `rescale` parameter to scale our data to what will essentially become a bunch of binary matrices - one for each image.
+`image_data_generator` performs data augmentation! However, we will just use the lone `rescale` parameter to scale our data to what will essentially become a bunch of binary matrices - one for each image that represents a dark or a light pixel.
 
 See `?image_data_generator` to learn more.
 ```{r}
-# Transform our training data to rescaled values of
+# Transform training data 
 train_datagen = keras::image_data_generator(rescale = 1/255)
 
-# Transform our validation data
+# Transform validation data 
 val_datagen = keras::image_data_generator(rescale = 1/255)
 ```
 
@@ -68,19 +69,29 @@ train_datagen$
 ```
 
 ### Define the image characteristics
-Before we define the model, we want to give keras a few more details about the properties of our images. We will use the `flow_from_directory` method on both `train_datagen` and `val_datagen` to define our new variables. What parameters are we specifying?
+Before we define the model, we also need to give keras a few more details about the properties of our images. We will use the `flow_from_directory` method on both `train_datagen` and `val_datagen` to define our new variables. 
 
 ```{r}
 # Configure the training model
 train_gen =
+                                    # specify the file path to the training images
   train_datagen$flow_from_directory(train_path,
+                                    
+                                    # image shape
                                     target_size = c(img_width, img_height),
+                                    
+                                    # batch size 
                                     batch_size = batch_size,
+                                    
+                                    # dog or human? 
                                     class_mode = "binary",
+                                    
+                                    # color profile
                                     color_mode = "grayscale")
 
 # Configure the validation model
 val_gen =
+                                  # repeat for validation images
   val_datagen$flow_from_directory(val_path,
                                   target_size = c(img_width, img_height),
                                   batch_size = batch_size,
@@ -89,10 +100,10 @@ val_gen =
 ```
 
 ## Define the model
-Define the model! Refer back to part1 if you need help remembering what the parameters are and what your arguments should be :)
+Define the model! o_O
 
 ```{r}
-library(dplyr) # %>% come from here
+library(dplyr) # %>% come from here (and of course magrittr)
 library(keras) # layer_flatten, layer_dense, layer_dropout
 model <- keras::keras_model_sequential()
 
@@ -105,17 +116,17 @@ model %>%
 
   # INPUT LAYER
   # layer_dense allows us to actually add the input layer. What parameters are we specifying?
-  layer_dense(units = 20, activation = 'relu', input_shape = c(img_width, img_height)) %>%
-
+  layer_dense(units = 96, activation = 'relu', input_shape = c(img_width, img_height)) %>%
+  
   # INPUT LAYER
   # layer_dropout allows us to apply regularization to our model and can apply to all layers
-  layer_dropout(rate = 0.1) %>%
+  layer_dropout(rate = 0.4) %>%
 
   # HIDDEN LAYER
-  layer_dense(units = 20, activation = 'relu') %>%
+  layer_dense(units = 192, activation = 'relu') %>%
 
-  layer_dropout(rate = 0.05) %>%
-
+  layer_dropout(rate = 0.3) %>%
+  
   # OUTPUT LAYER
   layer_dense(units = 1, activation = 'sigmoid')
 
@@ -128,8 +139,14 @@ We can use the generic `compile` function to specify our loss and optimizer func
 
 ```{r}
 model %>% compile(
+  
+  # Dog or human?
   loss = 'binary_crossentropy',
-  optimizer = optimizer_adam(),
+  
+  # Slow the learning rate a little...
+  optimizer = optimizer_adam(lr = 0.0001), 
+  
+  # How to evaluate model performance
   metrics = c('accuracy')
 )
 ```
@@ -139,6 +156,7 @@ model %>% compile(
 Note that we have to use `fit_generator` to fit our model this time because we are also using the custom `flow_from_directory` function rather than the simpler format of part1.
 
 ```{r}
+set.seed(1)
 history = model %>%
   fit_generator(train_gen,
                 steps_per_epoch = as.integer(num_train_samples / batch_size),
@@ -151,11 +169,11 @@ plot(history) + theme_bw()
 ```
 
 ```{r predict_valdata}
-# model %>% evaluate()
+model %>% evaluate_generator(generator = val_gen, steps = 10)
 ```
 
-## Challenge 1
-Why were our loss and accuracy metrics so jumpy? Is this model any good? What are the differences between training and validation datasets? What might be done to improve our predictions?
+Not bad for randomly selecting small subsets of the much larger dog and human datasets linked above! This neural net predicts roughly 70-75% images correctly. 
 
-## Challenge 2 (take home)
-Recapitulate what you learned in parts 1 and 2 and fit a deep neural network on the [FashionMNIST](https://keras.io/datasets/#fashion-mnist-database-of-fashion-articles) dataset. How are these data stored? Are they actual images? How can we read them into keras in R? 
+## Challenge
+How can we improve performance when the nomenclature and vocabulary feels so complicated? [Read this excellent post](https://blog.slavv.com/37-reasons-why-your-neural-network-is-not-working-4020854bd607) to learn more. Try tuning some of our model (hypter)parameters to see if you can improve model performance. 
+

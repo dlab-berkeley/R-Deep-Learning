@@ -58,9 +58,6 @@ x_test <- mnist$test$x
 y_test <- mnist$test$y
 ```
 
-## Challenge 1
-How many images are in `x_train`, `y_train`, and `x_test`, and `y_test`? What are their pixel dimensions? How can you find out? 
-
 ## Reshape, rescale, one-hot encode
 
 ### X variables
@@ -78,9 +75,6 @@ x_test <- array_reshape(x_test, c(nrow(x_test), height * width))
 dim(x_train)
 dim(x_test)
 ```
-
-## Challenge 2
-Now now many dimensions are `x_train` and `x_test`?
 
 ### Gray rescale
 
