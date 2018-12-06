@@ -185,5 +185,5 @@ model %>% evaluate(x_test, y_test)
 # The model works pretty well! 
 ```
 
-## Challenge 3
+## Challenge
 Write down the steps you followed to run this model from start to finish. 
