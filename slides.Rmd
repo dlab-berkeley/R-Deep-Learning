@@ -273,6 +273,7 @@ Part 1
 #### `image_data_generator`  
 #### `flow_from_directory`  
 #### `keras_model_sequential`  
+#### `layer_flatten`, `layer_dense`, `layer_dropout`  
 #### `compile`  
 #### `fit_generator`  
 #### `evaluate_generator`  
