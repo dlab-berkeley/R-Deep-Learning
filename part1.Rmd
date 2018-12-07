@@ -47,15 +47,15 @@ Let's look at 70,000 handwritten digit images from the [Modified National Instit
 
 ```{r}
 # This line requires a working internet connection to download the data the first time.
-mnist <- dataset_mnist()
+mnist = dataset_mnist()
 ```
 
 ```{r}
 # Define our x and y variables for the training and test sets. 
-x_train <- mnist$train$x
-y_train <- mnist$train$y
-x_test <- mnist$test$x
-y_test <- mnist$test$y
+x_train = mnist$train$x
+y_train = mnist$train$y
+x_test = mnist$test$x
+y_test = mnist$test$y
 ```
 
 ## Reshape, rescale, one-hot encode
@@ -68,8 +68,8 @@ height = 28
 width = 28
 
 # Reshape
-x_train <- array_reshape(x_train, c(nrow(x_train), height * width))
-x_test <- array_reshape(x_test, c(nrow(x_test), height * width))
+x_train = array_reshape(x_train, c(nrow(x_train), height * width))
+x_test = array_reshape(x_test, c(nrow(x_test), height * width))
 
 # Check dimensions of x.
 dim(x_train)
@@ -82,8 +82,8 @@ Grayscale pixel values that range from between 0 (black end of the color spectru
 
 ```{r}
 # rescale
-x_train <- x_train / 255
-x_test <- x_test / 255
+x_train = x_train / 255
+x_test = x_test / 255
 ```
 
 ### Y variables
@@ -92,8 +92,8 @@ We also want to convert our y outcome vector to a one-hot encoded binary matrix.
 
 ```{r}
 # Convert our outcome and specify 10 possible classes.
-y_train <- to_categorical(y_train, 10)
-y_test <- to_categorical(y_test, 10)
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
 
 # Check dimensions of new y matrices.
 dim(y_train)
@@ -117,7 +117,7 @@ Now we can define the model! We just want to build a linear stack of layers. The
 See `?keras_model_sequential` to learn more.
 
 ```{r}
-model <- keras_model_sequential() 
+model = keras_model_sequential() 
 
 model %>% 
   
@@ -157,7 +157,7 @@ Now we can train the model using `fit`! Here, we can just pass in our X and Y va
 Watch the model build epoch by epoch. 
 ```{r}
 set.seed(1)
-history <- model %>% fit(
+history = model %>% fit(
   x_train, y_train, 
   epochs = 30, batch_size = 128, 
   validation_split = 0.2
@@ -186,4 +186,4 @@ model %>% evaluate(x_test, y_test)
 ```
 
 ## Challenge
-Write down the steps you followed to run this model from start to finish. 
+Write down the steps you followed to run this model from start to finish. What does each part do? 

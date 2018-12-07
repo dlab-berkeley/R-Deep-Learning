@@ -12,7 +12,7 @@ class: center, middle, inverse, title-slide
 
 # Introduction to Deep Learning in R
 ### D-Lab - Chris Kennedy and Evan Muzzall
-### Dec 14, 2018 (updated: 2018-12-04)
+### Dec 14, 2018 (updated: 2018-12-07)
 
 ---
 
@@ -57,25 +57,13 @@ Install key additional packages:
 
 ---
 
-class: left, middle
-
-# Download the workshop materials 
-
-### 1) Download the workshiop materials: https://github.com/dlab-berkeley/Deep-Learning-in-R
-
-### 2) Download R &gt;= 3.4: https://cloud.r-project.org/  
-
-### 3) Download RStudio Desktop Open Source License FREE: https://www.rstudio.com/products/rstudio/download/
-
----
-
 class: left
 
 # Workshop Goals
 
 ### Introduction  
 ### Part 1. MNIST handwritten digit classification example  
-### Part 2. Dogs-humans example  
+### Part 2. Dog-human example  
 ### Part 3. Biomedical example  
 ### Part 4. Cloud example
 
@@ -85,7 +73,7 @@ class: left
 
 #### Deep Learning allows "computers to learn from experience and understand the world in terms of a hierarchy of concepts, with each concept deﬁned through its relation to simpler concepts. By gathering knowledge from experience, this approach avoids the need for human operators to formally specify all the knowledge that the computer needs.  
 
-#### The hierarchy of concepts enables the computer to learn complicated concepts bybuilding them out of simpler ones. If we draw a graph showing how these concepts are built on top of each other, the graph is deep, with many layers. For this reason, we call this approach to AI deep learning."  
+#### The hierarchy of concepts enables the computer to learn complicated concepts by building them out of simpler ones. If we draw a graph showing how these concepts are built on top of each other, the graph is deep, with many layers. For this reason, we call this approach to AI deep learning."  
 
 #### (https://www.deeplearningbook.org/contents/intro.html, pp. 1-2)
 
@@ -145,6 +133,227 @@ class: center
 #### 6. With deep networks, the process also takes places between **hidden layers**, or areas of nonlinear transformations connected only to the layers before and after them. They are referred to as "hidden" because they are not show as the final output. 
 
 ---
+
+# Part 1 functions
+
+#### `data_mnist()`
+#### `array_reshape()`
+#### `to_categorical()`
+#### `layer_dense()`
+#### `layer_dropout()`
+#### `compile()`
+#### `fit()`
+#### `evaluate()`
+
+---
+
+Part 1
+# `data_mnist`
+
+`mnist = dataset_mnist()`
+
+#### Split data into 
+
+#### Training set
+`x_train = mnist$train$x`
+`y_train = mnist$train$y`
+
+#### Validation (test) set
+`x_test = mnist$test$x`
+`y_test = mnist$test$y`
+---
+
+Part 1
+# `array_reshape`
+Arguments we should define: 
+
+**Array:** training or test set
+
+**3D vector:** containing  
+  1) Number of rows in train/test set  
+  2) Image height  
+  3) Image width  
+
+`x_train = array_reshape(x_train, c(nrow(x_train), height * width))`  
+
+`x_test = array_reshape(x_test, c(nrow(x_test), height * width))`
+
+Also gray rescale:  
+`x_train = x_train / 255`  
+
+`x_test = x_test / 255`
+
+---
+
+Part 1
+# `to_categorical`
+**Data:** train and test
+
+**Number of Y classes:** 10; number of Y classes
+
+`y_train = to_categorical(y_train, 10)`  
+
+`y_test = to_categorical(y_test, 10)`
+
+---
+
+Part 1
+# `keras_model_sequential`
+**Input layer:**  
+
+  `layer_dense`  
+    **Units:** number of neurons in the input layer  
+    **Activation function:** "relu"  
+    **Input shape:** dimensions of the images  
+  `layer_dropout`  
+    **Rate:** more or less?  
+
+**Hidden layer:** Same as input layer, minus **Input shape.**  
+
+**Output layer:** Just need **Units** and **Activation function.**
+  
+---
+
+Part 1
+
+`model = keras_model_sequential() `
+
+`model %&gt;%`
+  
+**INPUT LAYER**  
+  `layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %&gt;%` 
+  
+  `layer_dropout(rate = 0.4) %&gt;%` 
+  
+**HIDDEN LAYER**  
+  `layer_dense(units = 128, activation = 'relu') %&gt;%`
+  
+  `layer_dropout(rate = 0.3) %&gt;%`
+  
+**OUTPUT LAYER**  
+  `layer_dense(units = 10, activation = 'softmax')`
+
+`summary(model)`
+
+---
+
+Part 1
+# `compile` 
+Performance evaluation metrics  
+**Loss function:**  
+**Optimizer function:**  
+**Performance metric:**  
+
+`model %&gt;% compile(loss = 'categorical_crossentropy', optimizer = optimizer_rmsprop(lr = 0.001), metrics = c('accuracy'))`
+
+---
+
+Part 1
+# `fit`
+**Data:** xtrain and ytrain  
+**epochs:** number of full passes  
+**batch_size:**  
+**validation_splits:**  
+  
+`history = model %&gt;% fit(x_train, y_train, epochs = 30, batch_size = 128, validation_split = 0.2)`
+
+# `evaluate`
+**Data:** xtest and ytest
+
+`model %&gt;% evaluate(x_test, y_test)`
+
+---
+
+# Part 2 functions
+#### `list_files`  
+#### `image_data_generator`  
+#### `flow_from_directory`  
+#### `keras_model_sequential`  
+#### `compile`  
+#### `fit_generator`  
+#### `evaluate_generator`  
+
+---
+
+Part 2  
+`train_path = "data-raw/dog-human/TRAIN"`  
+
+`val_path = "data-raw/dog-human/VAL"`  
+
+# `list_files`
+`train_images = list.files(train_path, full.names = T, recursive = T)`  
+
+`val_images = list.files(val_path, full.names = T, recursive = T)`
+
+---
+
+Part 2
+# Define model characteristics  
+**Image width and height:**  
+**Batch size:**  
+**Number of training samples:**  
+**Number of validation (test) samples:**  
+**Epochs:**  
+---
+
+Part 2
+# `image_data_generator`
+
+Gray rescale  
+
+`train_datagen = keras::image_data_generator(rescale = 1/255)`  
+
+`val_datagen = keras::image_data_generator(rescale = 1/255)`
+---
+
+Part 2
+# `flow_from_directory`
+**File path:** to training and test data  
+**Image shape:**  
+**Batch size:**  
+**Classification output** binary  
+**Color profile:** grayscale  
+
+---
+
+Part 2
+# `keras_model_sequential`
+
+Fit the model! 
+
+Same as Part 1, except we need to first flatten the three dimensional array to one dimension:  
+
+`layer_flatten(input_shape = c(img_width, img_height, 1))`
+
+The `compile` step (loss function, activation function, and performance metric) is also the same as Part 1. 
+
+---
+
+Part 2
+
+# `fit_generator`
+Training model configuration (using `flow_from_directory`)  
+**Steps per epoch:**  
+**Epochs:**  
+**Validation data:**  
+**Validation steps:**  
+
+`history = model %&gt;%`
+  `fit_generator(train_gen, steps_per_epoch = as.integer(num_train_samples / batch_size),`
+  `epochs = epochs, validation_data = val_gen, validation_steps = as.integer(num_validation_samples / batch_size))`
+
+---
+
+Part 2
+# `evaluate_generator`
+**Generator:**  
+
+**Steps:**  
+
+model %&gt;% evaluate_generator(generator = val_gen, steps = 10)
+
+---
+
 
 # Acknowledgements  
 Allaire JJ. 2017. [keras for R](https://blog.rstudio.com/2017/09/05/keras-for-r/)

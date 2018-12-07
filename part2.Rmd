@@ -100,12 +100,12 @@ val_gen =
 ```
 
 ## Define the model
-Define the model! o_O
+Define the model! 
 
 ```{r}
 library(dplyr) # %>% come from here (and of course magrittr)
 library(keras) # layer_flatten, layer_dense, layer_dropout
-model <- keras::keras_model_sequential()
+model = keras::keras_model_sequential()
 
 model %>%
 
@@ -175,5 +175,4 @@ model %>% evaluate_generator(generator = val_gen, steps = 10)
 Not bad for randomly selecting small subsets of the much larger dog and human datasets linked above! This neural net predicts roughly 70-75% images correctly. 
 
 ## Challenge
-How can we improve performance when the nomenclature and vocabulary feels so complicated? [Read this excellent post](https://blog.slavv.com/37-reasons-why-your-neural-network-is-not-working-4020854bd607) to learn more. Try tuning some of our model (hypter)parameters to see if you can improve model performance. 
-
+How can we improve performance of this neural network? [Read this excellent post](https://blog.slavv.com/37-reasons-why-your-neural-network-is-not-working-4020854bd607) to learn 37 different ways. Try tuning some of our model (hypter)parameters in the above code to see if you can improve model performance. 
