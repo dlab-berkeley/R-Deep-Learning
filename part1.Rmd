@@ -51,11 +51,15 @@ mnist = dataset_mnist()
 ```
 
 ```{r}
-# Define our x and y variables for the training and test sets. 
+# Define our x and y variables for the training and test sets.
 x_train = mnist$train$x
 y_train = mnist$train$y
 x_test = mnist$test$x
 y_test = mnist$test$y
+
+# Note the 3D array structure of the raw features
+str(x_train)
+str(x_test)
 ```
 
 ## Reshape, rescale, one-hot encode
@@ -71,9 +75,9 @@ width = 28
 x_train = array_reshape(x_train, c(nrow(x_train), height * width))
 x_test = array_reshape(x_test, c(nrow(x_test), height * width))
 
-# Check dimensions of x.
-dim(x_train)
-dim(x_test)
+# Check the new 2D feature dimensions
+str(x_train)
+str(x_test)
 ```
 
 ### Gray rescale

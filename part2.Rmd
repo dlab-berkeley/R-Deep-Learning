@@ -38,14 +38,14 @@ Now, we want to define some of the characteristics outside of our model. This wa
 # Define image width and height as 96 pixels
 img_width = img_height = 96L
 
-# Define our batch size, or number of training observations for each epoch, as 150
-batch_size = 150L
+# Define our batch size, or number of training observations for each epoch, as 100
+batch_size = 100L
 
 # Define the number of images in our training dataset to be used (600)
 (num_train_samples = length(list.files(train_path, recursive = T)))
 
-# Define the number of images in our validation dataset to use (10)
-num_validation_samples = 25L
+# Define the number of images in our validation dataset to use (50)
+num_validation_samples = 50L
 
 # Define the number of full passes of the model
 epochs = 30L
