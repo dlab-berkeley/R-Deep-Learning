@@ -47,8 +47,8 @@ Or, use Bash to git clone: `$ git clone git@github.com:dlab-berkeley/Deep-Learni
 `keras::install_keras()`  
 
 Install key additional packages:  
-* Image Magick
-`install.packages("magick")`
+* Image Magick  
+`install.packages("magick")`  
 `library(magick)`
 
 (MacOS Homebrew or Linux users, see extra install info here)

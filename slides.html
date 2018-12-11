@@ -12,7 +12,7 @@ class: center, middle, inverse, title-slide
 
 # Introduction to Deep Learning in R
 ### D-Lab - Chris Kennedy and Evan Muzzall
-### Dec 14, 2018 (updated: 2018-12-09)
+### Dec 14, 2018 (updated: 2018-12-10)
 
 ---
 
@@ -49,8 +49,8 @@ Or, use Bash to git clone: `$ git clone git@github.com:dlab-berkeley/Deep-Learni
 `keras::install_keras()`  
 
 Install key additional packages:  
-* Image Magick
-`install.packages("magick")`
+* Image Magick  
+`install.packages("magick")`  
 `library(magick)`
 
 (MacOS Homebrew or Linux users, see extra install info here)
@@ -331,6 +331,7 @@ Listing the files prints the full file paths of our images.
 ---
 
 Part 2  
+
 We can fit the model like before, by defining the number of units in each layer, the activation function, the input size, etc. However we should also specify: 
 - Image width and height  
 - Batch size  
@@ -395,6 +396,11 @@ Part 2
 Predict on the validation data! 
 
 model %&gt;% evaluate_generator(generator = val_gen, steps = 10)
+
+---
+
+# Part 2 Challenge
+How can we improve performance of this neural network? [Read this excellent post](https://blog.slavv.com/37-reasons-why-your-neural-network-is-not-working-4020854bd607) to learn 37 different ways. Try tuning some of our model (hypter)parameters in the above code to see if you can improve model performance. 
 
 ---
 
