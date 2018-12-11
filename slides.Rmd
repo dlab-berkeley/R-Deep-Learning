@@ -51,7 +51,7 @@ Install key additional packages:
 `install.packages("magick")`  
 `library(magick)`
 
-(MacOS Homebrew or Linux users, see extra install info here)
+(MacOS Homebrew or Linux users, [see extra install info here](https://cran.r-project.org/web/packages/magick/vignettes/intro.html#build_from_source))
 
 ---
 
