@@ -17,7 +17,7 @@ the Tensorflow Cloud ML [getting started page](https://tensorflow.rstudio.com/to
 Side note: [HIPAA compliance information is available here](https://cloud.google.com/security/compliance/hipaa/).
 
 ```{r cloud_install, eval = FALSE}
-install.packages("cloudml")
+install.packages(c("cloudml", "xaringan"))
 
 # Install Google Cloud SDK.
 # This will run a bunch of stuff in the Terminal and require you to press
@@ -60,7 +60,8 @@ unlink("data-raw/Open_I_abd_vs_CXRs", recursive = TRUE)
 # This will take a long time the first time due to installation of packages, etc.
 # Every package that is successfully installed is re-used in future runs, so this
 # speeds up, even if it takes a few iterations to run successfully.
-job = cloudml_train("cloudml_train.R", flags = "cloudml_tuning.yml",
+job = cloudml_train("cloudml/cloudml_train.R",
+                    flags = "cloudml/cloudml_tuning.yml",
                     # True will "collect job when training is complete". See ?cloudml_train
                     collect = TRUE)
 ```

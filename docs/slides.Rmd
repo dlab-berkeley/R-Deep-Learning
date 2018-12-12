@@ -48,21 +48,7 @@ thm <- theme_bw() +
   )
 theme_set(thm)
 
-# CK: we should explore these settings.
-if (FALSE) {
-library(RefManageR)
-BibOptions(check.entries = FALSE, 
-           bib.style = "authoryear", 
-           cite.style = 'numeric', 
-           style = "markdown",
-           hyperlink = FALSE, 
-           dashed = TRUE)
-bib <- ReadBib("bib.bib", check = FALSE)
-library(RBitmoji)
-my_id <- "ebb3cf19-34bb-4caf-a5c5-abe3ec6cec35-v1"
-library(ranger)   
-library(rsample)
-}
+
 ```
 
 class: title-slide   
