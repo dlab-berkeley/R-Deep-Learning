@@ -7,3 +7,6 @@
 # Don't track these medical images in git.
 data-raw/medical_images.zip
 data-raw/Open_I_abd_vs_CXRs/
+
+# cloudml
+runs
