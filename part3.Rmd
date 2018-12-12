@@ -3,10 +3,6 @@ title: "R for Deep Learning"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## Install dependencies
 
 One this chunk once manually if needed. It won't be executed when knitting the file or selecting "run all chunks".

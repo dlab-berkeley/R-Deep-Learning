@@ -3,10 +3,6 @@ title: "Cloud ML"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## Google Cloud ML
 
 First go to (https://console.cloud.google.com/), create a new project, and enable the "Machine Learning Engine" API for that project.
