@@ -7,7 +7,7 @@ output: html_document
 
 ## Introduction
 
-Review the slides to get onboarded: in your RStudio Files tab, open the "docs" folder then click the "slides.html" file and select "view in web browser."
+[Review the slides to get onboarded](https://dlab-berkeley.github.io/Deep-Learning-in-R/slides.html#1)
 
 ## Install packages
 
