@@ -110,15 +110,19 @@ Or (advanced):
 
 ## Install keras by typing in the RStudio console or an R script:
 
-`devtools::install_github("rstudio/keras")`  
-`install.packages("keras")`  
-`keras::install_keras()`  
+```{r}
+install.packages("keras")  
+keras::install_keras()  
+```
 
 ## Install key additional packages:  
 
-  * Image Magick  
-   `install.packages("magick")`  
-   `library(magick)`
+### Image Magick  
+
+```{r}
+install.packages("magick")
+library(magick)
+```
 
 (MacOS Homebrew or Linux users, [see extra install info here](https://cran.r-project.org/web/packages/magick/vignettes/intro.html#build_from_source))
 
@@ -466,7 +470,9 @@ Fit the model!
 
 Same as Part 1, except we need to first flatten the three dimensional array to one dimension:  
 
-`layer_flatten(input_shape = c(img_width, img_height, 1))`
+```{r}
+layer_flatten(input_shape = c(img_width, img_height, 1))
+```
 
 The `compile` step (loss function, activation function, and performance metric) is also the same as Part 1. 
 
@@ -480,16 +486,20 @@ This fits the training model configuration (using `flow_from_directory`)
 - Validation data: the validation model 
 - Validation steps: the number of batch runs needed to complete one full iteration of validation.  
 
-`history = model %>%`
-  `fit_generator(train_gen, steps_per_epoch = as.integer(num_train_samples / batch_size),`
-  `epochs = epochs, validation_data = val_gen, validation_steps = as.integer(num_validation_samples / batch_size))`
+```{r}
+history = model %>%
+  fit_generator(train_gen, steps_per_epoch = as.integer(num_train_samples / batch_size),
+  epochs = epochs, validation_data = val_gen, validation_steps = as.integer(num_validation_samples / batch_size))
+```
 
 ---
 
 # Part 2: `evaluate_generator`
 Predict on the validation data! 
 
+```{r}
 model %>% evaluate_generator(generator = val_gen, steps = 10)
+```
 
 ---
 
