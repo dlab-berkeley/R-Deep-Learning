@@ -129,7 +129,7 @@ library(magick)
 
 ---
 
-Also install the following packages:
+Also, install the following packages:
 ```{r}
 install.packages(c("cowplot", "dplyr", "ggplot2"))
 ```
