@@ -165,7 +165,7 @@ class: center
 # What is an artificial neural network? 
 
 "Perceptron"
-```{r, out.width = "600px", echo = F}
+```{r, out.width = "600px", echo = F, eval = TRUE}
 knitr::include_graphics("slide_img/ann.png")
 ```
 
@@ -213,7 +213,7 @@ class: center
 
 # What is an activation function?
 
-```{r, out.width = "500px", echo = F}
+```{r, out.width = "500px", echo = F, eval = TRUE}
 knitr::include_graphics("slide_img/actfun.png")
 ```
 
@@ -223,7 +223,7 @@ class: center
 
 # What makes a neural network "deep"?
 
-```{r, out.width = "700px", echo = F}
+```{r, out.width = "700px", echo = F, eval = TRUE}
 knitr::include_graphics("slide_img/deep.png")
 ```
 
