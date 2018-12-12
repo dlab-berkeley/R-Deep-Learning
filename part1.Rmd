@@ -13,7 +13,7 @@ output: html_document
 
 Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
 
-```{r install, eval = FALSE}
+```{r install, eval=FALSE}
 # Install keras package from CRAN.
 install.packages("keras")
 
@@ -29,8 +29,8 @@ keras::install_keras()
 ```
 
 Also install some other helper packages. Run this line manually if needed:
-```{r, eval = F}
-install.packages(c("cowplot", "dplyr", "tensorflow", "ggplot2"))
+```{r install_helpers, eval=FALSE}
+install.packages(c("cowplot", "dplyr", "ggplot2"))
 ```
 
 ## Load packages
