@@ -90,7 +90,7 @@ class: center, middle, inverse
 
 [Install Anaconda Python (3.7+)](https://www.anaconda.com/download/#macos) if you have not already done so. Use default options.  
 
-# Download materials
+## Download materials
 
 [Download the workshop materials](https://github.com/dlab-berkeley/Deep-Learning-in-R)
   * Click green “Clone or Download” button
@@ -252,8 +252,7 @@ knitr::include_graphics("slide_img/deep.png")
 
 ---
 
-Part 1
-# `data_mnist`
+# Part 1: `data_mnist`
 [Load the MNIST dataset](http://yann.lecun.com/exdb/mnist/) using the built-in function and assign the training and test X and Y variables: 
 
 #### Training set
@@ -269,8 +268,7 @@ Part 1
 `str(x_train)`
 ---
 
-Part 1
-# `array_reshape`
+# Part 1: `array_reshape`
 This function converts our 3D tensor (samples, height, width) to a 2D one (samples, input shape). 
 
 `x_train = array_reshape(x_train, c(nrow(x_train), height * width))`  
@@ -287,8 +285,7 @@ This function converts our 3D tensor (samples, height, width) to a 2D one (sampl
 
 ---
 
-Part 1
-# `to_categorical`
+# Part 1: `to_categorical`
 Convert integer vector to binary class matrix. Specify the train and test labels and the number of Y classes (10, the numbers 0 thru 9).  
 
 `y_train = to_categorical(y_train, 10)`  
@@ -297,8 +294,7 @@ Convert integer vector to binary class matrix. Specify the train and test labels
 
 ---
 
-Part 1
-# `keras_model_sequential`
+# Part 1: `keras_model_sequential`
 This function allows us to build a linear stack of layers. We will make a model with one input layer, one hidden layer, and one output layer. We need to define:  
 - The number of units in the layer.  
 - Activation function: how to determine the output of a node (e.g., relu, sigmoid).  
@@ -329,8 +325,7 @@ Part 1
 
 ---
 
-Part 1
-# `compile` 
+# Part 1: `compile` 
 Here we can define the performance evaluation metrics to be incorporated into the model.  
 
 **Loss function:** measures the difference in distance scores between predicted and actual outcomes (i.e., a residual); we hope to minimize this value.  
@@ -343,8 +338,7 @@ Here we can define the performance evaluation metrics to be incorporated into th
 
 ---
 
-Part 1
-# `fit`
+# Part 1: `fit`
 We are almost ready to train the model, but we first need to provide a few more specifications. 
 
 - X and Y training data   
@@ -355,8 +349,7 @@ We are almost ready to train the model, but we first need to provide a few more 
 `history = model %>% fit(x_train, y_train, epochs = 30, batch_size = 128, validation_split = 0.2)`
 
 ---
-Part 1  
-# `evaluate`
+# Part 1: `evaluate`
 Predict on the test set!  
 
 `model %>% evaluate(x_test, y_test)`
@@ -388,7 +381,7 @@ Now that you are warmed up, let's see what Keras can do when we have our own fol
 
 `val_path = "data-raw/dog-human/VAL"`  
 
-# `list_files`
+## `list_files`
 Listing the files prints the full file paths of our images.  
 
 `train_images = list.files(train_path, full.names = T, recursive = T)`  
@@ -408,8 +401,7 @@ We can fit the model like before, by defining the number of units in each layer,
 
 ---
 
-Part 2
-# `image_data_generator`
+# Part 2: `image_data_generator`
 This function [performs data augmentation](https://keras.rstudio.com/reference/image_data_generator.html). It contains many tunable parameters, but we will just use the rescale to the gray channel. 
 
 `train_datagen = keras::image_data_generator(rescale = 1/255)`  
@@ -417,8 +409,7 @@ This function [performs data augmentation](https://keras.rstudio.com/reference/i
 `val_datagen = keras::image_data_generator(rescale = 1/255)`
 ---
 
-Part 2
-# `flow_from_directory`
+# Part 2: `flow_from_directory`
 Here we can configure the training model. You will need to define: 
 - The file paths to the training and test data  
 - Image shape  
@@ -430,8 +421,7 @@ Here we can configure the training model. You will need to define:
 
 ---
 
-Part 2
-# `keras_model_sequential`
+# Part 2: `keras_model_sequential`
 
 Fit the model! 
 
@@ -443,9 +433,8 @@ The `compile` step (loss function, activation function, and performance metric) 
 
 ---
 
-Part 2
+# Part 2: `fit_generator`
 
-# `fit_generator`
 This fits the training model configuration (using `flow_from_directory`)  
 - Steps per epoch: the number of batch runs to complete one full iteration of training.  
 - Epochs: 
@@ -458,8 +447,7 @@ This fits the training model configuration (using `flow_from_directory`)
 
 ---
 
-Part 2
-# `evaluate_generator`
+# Part 2: `evaluate_generator`
 Predict on the validation data! 
 
 model %>% evaluate_generator(generator = val_gen, steps = 10)
