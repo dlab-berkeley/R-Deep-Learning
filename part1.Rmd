@@ -27,6 +27,11 @@ keras::install_keras()
 # keras::install_keras(tensorflow = "gpu")
 ```
 
+Also install some other helper packages. Run this line manually if needed:
+```{r, eval = F}
+install.packages(c("cowplot", "dplyr", "tensorflow", "ggplot2"))
+```
+
 ## Load packages
 
 Now that we have installed the necessary packages, library them so that R can utilize their functionalities
