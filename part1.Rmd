@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Deep Learning in R - Part 1"
 author: "D-Lab"
-date: "11/24/2018"
+date: "11/24/2018 (updated: `r Sys.Date()`)"
 output: html_document
 ---
 
