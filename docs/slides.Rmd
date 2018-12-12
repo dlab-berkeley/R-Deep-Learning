@@ -113,6 +113,7 @@ Or (advanced):
 ```{r}
 install.packages("keras")  
 keras::install_keras()  
+library(keras)
 ```
 
 ## Install key additional packages:  
@@ -125,6 +126,11 @@ library(magick)
 ```
 
 (MacOS Homebrew or Linux users, [see extra install info here](https://cran.r-project.org/web/packages/magick/vignettes/intro.html#build_from_source))
+
+---
+
+Also install the following packages:
+`install.packages(c("cowplot", "dplyr", "tensorflow", "ggplot2"))`
 
 ---
 
@@ -263,7 +269,7 @@ knitr::include_graphics("slide_img/deep.png")
 ---
 
 # Part 1: `data_mnist`
-[Load the MNIST dataset](http://yann.lecun.com/exdb/mnist/) using the built-in function and assign the training and test X and Y variables: 
+[Load the MNIST dataset](http://yann.lecun.com/exdb/mnist/) using the built-in function `mnist = dataset_mnist()` and assign the training and test X and Y variables: 
 
 #### Training set
 ```{r eval=F}
