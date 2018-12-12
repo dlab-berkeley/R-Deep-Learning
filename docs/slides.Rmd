@@ -130,7 +130,9 @@ library(magick)
 ---
 
 Also install the following packages:
-`install.packages(c("cowplot", "dplyr", "tensorflow", "ggplot2"))`
+```{r}
+install.packages(c("cowplot", "dplyr", "ggplot2"))
+```
 
 ---
 
