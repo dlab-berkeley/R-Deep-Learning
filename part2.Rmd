@@ -13,16 +13,16 @@ The MNIST dataset is a fun way to get your feet wet, but real images can require
 
 Load a folder of dog-human images from the `data-raw` folder in the workshop materials. First, we want to define the file paths of our already split training and validation (aka test data) image folders. We manually selected 600 training and 100 test images from the excellent [Stanford Dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/) and [INRIA Person](http://pascal.inrialpes.fr/data/human/) image databases. 
 
-```{r}
+```{r examine_data}
 # Specify the file paths for our training and validation (aka test) data
 train_path = "data-raw/dog-human/TRAIN"
 val_path = "data-raw/dog-human/VAL"
 
 # Define two more variables as the actual names of the files
-train_images = list.files(train_path, full.names = T, recursive = T)
-val_images = list.files(val_path, full.names = T, recursive = T)
+train_images = list.files(train_path, full.names = TRUE, recursive = TRUE)
+val_images = list.files(val_path, full.names = TRUE, recursive = TRUE)
 
-# We have 34 training set images and 16 validation set images
+# We have 600 training set images and 100 validation set images
 length(train_images)
 length(val_images)
 
