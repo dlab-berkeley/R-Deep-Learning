@@ -179,7 +179,6 @@ model %>%
 
 (num_train_samples = length(train_files))
 num_validation_samples = 10L
-epochs = 20L
 ```
 
 ## Fit model
