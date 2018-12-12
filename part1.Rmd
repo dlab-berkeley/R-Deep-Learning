@@ -14,10 +14,11 @@ output: html_document
 Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
 
 ```{r install, eval = FALSE}
-# Install keras package
-devtools::install_github("rstudio/keras")
-# or
+# Install keras package from CRAN.
 install.packages("keras")
+
+# If the most recent version is desired:
+# devtools::install_github("rstudio/keras")
 
 # Then run install_keras() function to install anaconda python, tensorflow, and keras.
 keras::install_keras()
