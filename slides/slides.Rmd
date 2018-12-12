@@ -1,25 +1,82 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Introduction to Deep Learning in R</title>
-    <meta charset="utf-8">
-    <meta name="author" content="D-Lab - Evan Muzzall and Chris Kennedy" />
-    <link href="libs/remark-css/robot.css" rel="stylesheet" />
-  </head>
-  <body>
-    <textarea id="source">
-class: center, middle, inverse, title-slide
+---
+title: "Introduction to Deep Learning in R"
+subtitle: ""
+author: "D-Lab - Evan Muzzall and Chris Kennedy"
+date: "Dec 14, 2018 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: ["scrollable.css", "mtheme_max.css", "fonts_mtheme_max.css"]
+    self_contained: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      slideNumberFormat: |
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>`
+    seal: false   
+---
 
-# Introduction to Deep Learning in R
-### D-Lab - Evan Muzzall and Chris Kennedy
-### Dec 14, 2018 (updated: 2018-12-12)
+```{r setup, include=FALSE, cache=FALSE}
+# Set global R options
+options(htmltools.dir.version = FALSE, servr.daemon = TRUE)
+# Set global knitr chunk options
+knitr::opts_chunk$set(
+  fig.align = "center", 
+  #cache = TRUE,
+  error = FALSE,
+  message = FALSE, 
+  warning = FALSE, 
+  collapse = TRUE 
+)
+# This is good for getting the ggplot background consistent with
+# the html background color
+library(tidyverse)
+thm <- theme_bw() + 
+  theme(
+    panel.background = element_rect(fill = "transparent", colour = NA), 
+    plot.background = element_rect(fill = "transparent", colour = NA),
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+
+# CK: we should explore these settings.
+if (FALSE) {
+library(RefManageR)
+BibOptions(check.entries = FALSE, 
+           bib.style = "authoryear", 
+           cite.style = 'numeric', 
+           style = "markdown",
+           hyperlink = FALSE, 
+           dashed = TRUE)
+bib <- ReadBib("bib.bib", check = FALSE)
+library(RBitmoji)
+my_id <- "ebb3cf19-34bb-4caf-a5c5-abe3ec6cec35-v1"
+library(ranger)   
+library(rsample)
+}
+```
+
+class: title-slide   
+<a href="https://github.com/dlab-berkeley/Deep-Learning-in-R"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+
+<br><br><br><br>
+# .font130[Introduction to Deep Learning in R]
+
+### Evan Muzzall and Chris Kennedy  
+### Dec. 14, 2018
 
 ---
 
-
-
-
-class: center, middle
+class: center, middle, inverse
 
 # "It’s tough to make predictions, especially about the future." -Yogi Berra
 
@@ -42,7 +99,7 @@ class: center, middle
   
 Or (advanced):
   * Copy the github clone URL (https or ssh version)
-  * In RStudio select File -&gt; New Project -&gt; Version Control -&gt; Git and paste the repository URL
+  * In RStudio select File -> New Project -> Version Control -> Git and paste the repository URL
 
 ---
 
@@ -98,7 +155,9 @@ class: center
 # What is an artificial neural network? 
 
 "Perceptron"
-&lt;img src="slide_img/ann.png" width="600px" /&gt;
+```{r, out.width = "600px", echo = F}
+knitr::include_graphics("slide_img/ann.png")
+```
 
 ---
 
@@ -144,7 +203,9 @@ class: center
 
 # What is an activation function?
 
-&lt;img src="slide_img/actfun.png" width="500px" /&gt;
+```{r, out.width = "500px", echo = F}
+knitr::include_graphics("slide_img/actfun.png")
+```
 
 ---
 
@@ -152,7 +213,9 @@ class: center
 
 # What makes a neural network "deep"?
 
-&lt;img src="slide_img/deep.png" width="700px" /&gt;
+```{r, out.width = "700px", echo = F}
+knitr::include_graphics("slide_img/deep.png")
+```
 
 ---
 
@@ -247,17 +310,17 @@ Part 1
 
 `model = keras_model_sequential() `
 
-`model %&gt;%`
+`model %>%`
   
 **INPUT LAYER**  
-  `layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %&gt;%` 
+  `layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>%` 
   
-  `layer_dropout(rate = 0.4) %&gt;%` 
+  `layer_dropout(rate = 0.4) %>%` 
   
 **HIDDEN LAYER**  
-  `layer_dense(units = 128, activation = 'relu') %&gt;%`
+  `layer_dense(units = 128, activation = 'relu') %>%`
   
-  `layer_dropout(rate = 0.3) %&gt;%`
+  `layer_dropout(rate = 0.3) %>%`
   
 **OUTPUT LAYER**  
   `layer_dense(units = 10, activation = 'softmax')`
@@ -276,7 +339,7 @@ Here we can define the performance evaluation metrics to be incorporated into th
   
 **Performance metric:** We can just choose accuracy since we are tasked with a multinomial classification problem of ten handwritten digits.  
 
-`model %&gt;% compile(loss = 'categorical_crossentropy', optimizer = optimizer_rmsprop(lr = 0.001), metrics = c('accuracy'))`
+`model %>% compile(loss = 'categorical_crossentropy', optimizer = optimizer_rmsprop(lr = 0.001), metrics = c('accuracy'))`
 
 ---
 
@@ -289,14 +352,14 @@ We are almost ready to train the model, but we first need to provide a few more 
 - Batch size: number of samples from the training set to be used in a single epoch. An "iteration" is the number of batches necessary to complete one epoch, where gradients are computed relative to the loss of the individual batch. 
 - Validation split: percentage of data to be used as the validation set (0.2 means last 20%).  
 
-`history = model %&gt;% fit(x_train, y_train, epochs = 30, batch_size = 128, validation_split = 0.2)`
+`history = model %>% fit(x_train, y_train, epochs = 30, batch_size = 128, validation_split = 0.2)`
 
 ---
 Part 1  
 # `evaluate`
 Predict on the test set!  
 
-`model %&gt;% evaluate(x_test, y_test)`
+`model %>% evaluate(x_test, y_test)`
 
 ---
 
@@ -363,7 +426,7 @@ Here we can configure the training model. You will need to define:
 - Output class: binary
 - Color profile: grayscale
 
-&gt; Remember this is a Pythonic "method"! 
+> Remember this is a Pythonic "method"! 
 
 ---
 
@@ -389,7 +452,7 @@ This fits the training model configuration (using `flow_from_directory`)
 - Validation data: the validation model 
 - Validation steps: the number of batch runs needed to complete one full iteration of validation.  
 
-`history = model %&gt;%`
+`history = model %>%`
   `fit_generator(train_gen, steps_per_epoch = as.integer(num_train_samples / batch_size),`
   `epochs = epochs, validation_data = val_gen, validation_steps = as.integer(num_validation_samples / batch_size))`
 
@@ -399,7 +462,7 @@ Part 2
 # `evaluate_generator`
 Predict on the validation data! 
 
-model %&gt;% evaluate_generator(generator = val_gen, steps = 10)
+model %>% evaluate_generator(generator = val_gen, steps = 10)
 
 ---
 
@@ -428,51 +491,3 @@ Lakhani, P. 2018. [Hello_World_Deep_Learning.](https://github.com/paras42/Hello_
 [View the resouces listed](https://github.com/dlab-berkeley/Deep-Learning-in-R/blob/master/README.md) in this repository's readme file. 
 
 Images [borrowed from Qingkai Kong's ANNs in Python workshop.](https://github.com/qingkaikong/20181129_ANN_basics_DLab)
-    </textarea>
-<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-<script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
-});
-if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
-  window.dispatchEvent(new Event('resize'));
-});
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
-  if (!r) return;
-  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
-  d.head.appendChild(s);
-})();</script>
-
-<script>
-(function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
-  for (i = 0; i < codes.length;) {
-    code = codes[i];
-    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
-      text = code.textContent;
-      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
-          /^\$\$(.|\s)+\$\$$/.test(text) ||
-          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
-        code.outerHTML = code.innerHTML;  // remove <code></code>
-        continue;
-      }
-    }
-    i++;
-  }
-})();
-</script>
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-(function () {
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
-  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
-    script.src  = script.src.replace(/^https?:/, '');
-  document.getElementsByTagName('head')[0].appendChild(script);
-})();
-</script>
-  </body>
-</html>
