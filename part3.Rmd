@@ -8,9 +8,8 @@ output: html_document
 One this chunk once manually if needed. It won't be executed when knitting the file or selecting "run all chunks".
 
 ```{r install_deps, eval = FALSE}
+# Install magick if not already installed.
 install.packages("magick")
-install.packages("cowplot")
-
 ```
 
 ## Load packages
