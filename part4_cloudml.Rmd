@@ -35,6 +35,11 @@ job_status()
 
 Create the bucket and copy our local files
 
+  * Go to [Google Storage Browser](https://console.cloud.google.com/storage/browser)
+  * Click "create bucket".
+  * Enter "medical-images-data-XXX" as the bucket name, where you replace XXX with a random number or your name.
+  * Update the google storage bucket name in the chunk below and in cloudml/cloudml_tuning.yml (line 2)
+
 ```{r setup_data}
 gcloud_terminal()
 # synchronize a bucket and a local directory
