@@ -37,7 +37,6 @@ knitr::opts_chunk$set(
 )
 # This is good for getting the ggplot background consistent with
 # the html background color
-library(tidyverse)
 thm <- theme_bw() + 
   theme(
     panel.background = element_rect(fill = "transparent", colour = NA), 
