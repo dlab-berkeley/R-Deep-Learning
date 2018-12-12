@@ -25,22 +25,26 @@ class: center, middle
 
 # Software requirements
 
-[Click here](https://github.com/dlab-berkeley/Deep-Learning-in-R) to download the workshiop materials
-  * Click green “Clone or Download” button
-  * Click “Download Zip”
-  * Extract this zip file to your desktop
-
-Or, use Bash to git clone: `$ git clone git@github.com:dlab-berkeley/Deep-Learning-in-R.git`
-
 [Install R 3.4 or greater](https://cloud.r-project.org/)   
 
-[Install Rstudio](https://www.rstudio.com/products/rstudio/download/)  
+[Install RStudio](https://www.rstudio.com/products/rstudio/download/)  
 
 [Install Anaconda Python (3.7+)](https://www.anaconda.com/download/#macos) if you have not already done so. Use default options.  
 
+# Download materials
+
+[Download the workshop materials](https://github.com/dlab-berkeley/Deep-Learning-in-R)
+  * Click green “Clone or Download” button
+  * Click “Download Zip”
+  * Extract this zip file to your Dropbox / Box / etc. and double-click the Rproj file.
+  
+Or (advanced):
+  * Copy the github clone URL (https or ssh version)
+  * In RStudio select File -> New Project -> Version Control -> Git and paste the repository URL
+
 ---
 
-# Install keras by typing in RStudio script/console:
+# Install keras by typing in the RStudio console or an R script:
 
 `devtools::install_github("rstudio/keras")`  
 `install.packages("keras")`  
