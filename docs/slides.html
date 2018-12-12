@@ -288,17 +288,17 @@ model = keras_model_sequential()
 
 model %&gt;%
   
-*(INPUT LAYER)
+*# (INPUT LAYER)
   layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %&gt;%
   
   layer_dropout(rate = 0.4) %&gt;% 
   
-*(HIDDEN LAYER) 
+*# (HIDDEN LAYER) 
   layer_dense(units = 128, activation = 'relu') %&gt;%
   
   layer_dropout(rate = 0.3) %&gt;%
   
-*(OUTPUT LAYER)
+*# (OUTPUT LAYER)
   layer_dense(units = 10, activation = 'softmax')
 
 summary(model)
