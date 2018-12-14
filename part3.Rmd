@@ -207,11 +207,8 @@ model %>%
             optimizer_adam(#lr = 0.00001,
                            #lr = 0.0005,
                            lr = 0.0001,
-                           beta_1 = 0.9,
-                           beta_2 = 0.999, epsilon = 1e-08,
-                           decay = 0.0
-                           #decay = 1e-5
-                           ),
+                           # epsilon is a configuratoin setting for the adam optimizer.
+                           epsilon = 1e-08),
           # Or can use string version: loss = "binary_crossentropy".
           loss = loss_binary_crossentropy,
           metrics = "accuracy")
@@ -238,6 +235,8 @@ plot(history)
 
 ## Train full model
 
+Now we unfreeze the entire model and train for just a few epochs to customize the entire model to our specific dataset.
+
 ```{r}
 # Unfreeze_weights() seems to require that we explicitly specify the layers.
 unfreeze_weights(model, 1, length(model$layers))
@@ -246,9 +245,7 @@ model %>%
   compile(optimizer =
             # Notice that our learning rate is lower here.
             optimizer_adam(lr = 0.00001,
-                           beta_1 = 0.9,
-                           beta_2 = 0.999, epsilon = 1e-08,
-                           decay = 0.0),
+                           epsilon = 1e-08),
           loss = loss_binary_crossentropy,
           metrics = "accuracy")
 
@@ -262,6 +259,10 @@ history = model %>%
 ```
 
 Our validation loss is now lower than the training loss - any ideas why that would be?
+
+Challenges:
+1. Go back to the first model and try modifying some settings: number of hidden units, additional hidden layers, and/or dropout rate. How do they each affect your results?
+2. Review the help page for optimizer_adam and try changing a setting or two. Click to the other optimizers and try a different optimizer.
 
 ## Data augmentation
 
