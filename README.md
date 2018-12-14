@@ -30,6 +30,10 @@ Convey the basics of deep learning in R using keras on image datasets. Students 
 
 ## Prerequisites
 
+This is an advanced level workshop. Participants should be intermediate R users and have had some prior exposure to machine learning.
+
+We assume the following background:
+
 * D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (4 hours)
 * Or, comparable experience/training, assuming familiarity with:
   * Basic R syntax
@@ -38,6 +42,8 @@ Convey the basics of deep learning in R using keras on image datasets. Students 
   * Dataset cleaning
   * Overfitting / underfitting
   * Hyperparameter customization
+
+If you are not comfortable installing packages, writing your own R code, and using RStudio, this will not be a good workshop for you.
 
 ## Technology requirements
 
