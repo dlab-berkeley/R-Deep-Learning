@@ -45,7 +45,7 @@ Please bring a laptop with the following:
 
 * [R version](https://cloud.r-project.org/)
 3.4 or greater
-* [RStudio integrated development environment (IDE)](https://www.rstudio.com/products/rstudio/download/#download) is
+* [RStudio editor](https://www.rstudio.com/products/rstudio/download/#download) is
 highly recommended but not required.
 
 ## Resources
