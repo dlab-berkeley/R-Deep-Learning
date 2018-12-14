@@ -130,9 +130,19 @@ ggdraw() + draw_image(train_files[2]) + ggtitle("2nd image") + theme_minimal() +
 
 ```
 
-## Setup data and core model
+## Pre-trained network + Fine tuning
+
+In order to reach high levels of accuracy, neural networks generally need to be very deep, which means many hidden layers. This allows the network to build a complex understanding of the input data because deeper layers build upon earlier layers to "engineer" new features that it has learned are related to predicting accurately.
+
+However deep neural networks consist of millions of links (weights) between neurons, and if we have only 100 observations the network doesn't have sufficient information to adjust the weights accurately. As a result deep neural networks built from scratch require a large number of observations: preferably millions, but possibly down to 50k (depending on the task).
+
+What has emerged as a way around this limitation is "pre-training + fine-tuning". First, we train a complex (deep) neural network on a large dataset, which allows the layers to calibrate their weights well. Our hope is that the features it engineers on that dataset will be applicable to our new, smaller dataset. This is known as the "base model", and Keras supplies 10 such pre-trained models for our usage.
+
+Next we apply that pre-trained neural network to our smaller dataset. We remove the last layer or two which are more specific to the original dataset, and add on a new layer or two that are randomly initialized. **Fine-tuning** is then re-running the network on our smaller dataset and updating primarily those new layers to our small dataset; we may also update the "base" neural network weights slightly.
 
 We are using Inception v3 to jump-start our deep learning, but [many others are available in Keras](https://keras.rstudio.com/articles/applications.html).
+
+## Setup data and core model
 
 ```{r setup_model}
 # Dimensions of our images as expected by the neural architecture.
@@ -231,10 +241,10 @@ plot(history)
 ```{r}
 # Unfreeze_weights() seems to require that we explicitly specify the layers.
 unfreeze_weights(model, 1, length(model$layers))
-summary(model)
 
 model %>%
   compile(optimizer =
+            # Notice that our learning rate is lower here.
             optimizer_adam(lr = 0.00001,
                            beta_1 = 0.9,
                            beta_2 = 0.999, epsilon = 1e-08,
@@ -251,7 +261,11 @@ history = model %>%
                 validation_steps = as.integer(num_validation_samples / batch_size))
 ```
 
+Our validation loss is now lower than the training loss - any ideas why that would be?
+
 ## Data augmentation
+
+As optional homework, here is sample code for a more complex image data generator. This code uses **data augmentation**, which applies random small perturbations to the original images to 1) approximate having a larger sample size, and 2) encourage the network to be less sensitive to the original image characteristics. As a result, this augmentation step should allow us to achieve better performance compared to not doing it.
 
 ```{r data_augmentation}
 train_datagen =
