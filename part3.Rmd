@@ -1,5 +1,5 @@
 ---
-title: "R for Deep Learning"
+title: "Deep Learning in R: Part 3 (Fine-tuning)"
 output: html_document
 ---
 
@@ -12,14 +12,21 @@ One this chunk once manually if needed. It won't be executed when knitting the f
 install.packages("magick")
 ```
 
+ImageMagick is an open source image processing library in C++ that is supported in many different languages; we are using an R package that interfaces with the C++ code. See details in the [magick vignette](https://cran.r-project.org/web/packages/magick/vignettes/intro.html).
+
 ## Load packages
+
+Typically when conducting statistical analysis we want to ensure reproducible results. In other words, if I run the analysis file twice I should get exactly the same estimated accuracy each time. This is important when publishing research and when doing experiments.
+
+Unfortunately deep learning in Keras and Tensorflow is not easily reproducible. RStudio recommends that we run the `use_session_with_seed()` function immediately after loading the keras package. We may need to also disable both GPU support and use of multiple CPU cores to guarantee reproducible results. Realistically that would be too slow in many cases, so we may have to settle with not necessarily having 100% reproducible results. See more details in the [RStudio Keras FAQ](https://keras.rstudio.com/articles/faq.html#how-can-i-obtain-reproducible-results-using-keras-during-development).
 
 ```{r load_packages}
 
 library(keras)
+
 # Set the seed immediately after loading keras library.
-# More info on reproducibility here:
-# https://keras.rstudio.com/articles/faq.html#how-can-i-obtain-reproducible-results-using-keras-during-development
+# If the library was already loaded, we may want to run .rs.restartR() to restart
+# our R session.
 use_session_with_seed(1, disable_gpu = FALSE, disable_parallel_cpu = FALSE)
 
 library(dplyr)
@@ -30,6 +37,9 @@ library(tensorflow)
 ```
 
 ## Download imaging data
+
+In parts 3 and 4 we don't store the image data in the GitHub repository directly, because
+Git is intended to track changes text files and doesn't work as well for binary files like images ((see one opinionated article on this)[https://robinwinslow.uk/2013/06/11/dont-ever-commit-binary-files-to-git/]). Instead we will download a zip file and unzip it programmatically. This keeps the repository size smaller and quicker to clone or download.
 
 ```{r download_data}
 local_file = "data-raw/medical_images.zip"
@@ -46,9 +56,17 @@ if (!file.exists("data-raw/Open_I_abd_vs_CXRs")) {
 }  
 ```
 
-## Import images
+## Setup paths
 
-```{r import_images}
+We will use the `dirs` list to organize our different directories into a few variables:
+
+  * `dirs$base` - path to our main directory with the images unzipped.
+  * `dirs$train` - path to the training set folder.
+  * `dirs$val` - path to the validation set folder.
+  
+It's a good practice to organize multiple settings into a single list object. For one, it keeps the environment more organized, and it also makes it easier to save those settings into an RData file for posterity.
+
+```{r setup_paths}
 # Organize our directories into a list.
 dirs = list(base = "data-raw/Open_I_abd_vs_CXRs/")
 
