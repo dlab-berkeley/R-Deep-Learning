@@ -1,5 +1,5 @@
 ---
-title: "Cloud ML"
+title: "Deep Learning in R: Part 4 (Cloud Machine Learning)"
 output: html_document
 ---
 

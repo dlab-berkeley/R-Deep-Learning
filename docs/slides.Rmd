@@ -97,8 +97,8 @@ Or (advanced):
 
 ```{r}
 install.packages("keras")  
-keras::install_keras()  
 library(keras)
+install_keras()  
 ```
 
 ## Install key additional packages:  
