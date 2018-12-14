@@ -13,6 +13,7 @@ the Tensorflow Cloud ML [getting started page](https://tensorflow.rstudio.com/to
 Side note: [HIPAA compliance information is available here](https://cloud.google.com/security/compliance/hipaa/).
 
 ```{r cloud_install, eval = FALSE}
+# Xarigan is only needed because it's used in docs/slides.Rmd.
 install.packages(c("cloudml", "xaringan"))
 
 # Install Google Cloud SDK.
