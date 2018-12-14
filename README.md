@@ -1,6 +1,6 @@
 # Deep Learning in R
 
-This is the repository for D-Lab’s Introduction to Deep Learning in R workshop.
+This is the repository for D-Lab’s Introduction to Deep Learning in R workshop. [View the associated slides here](https://dlab-berkeley.github.io/Deep-Learning-in-R/slides.html#1).
 
 [![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/dlab-berkeley/Deep-Learning-in-R/master?urlpath=rstudio)
 
