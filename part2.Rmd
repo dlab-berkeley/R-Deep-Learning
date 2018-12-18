@@ -35,19 +35,19 @@ ggdraw() + draw_image(val_images[1])
 ### Define model characteristics
 Now, we want to define some of the characteristics outside of our model. This way, we can just pass in the same variable instead of a value each time.
 ```{r}
-# Define image width and height as 96 pixels
+# Expected image width and height are 96 pixels.
 img_width = img_height = 96L
 
-# Define our batch size, or number of training observations for each epoch, as 100
+# Number of observations to analyze per iteration.
 batch_size = 100L
 
-# Define the number of images in our training dataset to be used (600)
-(num_train_samples = length(list.files(train_path, recursive = T)))
+# Number of images in our training data (600).
+(num_train_samples = length(list.files(train_path, recursive = TRUE)))
 
-# Define the number of images in our validation dataset to use (50)
-num_validation_samples = 50L
+# Number of images in our validation data.
+num_validation_samples = 100L
 
-# Define the number of full passes of the model
+# Number of full passes through the training data.
 epochs = 30L
 ```
 
