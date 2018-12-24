@@ -35,6 +35,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   eval = FALSE
 )
+library(ggplot2)
 # This is good for getting the ggplot background consistent with
 # the html background color
 thm <- theme_bw() + 
@@ -328,7 +329,7 @@ model = keras_model_sequential()
 
 model %>%
   
-*# (INPUT LAYER)
+*# (INPUT LAYER + HIDDEN LAYER)
   layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>%
   
   layer_dropout(rate = 0.4) %>% 

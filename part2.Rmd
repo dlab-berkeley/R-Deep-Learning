@@ -114,12 +114,11 @@ model %>%
   # Note: we did not have to do this in part1 because the data were already flattened
   layer_flatten(input_shape = c(img_width, img_height, 1)) %>%
 
-  # INPUT LAYER
+  # HIDDEN LAYER
   # layer_dense allows us to actually add the input layer. What parameters are we specifying?
   layer_dense(units = 96, activation = 'relu', input_shape = c(img_width, img_height)) %>%
   
-  # INPUT LAYER
-  # layer_dropout allows us to apply regularization to our model and can apply to all layers
+  # layer_dropout allows us to apply regularization to our model.
   layer_dropout(rate = 0.4) %>%
 
   # HIDDEN LAYER

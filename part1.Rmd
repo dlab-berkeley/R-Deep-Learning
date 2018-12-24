@@ -131,14 +131,14 @@ model = keras_model_sequential()
 
 model %>% 
   
-  # INPUT LAYER
+  # INPUT LAYER + 1st HIDDEN LAYER.
   # layer_dense allows us to add a layer! What parameters are we specifying?
   
   layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
   
   layer_dropout(rate = 0.4) %>% 
   
-  # HIDDEN LAYER 
+  # HIDDEN LAYER  (2nd)
   layer_dense(units = 128, activation = 'relu') %>%
   
   layer_dropout(rate = 0.3) %>%
