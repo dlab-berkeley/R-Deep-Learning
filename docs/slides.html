@@ -225,9 +225,15 @@ class: center
 
 ---
 
+# Part 1
+
+### Open Part1.Rmd to begin the coding walkthrough. 
+
+---
+
 class: center
 
-# Performance
+# Part 1 - MNIST classification performance
 **Training set**
 &lt;img src="slide_img/keras MNIST training data.png" width="600px" style="display: block; margin: auto;" /&gt;
   
@@ -242,26 +248,41 @@ acc = 0.9817
 
 ---
 
-# Part 2 functions
-#### `list_files()`: 
+# Part 2
 
-#### `image_data_generator()`  
+Now look at an example that is more realistic in terms of additional preprocessing that you will have to consider if you are using your own images. The MNIST dataset was already curated for us into training and test sets with defined `\(x\)` and `\(y\)` variables. 
 
-#### `flow_from_directory()`  
-
-#### `keras_model_sequential()`  
-
-#### `layer_flatten()`, `layer_dense()`, `layer_dropout()`, `compile()`  
-
-#### `fit_generator`  
-
-#### `evaluate_generator`  
+This time however, try and classify raw images of dogs and people from the [Stanford Dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/) and [INRIA Person](http://pascal.inrialpes.fr/data/human/) image databases. This time, the setup will be a little bit different. 
 
 ---
 
-Part 2  
+# Part 2 functions
+#### `list_files()`: Returns ful path of images
 
-Now that you are warmed up, let's see what Keras can do when we have our own folders of images. Here we have two folders of [dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/) and [people](http://pascal.inrialpes.fr/data/human/), located in training and validation directories. 
+#### `image_data_generator()`: Performs data augmentation
+
+#### `flow_from_directory()`: Properly define variables for model fitting
+
+#### `keras_model_sequential()`: Build the network
+
+#### `layer_flatten()`, `layer_dense()`, `layer_dropout()`, `compile()`: What are these?  
+(hint: the same as Part 1 except for one - which one?)
+
+#### `fit_generator()`: Used to fit models to training data when `flow_from_directory()` is used
+
+#### `evaluate_generator()`: Used to evaluate performance on validation sets when `flow_from_directory()` is used. 
+
+---
+
+# Part 2
+
+### Open Part2.Rmd to begin the next walkthrough. 
+
+---
+
+# Part 2  
+
+For the Part 2 example, we use two folders of [dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/) and [people](http://pascal.inrialpes.fr/data/human/), located in training and validation directories. 
 
 
 ```r
@@ -282,26 +303,22 @@ val_images = list.files(val_path, full.names = TRUE, recursive = TRUE)
 
 ---
 
-Part 2  
+# Part 2  
 
-We can fit the model like before, by defining the number of units in each layer, the activation function, the input size, etc. However we should also specify: 
+We can fit the model like before by defining the number of units in each layer, the activation function, etc. However we should also specify: 
 - Image width and height  
 - Batch size  
 - Number of training samples  
 - Number of validation samples  
 - Epochs  
 
+However, since we are using images stored in directories that were manually downloaded and not as part of a built-in example, the functions to be used will change slightly. 
+
 ---
 
 # Part 2: `image_data_generator`
-This function [performs data augmentation](https://keras.rstudio.com/reference/image_data_generator.html). It contains many tunable parameters, but we will just use the rescale to the gray channel. 
+This function [performs data augmentation](https://keras.rstudio.com/reference/image_data_generator.html). It contains many tunable parameters, but we will just use it to rescale RGB color profile to the gray channel. 
 
-
-```r
-train_datagen = keras::image_data_generator(rescale = 1/255)  
-
-val_datagen = keras::image_data_generator(rescale = 1/255)
-```
 ---
 
 # Part 2: `flow_from_directory`
@@ -327,29 +344,29 @@ Same as Part 1, except we need to first flatten the three dimensional array to o
 layer_flatten(input_shape = c(img_width, img_height, 1))
 ```
 
-The `compile` step (loss function, activation function, and performance metric) is also the same as Part 1. 
+The `compile` step (loss function, activation function, and performance metric) is also similar to Part 1 except in Part 2 we use ["optimizer_adam"](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Adam) instead of ["optimizer_rmsprop"](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#RMSProp). 
 
 ---
 
 # Part 2: `fit_generator`
 
-This fits the training model configuration (using `flow_from_directory`)  
+This fits the training model configuration (using `flow_from_directory`). Remember the jargon from earlier:  
 - Steps per epoch: the number of batch runs to complete one full iteration of training.  
 - Epochs: 
 - Validation data: the validation model 
 - Validation steps: the number of batch runs needed to complete one full iteration of validation.  
 
-
-```r
-history = model %&gt;%
-  fit_generator(train_gen, steps_per_epoch = as.integer(num_train_samples / batch_size),
-  epochs = epochs, validation_data = val_gen, validation_steps = as.integer(num_validation_samples / batch_size))
-```
-
 ---
 
-# Part 2: `evaluate_generator`
-Predict on the validation data! 
+class: center
+
+# Part 2: Dog-human classification performance
+**Training Set**
+&lt;img src="slide_img/Part 2 dog-human training set.png" width="550px" style="display: block; margin: auto;" /&gt;
+
+Use `evaluate_generator` to predict on the **validation data**.  
+loss = 0.5146442  
+acc = 0.74 
 
 
 ```r

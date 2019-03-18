@@ -150,6 +150,8 @@ model %>% compile(
 )
 ```
 
+The `compile` step (loss function, activation function, and performance metric) is also similar to Part 1 except in Part 2 we use ["optimizer_adam"](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Adam) instead of ["optimizer_rmsprop"](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#RMSProp). 
+
 ### Train the model and evaluate its performance on new data
 
 Note that we have to use `fit_generator` to fit our model this time because we are also using the custom `flow_from_directory` function rather than the simpler format of part1.
