@@ -433,6 +433,9 @@ ISBN 9781617295546.
 
 Dancho M. 2018. [Deep learning with keras to predict customer churn.](https://blogs.rstudio.com/tensorflow/posts/2018-01-11-keras-customer-churn/)
 
+---
+
+# Acknowledgements  
 [Getting started](https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html) with keras: Overview vignette. 
 
 Lakhani, P. 2018. [Hello_World_Deep_Learning.](https://github.com/paras42/Hello_World_Deep_Learning)
