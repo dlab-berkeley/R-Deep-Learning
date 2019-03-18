@@ -89,4 +89,7 @@ highly recommended but not required.
     * F. Chollet and J.J. Allaire - [Deep Learning in R](https://www.manning.com/books/deep-learning-with-r)
     * I. Goodfellow, Y. Bengio, A. Courville - [www.deeplearningbook.org](https://www.deeplearningbook.org/)
     * Zhang et al. - [Dive into Deep Learning](http://en.diveintodeeplearning.org/) 
+    
+* Python
+    * [Qingkai Kong's Artificial Neural Network basics in Python](https://github.com/qingkaikong/20181129_ANN_basics_DLab)
 
