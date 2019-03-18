@@ -127,6 +127,7 @@ model %>%
   layer_dropout(rate = 0.3) %>%
   
   # OUTPUT LAYER
+  # here we can change our activation to a sigmoid function for a binary outcome
   layer_dense(units = 1, activation = 'sigmoid')
 
 summary(model)
