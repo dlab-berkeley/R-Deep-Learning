@@ -2,7 +2,7 @@
 title: "Introduction to Deep Learning in R"
 subtitle: ""
 author: "D-Lab - Evan Muzzall and Chris Kennedy"
-date: "Dec 14, 2018 (updated: `r Sys.Date()`)"
+date: "March 18, 2019 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: ["scrollable.css", "mtheme_max.css", "fonts_mtheme_max.css"]
@@ -59,7 +59,7 @@ class: title-slide
 # .font130[Introduction to Deep Learning in R]
 
 ### Evan Muzzall and Chris Kennedy  
-### Dec. 14, 2018
+### March 18, 2019
 
 ---
 
@@ -245,145 +245,37 @@ knitr::include_graphics("slide_img/deep.png")
 
 # Part 1 functions
 
-#### `data_mnist()`
-#### `array_reshape()`
-#### `to_categorical()`
-#### `layer_dense()`
-#### `layer_dropout()`
-#### `compile()`
-#### `fit()`
-#### `evaluate()`
+#### `data_mnist()`: Open prebuilt MNIST dataset
+
+#### `array_reshape()`: Reshape, rescale, one-hot encode
+
+#### `to_categorical()`: Convert y to factor type
+
+#### `keras_model_sequential()`: Build the network
+
+#### `layer_dense()`: Define number of units, input_shape, and activation function. 
+
+#### `layer_dropout()`: Specify dropout rate
+
+#### `compile()`: Compute loss function, optimizer, and metrics
+
+#### `fit()`: Fit/build the model; (eval training set performance)
+
+#### `evaluate()`: Evaluate test data performance
 
 ---
 
-# Part 1: `data_mnist`
-[Load the MNIST dataset](http://yann.lecun.com/exdb/mnist/) using the built-in function `mnist = dataset_mnist()` and assign the training and test X and Y variables: 
+class: center
 
-#### Training set
-```{r eval=F}
-x_train = mnist$train$x  
-y_train = mnist$train$y
+# Performance
+**Training set**
+```{r, out.width = "600px", echo = F, eval = TRUE}
+knitr::include_graphics("slide_img/keras MNIST training data.png")
 ```
-
-#### Validation (test) set
-```{r eval=F}
-x_test = mnist$test$x  
-y_test = mnist$test$y
-```
-
-#### Note the array dimension differences
-```{r eval=F}
-str(mnist$train$x)
-str(x_train)
-```
----
-
-# Part 1: `array_reshape`
-This function converts our 3D tensor (samples, height, width) to a 2D one (samples, input shape). 
-
-```{r eval=F}
-x_train = array_reshape(x_train, c(nrow(x_train), height * width))
-
-x_test = array_reshape(x_test, c(nrow(x_test), height * width))
-```
-
-#### Check new dimensions (2D)
-```{r eval=F}
-str(x_train)
-
-str(x_test) 
-```
-
-#### Gray rescale:  
-```{r eval=F}
-x_train = x_train / 255
-
-x_test = x_test / 255
-```
-
----
-
-# Part 1: `to_categorical`
-Convert integer vector to binary class matrix. Specify the train and test labels and the number of Y classes (10, the numbers 0 thru 9).  
-
-```{r eval=F}
-y_train = to_categorical(y_train, 10) 
-
-y_test = to_categorical(y_test, 10)
-```
-
----
-
-# Part 1: `keras_model_sequential`
-This function allows us to build a linear stack of layers. We will make a model with one input layer, one hidden layer, and one output layer. We need to define:  
-- The number of units in the layer.  
-- Activation function: how to determine the output of a node (e.g., sigmoid, relu, tanh).  
-- Input shape: image dimensions  
-- Dropout: a regularization method for preventing overfitting by reducing the number of units in a layer during a pass/epoch.  
----
-
-# Part 1
-
-```{r eval=FALSE}
-model = keras_model_sequential()
-
-model %>%
   
-*# (INPUT LAYER + HIDDEN LAYER)
-  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>%
-  
-  layer_dropout(rate = 0.4) %>% 
-  
-*# (HIDDEN LAYER) 
-  layer_dense(units = 128, activation = 'relu') %>%
-  
-  layer_dropout(rate = 0.3) %>%
-  
-*# (OUTPUT LAYER)
-  layer_dense(units = 10, activation = 'softmax')
-
-summary(model)
-```
-
----
-
-# Part 1: `compile` 
-Here we can define the performance evaluation metrics to be incorporated into the model.  
-
-**Loss function:** measures the difference in distance scores between predicted and actual outcomes (i.e., a residual); we hope to minimize this value.  
-
-**Optimizer function:** responsible for the backpropagation algorithm; defines how the loss function's gradient will update the weights. Also associated with the optimizer is the "learning rate", or by _how much_ should we update these weights?  
-  
-**Performance metric:** We can just choose accuracy since we are tasked with a multinomial classification problem of ten handwritten digits.  
-
-```{r eval=FALSE}
-model %>%
-  compile(loss = 'categorical_crossentropy',
-          optimizer = optimizer_rmsprop(lr = 0.001),
-          metrics = c('accuracy'))`
-```
----
-
-# Part 1: `fit`
-We are almost ready to train the model, but we first need to provide a few more specifications. 
-
-- X and Y training data   
-- The number of epochs (full passes) where the weight gradients will be computed to update the weights. 
-- Batch size: number of samples from the training set to be used in a single epoch. An "iteration" is the number of batches necessary to complete one epoch, where gradients are computed relative to the loss of the individual batch. 
-- Validation split: percentage of data to be used as the validation set (0.2 means last 20%).  
-
-```{r eval=F}
-history = model %>%
-  fit(x_train, y_train, epochs = 30, batch_size = 128, validation_split = 0.2)
-```
-
----
-# Part 1: `evaluate`
-Predict on the test set!  
-
-```{r eval=F}
-model %>% evaluate(x_test, y_test)
-```
+**Test set**  
+loss = 0.101398  
+acc = 0.9817
 
 ---
 
@@ -393,13 +285,18 @@ model %>% evaluate(x_test, y_test)
 ---
 
 # Part 2 functions
-#### `list_files`  
-#### `image_data_generator`  
-#### `flow_from_directory`  
-#### `keras_model_sequential`  
-#### `layer_flatten`, `layer_dense`, `layer_dropout`  
-#### `compile`  
+#### `list_files()`: 
+
+#### `image_data_generator()`  
+
+#### `flow_from_directory()`  
+
+#### `keras_model_sequential()`  
+
+#### `layer_flatten()`, `layer_dense()`, `layer_dropout()`, `compile()`  
+
 #### `fit_generator`  
+
 #### `evaluate_generator`  
 
 ---
