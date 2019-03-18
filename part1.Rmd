@@ -54,6 +54,9 @@ Let's look at 70,000 handwritten digit images from the [Modified National Instit
 ```{r}
 # This line requires a working internet connection to download the data the first time.
 mnist = dataset_mnist()
+
+# How are the data stored? 
+str(mnist)
 ```
 
 ```{r}
@@ -122,7 +125,7 @@ View(y_test)
 
 ## Define the model
 
-Now we can define the model! We just want to build a linear stack of layers. The `units` parameter defines how many nodes we should have in each layer. `input_shape` allows us to define the image dimensions. The `activation` parameter allows us to pass in the name of an activationi function as the argument.  
+Now we can define the model! We just want to build a linear stack of layers. The `units` parameter defines how many nodes we should have in each layer. `input_shape` allows us to define the image dimensions. The `activation` parameter allows us to pass in the name of an activation function as the argument.  
 
 See `?keras_model_sequential` to learn more.
 
