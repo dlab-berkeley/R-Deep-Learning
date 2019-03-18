@@ -428,8 +428,7 @@ Allaire JJ, Chollet F. 2018. keras: R interface to 'Keras'.
 
 - https://cran.r-project.org/web/packages/keras/vignettes/getting_started.html  
 
-Chollet F., Allaire JJ. 2018. [Deep Learning in R](https://www.manning.com/books/deep-learning-with-r). Manning Publications  
-ISBN 9781617295546.  
+Chollet F., Allaire JJ. 2018. [Deep Learning in R](https://www.manning.com/books/deep-learning-with-r). Manning Publications ISBN 9781617295546.  
 
 Dancho M. 2018. [Deep learning with keras to predict customer churn.](https://blogs.rstudio.com/tensorflow/posts/2018-01-11-keras-customer-churn/)
 
