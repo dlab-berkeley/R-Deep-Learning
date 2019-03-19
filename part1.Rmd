@@ -112,7 +112,7 @@ y_test = to_categorical(y_test, 10)
 dim(y_train)
 dim(y_test)
 
-# Review percentage of obervationss with each digit label.
+# Review percentage of obervations with each digit label.
 round(colMeans(y_train), 3)
 round(colMeans(y_test), 3)
 ```
@@ -132,7 +132,7 @@ See `?keras_model_sequential` to learn more.
 ```{r}
 model = keras_model_sequential() 
 
-model %>% 
+model %>%
   
   # INPUT LAYER + 1st HIDDEN LAYER.
   # layer_dense allows us to add a layer! What parameters are we specifying?
@@ -179,7 +179,7 @@ history = model %>% fit(
 
 ### Interpreting the plot
 
-**loss**: loss is the mean of the average loss across each batch of training data. We expect that the loss for earlier batches is higher than that for later batches because the model _should_ be learning over time.  hope that the later batches of data have lower losses.  
+**loss**: loss is the mean of the average loss across each batch of training data. We expect that the loss for earlier batches is higher than that for later batches because the model _should_ be learning over time. We hope that the later batches of data have lower losses.  
 
 **acc**: is the training accuracy.  
 
