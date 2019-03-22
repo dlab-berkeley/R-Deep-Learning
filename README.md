@@ -56,7 +56,7 @@ highly recommended but not required.
 
 ## Getting Started
 
-[View the installation instructions]() to get started. 
+Be sure to [follow the install instructions](https://github.com/dlab-berkeley/Deep-Learning-in-R/blob/master/install.txt) to get started. This process can take about 30 minutes, so be sure to try and do this before class. 
 
 ## Resources
 
