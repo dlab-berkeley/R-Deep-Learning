@@ -2,7 +2,9 @@
 title: "Participant instructions"
 author: "D-Lab"
 date: "3/23/2019"
-output: html_document
+output:
+  html_document:
+      keep_md: yes
 ---
 
 # Participant Instructions - Deep Learning in R
@@ -19,34 +21,42 @@ We will then work with you to resolve any challenges. It is important to get eve
 
 ## Software Requirements
 
-#### Core Programs
+### Core Programs
 
 1. Install R 3.4 or greater: https://cloud.r-project.org/  
 
 To avoid package errors this should be installed separate from Anaconda. If you have R installed through Anaconda please uninstall it and install the non-Anaconda version.  
 
 2. Install RStudio: https://www.rstudio.com/products/rstudio/download/
+
 Install Anaconda Python (3.7+) if you have not already done so: https://www.anaconda.com/distribution/  
 
 Use the default options.
 
-#### R and Python Packages
+### R and Python Packages
 
 Install Keras by running these commands in the RStudio console or an R script:  
 
-```{r}
+
+```r
 devtools::install_github("rstudio/keras")
 install.packages("keras")
 keras::install_keras()
-Install key additional packages
-Image Magick
+```
+
+### Install key additional packages
+
+#### Image Magick
+
+
+```r
 install.packages("magick")
 library(magick)
 ```
 
 MacOS users with R installed via Homebrew, or Linux users, [see extra install info here.](https://cran.r-project.org/web/packages/magick/vignettes/intro.html#build_from_source)
 
-#### Part 4 Google Cloud
+## Part 4 Google Cloud
 
 To follow along with part 4's Google Cloud demonstration, you will need to:
 
@@ -70,7 +80,9 @@ Click the blue "Enable" button. You will be asked to enable billing - this won't
 8. Click the blue "Enable" button.
 
 9. Install the cloudml R package by running in RStudio:
-```{r}
+
+
+```r
 install.packages("cloudml")
 library(cloudml)
 gcloud_install()
@@ -88,7 +100,7 @@ If everything is setup correctly you will see "no lines available in input" as a
 
 Apply for an additional $200 credit for R users
 
-#### Download Workshop Materials
+## Download Workshop Materials
 
 This does not need to be done in advance, because we may be making last-minute improvements.
 
