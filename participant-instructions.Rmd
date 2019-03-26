@@ -1,7 +1,4 @@
 ---
-title: "Participant instructions"
-author: "D-Lab"
-date: "3/23/2019"
 output: github_document
 ---
 

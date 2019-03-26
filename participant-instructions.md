@@ -1,7 +1,3 @@
-Participant instructions
-================
-D-Lab
-3/23/2019
 
 # Participant Instructions - Deep Learning in R
 
