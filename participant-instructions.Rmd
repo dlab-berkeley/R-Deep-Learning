@@ -2,9 +2,7 @@
 title: "Participant instructions"
 author: "D-Lab"
 date: "3/23/2019"
-output:
-  html_document:
-      keep_md: yes
+output: github_document
 ---
 
 # Participant Instructions - Deep Learning in R
