@@ -206,4 +206,6 @@ model %>% evaluate(x_test, y_test)
 ```
 
 ## Challenge
-Write down the steps you followed to run this model from start to finish. What does each part do? 
+1. Write down the steps you followed to run this model from start to finish. What does each part do? 
+
+2. Change the number of units and dropout in the layers. Can you change them to get even better (or worse) predictive performance on the test set? 
