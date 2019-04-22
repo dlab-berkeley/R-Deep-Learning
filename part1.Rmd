@@ -21,7 +21,9 @@ install.packages("keras")
 # devtools::install_github("rstudio/keras")
 
 # Then run install_keras() function to install anaconda python, tensorflow, and keras.
-keras::install_keras()
+# keras::install_keras()
+# Or:
+# keras::install_keras(method = "conda")
 # Or if you have a GPU and have followed these instructions:
 # https://tensorflow.rstudio.com/tools/local_gpu.html
 # NOTE: tensorflow seems to require CUDA 9.0 currently; 9.2 for example will not work.
@@ -43,6 +45,11 @@ library(keras)
 library(dplyr)
 library(tensorflow)
 library(ggplot2)
+
+# Review which version of Python R has chosen to use.
+reticulate::py_config()
+# This should return TRUE
+keras::is_keras_available()
 ```
 
 ## MNIST handwritten digit example
@@ -136,7 +143,6 @@ model %>%
   
   # INPUT LAYER + 1st HIDDEN LAYER.
   # layer_dense allows us to add a layer! What parameters are we specifying?
-  
   layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
   
   layer_dropout(rate = 0.4) %>% 
