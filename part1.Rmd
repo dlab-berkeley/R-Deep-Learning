@@ -21,8 +21,9 @@ install.packages("keras")
 # devtools::install_github("rstudio/keras")
 
 # Then run install_keras() function to install anaconda python, tensorflow, and keras.
-# keras::install_keras()
-# Or:
+keras::install_keras()
+# Or one of these (for Mac):
+# keras::install_keras(method = "virtualenv")
 # keras::install_keras(method = "conda")
 # Or if you have a GPU and have followed these instructions:
 # https://tensorflow.rstudio.com/tools/local_gpu.html
