@@ -135,7 +135,7 @@ model = keras_model_sequential()
 model %>%
   
   # INPUT LAYER + 1st HIDDEN LAYER.
-  # layer_dense allows us to add a hidden layer! However, note that the input_shape argument is what actually specifies the input layer. 
+  # layer_dense allows us to add a hidden layer! However, note that the input_shape argument is what actually specifies the input layer; "units = " and "activation = " define the first hidden layer. 
   
   layer_dense(units = 256, activation = 'relu', input_shape = 784) %>% 
   
