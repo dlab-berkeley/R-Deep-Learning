@@ -91,6 +91,7 @@ Be sure to [follow the install instructions](https://github.com/dlab-berkeley/De
 
 * Books
     * F. Chollet and J.J. Allaire - [Deep Learning in R](https://www.manning.com/books/deep-learning-with-r)
+    * Charniak E - [Introudction to Deep Learning](https://mitpress.mit.edu/books/introduction-deep-learning)  
     * I. Goodfellow, Y. Bengio, A. Courville - [www.deeplearningbook.org](https://www.deeplearningbook.org/)
     * Zhang et al. - [Dive into Deep Learning](http://en.diveintodeeplearning.org/) 
     
