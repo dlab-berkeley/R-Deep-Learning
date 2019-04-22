@@ -125,7 +125,7 @@ View(y_test)
 
 ## Define the model
 
-Now we can define the model! We just want to build a linear stack of layers. The `units` parameter defines how many nodes we should have in each layer. `input_shape` allows us to define the image dimensions. The `activation` parameter allows us to pass in the name of an activation function as the argument.  
+Now we can define the model! We just want to build a linear stack of layers. The `units` parameter defines how many nodes we should have in each layer. `input_shape` allows us to define the image dimensions in the actual input layer. The `activation` parameter allows us to pass in the name of an activation function as the argument.  
 
 See `?keras_model_sequential` to learn more.
 
@@ -135,9 +135,9 @@ model = keras_model_sequential()
 model %>%
   
   # INPUT LAYER + 1st HIDDEN LAYER.
-  # layer_dense allows us to add a layer! What parameters are we specifying?
+  # layer_dense allows us to add a hidden layer! However, note that the input_shape argument is what actually specifies the input layer. 
   
-  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = 784) %>% 
   
   layer_dropout(rate = 0.4) %>% 
   
