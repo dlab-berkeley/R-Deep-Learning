@@ -26,9 +26,12 @@ val_images = list.files(val_path, full.names = TRUE, recursive = TRUE)
 length(train_images)
 length(val_images)
 
+train_images[1]
+val_images[1]
+
 # Plot the first training image, and the first validation image
 library(cowplot)
-ggdraw() + draw_image(train_images[1])
+ggdraw() + draw_image(train_images[20])
 ggdraw() + draw_image(val_images[1])
 ```
 
@@ -65,7 +68,7 @@ val_datagen = keras::image_data_generator(rescale = 1/255)
 > Remember that we can learn a lot more about our keras variables by using the dollar sign operator `$`. This functions in a similar way to dot notation in Python for calling methods. Press the tab key after the dollar sign in the cell below:
 
 ```{r, eval = F}
-train_datagen$
+train_datagen
 ```
 
 ### Define the image characteristics
@@ -144,7 +147,7 @@ model %>% compile(
   loss = 'binary_crossentropy',
   
   # Slow the learning rate a little...
-  optimizer = optimizer_adam(lr = 0.0001), 
+  optimizer = optimizer_adam(lr = 0.000001), 
   
   # How to evaluate model performance
   metrics = c('accuracy')
@@ -158,11 +161,15 @@ The `compile` step (loss function, activation function, and performance metric) 
 Note that we have to use `fit_generator` to fit our model this time because we are also using the custom `flow_from_directory` function rather than the simpler format of part1.
 
 ```{r}
+#batch_size = 100
+batch_size = 10
+num_validation_samples
 set.seed(1)
 history = model %>%
   fit_generator(train_gen,
                 steps_per_epoch = as.integer(num_train_samples / batch_size),
                 epochs = epochs,
+                #epochs = 13,
                 validation_data = val_gen,
                 validation_steps = as.integer(num_validation_samples / batch_size))
 

@@ -23,8 +23,8 @@ install.packages("keras")
 # Then run install_keras() function to install anaconda python, tensorflow, and keras.
 keras::install_keras()
 # Or one of these (for Mac):
-# keras::install_keras(method = "virtualenv")
-# keras::install_keras(method = "conda")
+keras::install_keras(method = "virtualenv")
+keras::install_keras(method = "conda")
 # Or if you have a GPU and have followed these instructions:
 # https://tensorflow.rstudio.com/tools/local_gpu.html
 # NOTE: tensorflow seems to require CUDA 9.0 currently; 9.2 for example will not work.
@@ -49,6 +49,7 @@ library(ggplot2)
 
 # Review which version of Python R has chosen to use.
 reticulate::py_config()
+#reticulate::use_virtualenv("r-tensorflow")
 # This should return TRUE
 keras::is_keras_available()
 ```
@@ -95,6 +96,8 @@ x_test = array_reshape(x_test, c(nrow(x_test), height * width))
 # Check the new 2D feature dimensions
 str(x_train)
 str(x_test)
+summary(x_train[, 1:50])
+x_train[1, ]
 ```
 
 ### Gray rescale
@@ -112,6 +115,7 @@ x_test = x_test / 255
 We also want to convert our y outcome vector to a one-hot encoded binary matrix. We specify 10 because we have 10 numbers (0 thru 9). Type `?to_categorical` to learn more. 
 
 ```{r}
+head(y_train)
 # Convert our outcome and specify 10 possible classes.
 y_train = to_categorical(y_train, 10)
 y_test = to_categorical(y_test, 10)
@@ -120,9 +124,13 @@ y_test = to_categorical(y_test, 10)
 dim(y_train)
 dim(y_test)
 
+head(y_train)
+
 # Review percentage of obervations with each digit label.
+colMeans(y_train)
 round(colMeans(y_train), 3)
 round(colMeans(y_test), 3)
+summary(y_train)
 ```
 
 Or, see the data in its entirety of 0's and 1's. How do the dimensions of these matrices relate to your `dim` calls above? 
@@ -145,12 +153,12 @@ model %>%
   # INPUT LAYER + 1st HIDDEN LAYER.
   # layer_dense allows us to add a hidden layer! However, note that the input_shape argument is what actually specifies the input layer; "units = " and "activation = " define the first hidden layer. 
   
-  layer_dense(units = 256, activation = 'relu', input_shape = 784) %>% 
+  layer_dense(units = 64, activation = 'relu', input_shape = 784) %>% 
   
   layer_dropout(rate = 0.4) %>% 
   
   # HIDDEN LAYER  (2nd)
-  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dense(units = 16, activation = 'relu') %>%
   
   layer_dropout(rate = 0.3) %>%
   
@@ -167,6 +175,7 @@ We define "categorical_crossentropy" as our loss function since we are dealing w
 ```{r}
 model %>% compile(
   loss = 'categorical_crossentropy',
+  # loss = "mean_squared_error",
   optimizer = optimizer_rmsprop(lr = 0.001),
   metrics = c('accuracy')
 )
@@ -180,7 +189,7 @@ Watch the model build epoch by epoch.
 set.seed(1)
 history = model %>% fit(
   x_train, y_train, 
-  epochs = 30, batch_size = 128, 
+  epochs = 45, batch_size = 128, 
   validation_split = 0.2
 )
 ```
@@ -197,6 +206,7 @@ history = model %>% fit(
 
 ```{r}
 plot(history) + theme_minimal()
+#ggsave()
 ```
 
 ## Evaluate performance on the test data
@@ -204,6 +214,12 @@ plot(history) + theme_minimal()
 ```{r}
 model %>% evaluate(x_test, y_test)
 # The model works pretty well! 
+
+# Generate predictions on the test data, without explicit evaluation.
+preds = model %>% predict(x_test)
+dim(preds)
+head(round(preds, 4))
+glimpse(preds)
 ```
 
 ## Challenge

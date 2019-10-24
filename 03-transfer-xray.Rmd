@@ -27,6 +27,7 @@ library(keras)
 # Set the seed immediately after loading keras library.
 # If the library was already loaded, we may want to run .rs.restartR() to restart
 # our R session.
+# This is broken right now.
 use_session_with_seed(1, disable_gpu = FALSE, disable_parallel_cpu = FALSE)
 
 library(dplyr)
@@ -168,6 +169,7 @@ val_gen =
 
 # This will download the inception weights the first time it is run (~84 MB)
 base_model = keras::application_inception_v3(include_top = FALSE,
+                                             pooling = "avg",
                                              input_shape = c(img_width, img_height, 3L))
 # Outputs an 8x8x2048 tensor.
 base_model$output_shape
@@ -187,7 +189,7 @@ freeze_weights(base_model)
 
 # Add custom layer to inception.
 model_top = base_model$output %>%
-  layer_global_average_pooling_2d() %>%
+  #layer_global_average_pooling_2d() %>%
   layer_dense(units = 128, activation = "relu") %>%
   layer_dropout(0.5) %>%
   layer_dense(units = 1, activation = "sigmoid")
@@ -253,7 +255,7 @@ model %>%
 history = model %>%
   fit_generator(train_gen,
                 steps_per_epoch = as.integer(num_train_samples / batch_size),
-                epochs = 2,
+                epochs = 4,
                 validation_data = val_gen,
                 validation_steps = as.integer(num_validation_samples / batch_size))
 ```
