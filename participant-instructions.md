@@ -41,8 +41,9 @@ Install Keras by running these commands in the RStudio console or an R
 script:
 
 ``` r
-devtools::install_github("rstudio/keras")
+# This will install the R package.
 install.packages("keras")
+# This will setup the Python environment, including Keras and tensorflow.
 keras::install_keras()
 ```
 
