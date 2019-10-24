@@ -51,6 +51,7 @@ qplot(log(data$favorite_count + 1))
 qplot(data$retweet_count)
 
 summary(data)
+table(data$source, useNA = "ifany")
 ```
 
 How about we try to predict the number of retweets a Trump tweet will receive?
@@ -60,7 +61,7 @@ How about we try to predict the number of retweets a Trump tweet will receive?
 Adapted in part from https://keras.rstudio.com/articles/examples/reuters_mlp.html
 
 ```{r data_prep}
-max_words <- 1000
+max_words <- 5000
 batch_size <- 32
 epochs <- 5
 
@@ -92,19 +93,33 @@ cat(length(x_test), 'test sequences\n')
 
 cat('Vectorizing sequence data...\n')
 
+x_train[[1]]
+
 tokenizer <- text_tokenizer(num_words = max_words)
 tokenizer$fit_on_texts(data[[text_col]])
+
+# Total number of unique words (tokens) found.
+length(tokenizer$word_index)
+
 x_train_seq = texts_to_sequences(tokenizer, x_train)
 x_train_seq[[1]]
+
 str(x_train_seq)
+
+# Review distribution of token length.
+summary(sapply(x_train_seq, length))
+
+maxlen = 61L
 
 train_data <- pad_sequences(
   x_train_seq,
   #value = word_index_df %>% filter(word == "<PAD>") %>% select(idx) %>% pull(),
   padding = "post",
-  maxlen = 256
+  maxlen = maxlen,
 )
 
+str(train_data)
+train_data[1, ]
 
 x_test_seq = texts_to_sequences(tokenizer, x_test)
 
@@ -112,7 +127,7 @@ test_data <- pad_sequences(
   x_test_seq,
 #  value = word_index_df %>% filter(word == "<PAD>") %>% select(idx) %>% pull(),
   padding = "post",
-  maxlen = 256
+  maxlen = maxlen,
 )
 ```
 
@@ -128,14 +143,16 @@ model %>%
   layer_embedding(input_dim = vocab_size, output_dim = 16) %>%
   layer_global_average_pooling_1d() %>%
   layer_dense(units = 16, activation = "relu") %>%
+  layer_dropout(rate = 0.3) %>%
   layer_dense(units = 1, activation = "linear")
 
 model %>% summary()
 
 model %>% compile(
-  optimizer = optimizer_adam(lr = 0.01),
+  optimizer = optimizer_adam(lr = 0.005),
   loss = 'mean_squared_error'
 )
+
 ```
 
 ## Train model
@@ -144,10 +161,17 @@ model %>% compile(
 history <- model %>% fit(
   train_data,
   y_train,
-  epochs = 35,
+  epochs = 50,
   batch_size = 4,
-  validation_split = 0.2
+  validation_split = 0.2,
+  callbacks = list(
+    callback_early_stopping(patience = 8L, restore_best_weights = TRUE),
+    callback_reduce_lr_on_plateau(patience = 4L)
+  )
 )
+
+history
+plot(history)
 ```
 
 ## Evaluate model
@@ -156,10 +180,10 @@ history <- model %>% fit(
 ```{r eval_model}
 (eval_loss = model %>% evaluate(test_data, y_test, verbose = 0))
 
-# We're typically off by 10,530 retweets
+# We're typically off by 10,483 retweets
 sqrt(eval_loss)
 
-# Just predicting the mean would only be off by 11,503 retweets typically.
+# Just predicting the mean would only be off by 11,519 retweets typically.
 sd(y_test)
 
 # Look at predictions.
@@ -169,13 +193,14 @@ summary(preds)
 
 mean(y_train)
 
-# Not getting a huge spread in our predictions.
 qplot(preds)
 
 qplot(preds, y_test) + geom_smooth() + theme_minimal()
 
-# Correlation of 0.41, p is highly significant.
+# Correlation of 0.44, p is highly significant.
 cor.test(preds, y_test)
+# Spearman correlation of 0.575
+cor.test(rank(preds), rank(y_test))
 ```
 
 ## Try another architecture
@@ -187,6 +212,7 @@ cor.test(preds, y_test)
 model <- keras_model_sequential()
 model %>% 
   layer_embedding(input_dim = vocab_size, output_dim = 32) %>%
+  #layer_lstm(16) %>%
   layer_conv_1d(64, kernel_size = 1) %>%
   layer_global_average_pooling_1d() %>%
   layer_dense(units = 16, activation = "relu") %>%
@@ -196,7 +222,7 @@ model %>%
 model %>% summary()
 
 model %>% compile(
-  optimizer = optimizer_adam(lr = 0.005),
+  optimizer = optimizer_adam(lr = 0.001),
   loss = 'mean_squared_error'
 )
 ```
@@ -209,8 +235,13 @@ history <- model %>% fit(
   y_train,
   epochs = 50,
   batch_size = 32,
-  validation_split = 0.2
+  validation_split = 0.2,
+  callbacks = list(
+    callback_early_stopping(patience = 6L, restore_best_weights = TRUE, verbose = 1),
+    callback_reduce_lr_on_plateau(patience = 3L, verbose = 1))
 )
+
+plot(history)
 ```
 
 ## Evaluate model2
@@ -219,7 +250,7 @@ history <- model %>% fit(
 ```{r eval_model2}
 (eval_loss = model %>% evaluate(test_data, y_test, verbose = 0))
 
-# We're typically off by 10,600 retweets
+# We're typically off by 10,750 retweets
 sqrt(eval_loss)
 
 # Look at predictions.
@@ -231,10 +262,18 @@ summary(preds)
 qplot(preds)
 qplot(preds, y_test) + geom_smooth() + theme_minimal()
 
-# Correlation of 0.42
+# Pearson linear correlation of 0.395
 cor.test(preds, y_test)
+# Spearman correlation of 0.563
+cor.test(rank(preds), rank(y_test))
+# Same thing:
+cor.test(preds, y_test, method = "spearman", exact = FALSE)
+# Kendall's tau 0.402
+cor.test(preds, y_test, method = "kendall", exact = FALSE)
 ```
 
-## Challenge
+## Challenges
 
-Challenge: adapt this code to predict the favorite count rather than retweet count.
+1. Adjust the hyperparameters to see if you can improve performance.
+2. Swap out the pooling and convolution layer with `layer_lstm(16)` for comparison.
+3. Adapt this code to predict the favorite count rather than retweet count.
