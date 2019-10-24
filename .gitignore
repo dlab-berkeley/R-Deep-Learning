@@ -5,8 +5,9 @@
 .DS_Store
 
 # Don't track these medical images in git.
-data-raw/medical_images.zip
+data-raw/*.zip
 data-raw/Open_I_abd_vs_CXRs/
+data-raw/condensed_2018.json
 
 # cloudml
 runs
