@@ -8,6 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(rio)
 library(ggplot2)
+library(keras)
 ```
 
 ## Import data
@@ -132,7 +133,7 @@ model %>%
 model %>% summary()
 
 model %>% compile(
-  optimizer = 'adam',
+  optimizer = optimizer_adam(lr = 0.01),
   loss = 'mean_squared_error'
 )
 ```
@@ -143,8 +144,8 @@ model %>% compile(
 history <- model %>% fit(
   train_data,
   y_train,
-  epochs = 100,
-  batch_size = 32,
+  epochs = 35,
+  batch_size = 4,
   validation_split = 0.2
 )
 ```
@@ -155,7 +156,7 @@ history <- model %>% fit(
 ```{r eval_model}
 (eval_loss = model %>% evaluate(test_data, y_test, verbose = 0))
 
-# We're typically off by 11,500 retweets
+# We're typically off by 10,530 retweets
 sqrt(eval_loss)
 
 # Just predicting the mean would only be off by 11,503 retweets typically.
@@ -173,7 +174,7 @@ qplot(preds)
 
 qplot(preds, y_test) + geom_smooth() + theme_minimal()
 
-# Correlation of 0.15, p is significant.
+# Correlation of 0.41, p is highly significant.
 cor.test(preds, y_test)
 ```
 
@@ -189,12 +190,13 @@ model %>%
   layer_conv_1d(64, kernel_size = 1) %>%
   layer_global_average_pooling_1d() %>%
   layer_dense(units = 16, activation = "relu") %>%
+  layer_dropout(0.3) %>%
   layer_dense(units = 1, activation = "linear")
 
 model %>% summary()
 
 model %>% compile(
-  optimizer = 'adam',
+  optimizer = optimizer_adam(lr = 0.005),
   loss = 'mean_squared_error'
 )
 ```
@@ -205,7 +207,7 @@ model %>% compile(
 history <- model %>% fit(
   train_data,
   y_train,
-  epochs = 100,
+  epochs = 50,
   batch_size = 32,
   validation_split = 0.2
 )
@@ -217,7 +219,7 @@ history <- model %>% fit(
 ```{r eval_model2}
 (eval_loss = model %>% evaluate(test_data, y_test, verbose = 0))
 
-# We're typically off by 10,693 retweets
+# We're typically off by 10,600 retweets
 sqrt(eval_loss)
 
 # Look at predictions.
@@ -229,8 +231,8 @@ summary(preds)
 qplot(preds)
 qplot(preds, y_test) + geom_smooth() + theme_minimal()
 
-# Correlation of 0.38
-cor(preds, y_test)
+# Correlation of 0.42
+cor.test(preds, y_test)
 ```
 
 ## Challenge
