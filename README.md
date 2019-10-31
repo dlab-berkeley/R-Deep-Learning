@@ -34,7 +34,7 @@ This is an advanced level workshop. Participants should be intermediate R users 
 
 We assume the following background:
 
-* D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (4 hours)
+* D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (6 hours)
 * Or, comparable experience/training, assuming familiarity with:
   * Basic R syntax
   * statistical concepts such as mean and standard deviation
