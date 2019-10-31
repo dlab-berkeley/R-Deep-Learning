@@ -21,7 +21,7 @@ have sufficient time to investigate fixes during the training itself.
 
 ### Core Programs
 
-1.  Install R 3.4 or greater: <https://cloud.r-project.org/>
+1.  Install R 3.5 or greater: <https://cloud.r-project.org/>
 
 To avoid package errors this should be installed separate from Anaconda.
 If you have R installed through Anaconda please uninstall it and install
