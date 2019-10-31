@@ -47,7 +47,7 @@ install.packages("keras")
 # This will setup the Python environment, including Keras and tensorflow.
 keras::install_keras()
 
-# Confirm that it worked - this must return "TRUE".
+# Confirm that Python setup was successful - this must return "TRUE".
 keras::is_keras_available()
 ```
 
