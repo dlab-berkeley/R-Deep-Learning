@@ -96,5 +96,5 @@ Be sure to [follow the install instructions](https://github.com/dlab-berkeley/De
     * Zhang et al. - [Dive into Deep Learning](http://en.diveintodeeplearning.org/) 
     
 * Python
-    * [Qingkai Kong's Artificial Neural Network basics in Python](https://github.com/qingkaikong/20181129_ANN_basics_DLab)
+    * [Qingkai Kong's Artificial Neural Network Fundamentals in Python](https://github.com/dlab-berkeley/ANN-Fundamentals)
 
