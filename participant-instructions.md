@@ -30,8 +30,8 @@ the non-Anaconda version.
 2.  Install RStudio:
     <https://www.rstudio.com/products/rstudio/download/>
 
-Install Anaconda Python (3.7+) if you have not already done so:
-<https://www.anaconda.com/distribution/>
+3.  Install Anaconda Python (3.7+) if you have not already done so:
+    <https://www.anaconda.com/distribution/>
 
 Use the default options.
 
@@ -43,9 +43,19 @@ script:
 ``` r
 # This will install the R package.
 install.packages("keras")
+
 # This will setup the Python environment, including Keras and tensorflow.
 keras::install_keras()
+
+# Confirm that it worked - this must return "TRUE".
+keras::is_keras_available()
 ```
+
+#### Anaconda notes
+
+Anaconda is required on Windows, whereas MacOS and Linux may be ok
+without it. However it will be easiest to manage & troubleshoot when
+everyone is using Keras through Anaconda.
 
 ### Install key additional packages
 
@@ -60,7 +70,7 @@ MacOS users with R installed via Homebrew, or Linux users, [see extra
 install info
 here.](https://cran.r-project.org/web/packages/magick/vignettes/intro.html#build_from_source)
 
-## Part 4 Google Cloud
+## Part 4 Google Cloud (Optional - part 4 will not be covered during workshop)
 
 To follow along with part 4’s Google Cloud demonstration, you will need
 to:
@@ -145,9 +155,3 @@ Extract this zip file to your Dropbox / Box / etc. and open in RStudio.
 Copy the github clone URL (https or ssh version). In RStudio select File
 -\> New Project -\> Version Control -\> Git and paste the repository
 URL.
-
-#### Anaconda notes
-
-Anaconda is required on Windows, whereas MacOS and Linux should be ok
-without it. However it is probably easier to manage & troubleshoot when
-everyone is using Keras through anaconda.
