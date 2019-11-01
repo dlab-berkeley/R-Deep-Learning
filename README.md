@@ -34,7 +34,7 @@ This is an advanced level workshop. Participants should be intermediate R users 
 
 We assume the following background:
 
-* D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (4 hours)
+* D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (6 hours)
 * Or, comparable experience/training, assuming familiarity with:
   * Basic R syntax
   * statistical concepts such as mean and standard deviation
@@ -96,5 +96,5 @@ Be sure to [follow the install instructions](https://github.com/dlab-berkeley/De
     * Zhang et al. - [Dive into Deep Learning](http://en.diveintodeeplearning.org/) 
     
 * Python
-    * [Qingkai Kong's Artificial Neural Network basics in Python](https://github.com/qingkaikong/20181129_ANN_basics_DLab)
+    * [Qingkai Kong's Artificial Neural Network Fundamentals in Python](https://github.com/dlab-berkeley/ANN-Fundamentals)
 
