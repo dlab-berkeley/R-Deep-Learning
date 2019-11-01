@@ -73,6 +73,9 @@ Be sure to [follow the install instructions](https://github.com/dlab-berkeley/De
     * [See this](https://developers.google.com/machine-learning/crash-course/fitter/graph) sweet interactive learning rate tool
     * [Google seedbank examples](https://tools.google.com/seedbank/seeds)
     * [DeepLearning.ai](https://www.deeplearning.ai/)
+    
+* Workshops
+    * [Nvidia's Modeling Time Series Data with Recurrent Neural Networks in Keras](https://courses.nvidia.com/courses/course-v1:DLI+L-HX-05+V1/about)
 
 * Stanford
     * CS 20 - [Tensorflow for Deep Learning Research](http://web.stanford.edu/class/cs20si/syllabus.html)
