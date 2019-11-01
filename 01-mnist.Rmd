@@ -11,7 +11,7 @@ output: html_document
 
 ## Install packages
 
-Run this chunk manually to install once. It will not be run when one clicks "knit" or "run all".
+Run this chunk manually to install once. Note the "eval=FALSE" option in the settings for this block. This means that the block will not be run when one clicks "knit" or "run all".
 
 ```{r install, eval=FALSE}
 # Install keras package from CRAN.
@@ -31,14 +31,26 @@ keras::install_keras(method = "conda")
 # keras::install_keras(tensorflow = "gpu")
 ```
 
+Confirm that Keras is installed successfully within python. This will return "TRUE" if R can detect the python installation correctly. If it returns FALSE you will need to edit your keras::install_keras() line until it returns "TRUE".
+
+```{r confirm_keras}
+# This function needs to return TRUE.
+keras::is_keras_available()
+
+# If it returns FALSE, review the Python setup that R has automatically detected.
+reticulate::py_config()
+tensorflow::tf_config()
+```
+
 Also install some other helper packages. Run this line manually if needed:
+
 ```{r install_helpers, eval=FALSE}
 install.packages(c("cowplot", "dplyr", "ggplot2"))
 ```
 
 ## Load packages
 
-Now that we have installed the necessary packages, library them so that R can utilize their functionalities
+Now that we have installed the necessary packages, library them so that we can use the available functions without specifying the package name every time.
 
 ```{r load_packages}
 library(cowplot)
@@ -47,11 +59,8 @@ library(dplyr)
 library(tensorflow)
 library(ggplot2)
 
-# Review which version of Python R has chosen to use.
-reticulate::py_config()
 #reticulate::use_virtualenv("r-tensorflow")
 # This should return TRUE
-keras::is_keras_available()
 ```
 
 ## MNIST handwritten digit example
@@ -60,7 +69,7 @@ Jump in! The first example will consist of a walkthrough of the Keras vignette [
 
 Let's look at 70,000 handwritten digit images from the [Modified National Institute of Standards and Technology database](https://en.wikipedia.org/wiki/MNIST_database) (MNIST).  
 
-```{r}
+```{r load_data}
 # This line requires a working internet connection to download the data the first time.
 mnist = dataset_mnist()
 
@@ -68,7 +77,7 @@ mnist = dataset_mnist()
 str(mnist)
 ```
 
-```{r}
+```{r assign_vars}
 # Define our x and y variables for the training and test sets.
 x_train = mnist$train$x
 y_train = mnist$train$y
@@ -80,14 +89,15 @@ str(x_train)
 str(x_test)
 ```
 
-## Reshape, rescale, one-hot encode
+## Reshape, rescale
 
-### X variables
-The `array_reshape` function allows us to reshape a three-dimensional array like those foudn in our `mnist` dataset into matrices. Our 28x28 pixel images will become arrays/vectors with length $28*28 = 784$. 
+### Reshape
+The `array_reshape` function allows us to reshape a three-dimensional array like those found in our `mnist` dataset into matrices. Our 28x28 pixel images will become arrays/vectors with length $28*28 = 784$. 
 
-```{r}
-height = 28
-width = 28
+```{r reshape}
+# In R, L denotes that the value is an integer, rather than a floating point value. 
+height = 28L
+width = 28L
 
 # Reshape
 x_train = array_reshape(x_train, c(nrow(x_train), height * width))
@@ -96,52 +106,28 @@ x_test = array_reshape(x_test, c(nrow(x_test), height * width))
 # Check the new 2D feature dimensions
 str(x_train)
 str(x_test)
-summary(x_train[, 1:50])
+summary(x_train[, 500:550])
 x_train[1, ]
 ```
 
-### Gray rescale
+### Rescale
 
-Grayscale pixel values that range from between 0 (black end of the color spectrum) to 255 (white end of the color spectrum) are scaled to values between 0 and 1. The model will use these binary matrices to help determine the shape of the image from a pixelated perspective. 
+Pixel values that range from between 0 (black end of the color spectrum) to 255 (white end of the color spectrum) are scaled to values between 0 and 1. This can help the neural network optimize its weights by removing the scale factor of the pixel intensities.
 
-```{r}
-# rescale
+```{r rescale}
 x_train = x_train / 255
 x_test = x_test / 255
+
+# Confirm the max is now no more than 1 for each pixel.
+summary(x_train[, 500:520])
+
+# Confirm it explicitly by finding the max of each pixel column, then taking the max of that vector.
+max(apply(x_train, MARGIN = 2, max))
 ```
 
-### Y variables
+## Define the model architecture
 
-We also want to convert our y outcome vector to a one-hot encoded binary matrix. We specify 10 because we have 10 numbers (0 thru 9). Type `?to_categorical` to learn more. 
-
-```{r}
-head(y_train)
-# Convert our outcome and specify 10 possible classes.
-y_train = to_categorical(y_train, 10)
-y_test = to_categorical(y_test, 10)
-
-# Check dimensions of new y matrices.
-dim(y_train)
-dim(y_test)
-
-head(y_train)
-
-# Review percentage of obervations with each digit label.
-colMeans(y_train)
-round(colMeans(y_train), 3)
-round(colMeans(y_test), 3)
-summary(y_train)
-```
-
-Or, see the data in its entirety of 0's and 1's. How do the dimensions of these matrices relate to your `dim` calls above? 
-```{r eval = F}
-View(y_train)
-View(y_test)
-```
-
-## Define the model
-
-Now we can define the model! We just want to build a linear stack of layers. The `units` parameter defines how many nodes we should have in each layer. `input_shape` allows us to define the image dimensions in the actual input layer. The `activation` parameter allows us to pass in the name of an activation function as the argument.  
+Now we can define the model. We want to build a sequential stack of layers. The `units` parameter defines how many nodes (neurons) we should have in each layer. `input_shape` allows us to define the image dimensions in the initial input layer. The `activation` parameter allows us to pass in the name of an activation function as the argument.  
 
 See `?keras_model_sequential` to learn more.
 
@@ -151,7 +137,9 @@ model = keras_model_sequential()
 model %>%
   
   # INPUT LAYER + 1st HIDDEN LAYER.
-  # layer_dense allows us to add a hidden layer! However, note that the input_shape argument is what actually specifies the input layer; "units = " and "activation = " define the first hidden layer. 
+  # layer_dense allows us to add a hidden layer.
+  # The input_shape argument is what actually specifies the input layer; "units = " and "activation = " define the first hidden layer. 
+  # Alternatively we could have a separate layer_input() before layer_dense().
   
   layer_dense(units = 64, activation = 'relu', input_shape = 784) %>% 
   
@@ -169,12 +157,14 @@ summary(model)
 ```
 
 ## Compile model with loss function, optimizer, and metrics
+
 Recall that loss and optimizer functions work in tandem to tell us how wrong our predictions are.  
 
-We define "categorical_crossentropy" as our loss function since we are dealing with multilevel classification, and "optimizer_rmsprop()" as our optimizer because it might perform a little bit better than gradient descent with momentum. What does the `lr` parameter do? We also select "accuracy" as our metric to produce simple classification rates for our outcomes.
-```{r}
+We use "sparse_categorical_crossentropy" as our loss function since we are dealing with multiple classification (i.e. a categorical variable), and "optimizer_rmsprop()" as our optimizer because it might perform a little bit better than gradient descent with momentum. What does the `lr` parameter do? We also select "accuracy" as our metric to produce simple classification rates for our outcomes.
+
+```{r model_optimizer}
 model %>% compile(
-  loss = 'categorical_crossentropy',
+  loss = 'sparse_categorical_crossentropy',
   # loss = "mean_squared_error",
   optimizer = optimizer_rmsprop(lr = 0.001),
   metrics = c('accuracy')
@@ -182,11 +172,12 @@ model %>% compile(
 ```
 
 ## Train and evaluate
+
 Now we can train the model using `fit`! Here, we can just pass in our X and Y variables along with the other hyperparameters.  
 
-Watch the model build epoch by epoch. 
-```{r}
-set.seed(1)
+Watch the model build epoch by epoch. An **epoch** is one iteration through all of the training data, which is accomplished through batches of 128 observations here.
+
+```{r model_fit}
 history = model %>% fit(
   x_train, y_train, 
   epochs = 45, batch_size = 128, 
@@ -206,14 +197,14 @@ history = model %>% fit(
 
 ```{r}
 plot(history) + theme_minimal()
-#ggsave()
+# ggsave()
 ```
 
 ## Evaluate performance on the test data
 
-```{r}
-model %>% evaluate(x_test, y_test)
+```{r model_eval}
 # The model works pretty well! 
+model %>% evaluate(x_test, y_test)
 
 # Generate predictions on the test data, without explicit evaluation.
 preds = model %>% predict(x_test)
@@ -223,6 +214,7 @@ glimpse(preds)
 ```
 
 ## Challenge
-1. Write down the steps you followed to run this model from start to finish. What does each part do? 
 
-2. Change the number of units and dropout in the layers. Can you change them to get even better (or worse) predictive performance on the test set? 
+1. Change the number of units and dropout in the layers. Can you change them to get even better (or worse) predictive performance on the test set? 
+
+2. Write down the steps you followed to run this model from start to finish. What does each part do? 
