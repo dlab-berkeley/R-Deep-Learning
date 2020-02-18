@@ -178,11 +178,11 @@ Now we can train the model using `fit`! Here, we can just pass in our X and Y va
 Watch the model build epoch by epoch. An **epoch** is one iteration through all of the training data, which is accomplished through batches of 128 observations here.
 
 ```{r model_fit}
-history = model %>% fit(
+(history = model %>% fit(
   x_train, y_train, 
   epochs = 45, batch_size = 128, 
   validation_split = 0.2
-)
+))
 ```
 
 ### Interpreting the plot
