@@ -158,7 +158,7 @@ class: center
 
 # What is an artificial neural network? 
 
-"Perceptron" or "Multistage information distillation operation" (Allaire JJ, Chollet F 2018: 9)
+"Perceptron" or "Forward Propagation"
 
 ```{r, out.width = "600px", echo = F, eval = TRUE}
 knitr::include_graphics("slide_img/ann.png")
