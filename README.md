@@ -34,7 +34,7 @@ This is an advanced level workshop. Participants should be intermediate R users 
 
 We assume the following background:
 
-* D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (6 hours)
+* D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (6 hours) or its [tidymodels adaptation](https://github.com/dlab-berkeley/Machine-Learning-with-tidymodels)
 * Or, comparable experience/training, assuming familiarity with:
   * Basic R syntax
   * statistical concepts such as mean and standard deviation
@@ -57,7 +57,6 @@ highly recommended but not required.
 ## Getting Started
 
 Be sure to [follow the install instructions](https://github.com/dlab-berkeley/Deep-Learning-in-R/blob/master/participant-instructions.md) to get started. This process can take about 30 minutes, so be sure to try and do this before class. 
-
 ## Resources
 
 * D-Lab [Machine Learning Working Group](http://dlab.berkeley.edu/working-groups/machine-learning-working-group-0)

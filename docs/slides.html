@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="" xml:lang="">
   <head>
     <title>Introduction to Deep Learning in R</title>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta name="author" content="D-Lab - Evan Muzzall and Chris Kennedy" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="scrollable.css" type="text/css" />
     <link rel="stylesheet" href="mtheme_max.css" type="text/css" />
     <link rel="stylesheet" href="fonts_mtheme_max.css" type="text/css" />
@@ -112,9 +113,9 @@ class: left
 
 # What is deep learning? (short)
 
-### - A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. 
+### - A subfield of machine learning that utilizes multi-layered artificial neural networks for modelling and prediction of data. It's also called "layered representational" or "hierarchical representational learning."
 
-### - These models can be applied to numeric, categorical, image, text, audio, and time-series data. 
+### - These models (layered representations or neural networks) can be applied to numeric, categorical, image, text, audio, and time-series data. 
 
 ### - For images, neural networks import the image as a matrix of pixel values. Therefore it is useful to think of images as giant matrices! 
 
@@ -124,7 +125,8 @@ class: center
 
 # What is an artificial neural network? 
 
-"Perceptron"
+"Perceptron" or "Multistage information distillation operation" (Allaire JJ, Chollet F 2018: 9)
+
 &lt;img src="slide_img/ann.png" width="600px" style="display: block; margin: auto;" /&gt;
 
 ---
@@ -145,6 +147,21 @@ class: center
 
 ---
 
+# Why deep learning? 
+
+- Rephrased from Allaire JJ, Chollet F 2018: 22-23
+
+1. Simple: No more feature engineering.
+
+2. Scalability: 
+    - Parameterization on GPUs and TPUs. 
+    - Iterating over smaller batches. (= Not restricted by the data size)
+
+3. Versatility and reusability:
+    - Continuous online learning (new data can be learned without starting from scratch). The fundamental difference from classical ML models. 
+    
+---
+
 # How does it work? 
 
 #### 1. Supervised neural networks require "features", or an **input layer** of data that is used to produce our estimated **output layer**, or estimated classification of an actual image.  
@@ -161,7 +178,7 @@ class: center
 
 #### 5. The vector of original weights is added to the vector of updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.  
 
-#### 6. With deep networks, the process also takes places between **hidden layers**, or areas of nonlinear transformations connected only to the layers before and after them. They are referred to as "hidden" because they are not show as the final output. 
+#### 6. With deep networks, the process also takes places between **hidden layers**, or areas of *nonlinear* transformations connected only to the layers before and after them. They are referred to as "hidden" because they are not show as the final output. 
 
 ---
 
@@ -403,27 +420,101 @@ Lakhani, P. 2018. [Hello_World_Deep_Learning.](https://github.com/paras42/Hello_
 
 Images [borrowed from Qingkai Kong's ANNs in Python workshop](https://github.com/qingkaikong/20181129_ANN_basics_DLab)
     </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "ratio": "16:9",
 "highlightStyle": "github",
 "highlightLines": true,
 "countIncrementalSlides": false,
-"slideNumberFormat": "<div class=\"progress-bar-container\">   <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">   </div> </div>` "
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>`\n"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
   if (!r) return;
   s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
   d.head.appendChild(s);
-})();</script>
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
-(function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
   for (i = 0; i < codes.length;) {
     code = codes[i];
     if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
@@ -437,7 +528,8 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     i++;
   }
-})();
+};
+slideshow._releaseMath(document);
 </script>
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
