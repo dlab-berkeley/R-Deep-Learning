@@ -15,8 +15,8 @@ Load a folder of dog-human images from the `data-raw` folder in the workshop mat
 
 ```{r examine_data}
 # Specify the file paths for our training and validation (aka test) data
-train_path = "data-raw/dog-human/TRAIN"
-val_path = "data-raw/dog-human/VAL"
+train_path = file.path("data-raw", "dog-human", "TRAIN")
+val_path = file.path("data-raw", "dog-human", "VAL")
 
 # Define two more variables as the actual names of the files
 train_images = list.files(train_path, full.names = TRUE, recursive = TRUE)
@@ -31,6 +31,7 @@ val_images[1]
 
 # Plot the first training image, and the first validation image
 library(cowplot)
+library(magick)
 ggdraw() + draw_image(train_images[20])
 ggdraw() + draw_image(val_images[1])
 ```

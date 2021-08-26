@@ -45,7 +45,7 @@ tensorflow::tf_config()
 Also install some other helper packages. Run this line manually if needed:
 
 ```{r install_helpers, eval=FALSE}
-install.packages(c("cowplot", "dplyr", "ggplot2"))
+install.packages(c("cowplot", "dplyr", "ggplot2", "magick"))
 ```
 
 ## Load packages
@@ -58,6 +58,7 @@ library(keras)
 library(dplyr)
 library(tensorflow)
 library(ggplot2)
+library(magick)
 
 #reticulate::use_virtualenv("r-tensorflow")
 # This should return TRUE
