@@ -71,18 +71,19 @@ Let's look at 70,000 handwritten digit images from the [Modified National Instit
 
 ```{r load_data}
 # This line requires a working internet connection to download the data the first time.
-mnist = dataset_mnist()
+mnist <- dataset_mnist()
 
 # How are the data stored? 
-str(mnist)
+names(mnist)
+dim(mnist$train$x)
 ```
 
 ```{r assign_vars}
 # Define our x and y variables for the training and test sets.
-x_train = mnist$train$x
-y_train = mnist$train$y
-x_test = mnist$test$x
-y_test = mnist$test$y
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
 
 # Note the 3D array structure of the raw features
 str(x_train)
@@ -96,17 +97,16 @@ The `array_reshape` function allows us to reshape a three-dimensional array like
 
 ```{r reshape}
 # In R, L denotes that the value is an integer, rather than a floating point value. 
-height = 28L
-width = 28L
+height <- 28L
+width <- 28L
 
 # Reshape
-x_train = array_reshape(x_train, c(nrow(x_train), height * width))
-x_test = array_reshape(x_test, c(nrow(x_test), height * width))
+x_train <- array_reshape(x_train, c(nrow(x_train), height * width))
+x_test <- array_reshape(x_test, c(nrow(x_test), height * width))
 
 # Check the new 2D feature dimensions
 str(x_train)
 str(x_test)
-summary(x_train[, 500:550])
 x_train[1, ]
 ```
 
@@ -115,11 +115,8 @@ x_train[1, ]
 Pixel values that range from between 0 (black end of the color spectrum) to 255 (white end of the color spectrum) are scaled to values between 0 and 1. This can help the neural network optimize its weights by removing the scale factor of the pixel intensities.
 
 ```{r rescale}
-x_train = x_train / 255
-x_test = x_test / 255
-
-# Confirm the max is now no more than 1 for each pixel.
-summary(x_train[, 500:520])
+x_train <- x_train / 255
+x_test <- x_test / 255
 
 # Confirm it explicitly by finding the max of each pixel column, then taking the max of that vector.
 max(apply(x_train, MARGIN = 2, max))
@@ -132,24 +129,18 @@ Now we can define the model. We want to build a sequential stack of layers. The 
 See `?keras_model_sequential` to learn more.
 
 ```{r}
-model = keras_model_sequential() 
+model <- keras_model_sequential() 
 
 model %>%
-  
   # INPUT LAYER + 1st HIDDEN LAYER.
   # layer_dense allows us to add a hidden layer.
   # The input_shape argument is what actually specifies the input layer; "units = " and "activation = " define the first hidden layer. 
   # Alternatively we could have a separate layer_input() before layer_dense().
-  
   layer_dense(units = 64, activation = 'relu', input_shape = 784) %>% 
-  
-  layer_dropout(rate = 0.4) %>% 
-  
+  layer_dropout(rate = 0.4) %>%
   # HIDDEN LAYER  (2nd)
   layer_dense(units = 16, activation = 'relu') %>%
-  
   layer_dropout(rate = 0.3) %>%
-  
   # OUTPUT LAYER
   layer_dense(units = 10, activation = 'softmax')
 
@@ -178,11 +169,11 @@ Now we can train the model using `fit`! Here, we can just pass in our X and Y va
 Watch the model build epoch by epoch. An **epoch** is one iteration through all of the training data, which is accomplished through batches of 128 observations here.
 
 ```{r model_fit}
-(history = model %>% fit(
+history <- model %>% fit(
   x_train, y_train, 
-  epochs = 45, batch_size = 128, 
-  validation_split = 0.2
-))
+  epochs = 45,
+  batch_size = 128, 
+  validation_split = 0.2)
 ```
 
 ### Interpreting the plot
@@ -197,7 +188,6 @@ Watch the model build epoch by epoch. An **epoch** is one iteration through all 
 
 ```{r}
 plot(history) + theme_minimal()
-# ggsave()
 ```
 
 ## Evaluate performance on the test data

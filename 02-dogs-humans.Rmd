@@ -28,30 +28,26 @@ length(val_images)
 
 train_images[1]
 val_images[1]
-
-# Plot the first training image, and the first validation image
-library(cowplot)
-ggdraw() + draw_image(train_images[20])
-ggdraw() + draw_image(val_images[1])
 ```
 
 ### Define model characteristics
 Now, we want to define some of the characteristics outside of our model. This way, we can just pass in the same variable instead of a value each time.
 ```{r}
 # Expected image width and height are 96 pixels.
-img_width = img_height = 96L
+img_width <- 96L
+img_height <- 96L
 
 # Number of observations to analyze per iteration.
-batch_size = 100L
+batch_size <- 10L
 
 # Number of images in our training data (600).
-(num_train_samples = length(list.files(train_path, recursive = TRUE)))
+num_train_samples <- length(list.files(train_path, recursive = TRUE))
 
 # Number of images in our validation data.
-num_validation_samples = 100L
+num_validation_samples <- 100L
 
 # Number of full passes through the training data.
-epochs = 30L
+epochs <- 15L
 ```
 
 `image_data_generator` performs data augmentation! However, we will just use the lone `rescale` parameter to scale our data to what will essentially become a bunch of binary matrices - one for each image that represents a dark or a light pixel.
@@ -59,10 +55,10 @@ epochs = 30L
 See `?image_data_generator` to learn more.
 ```{r}
 # Transform training data 
-train_datagen = keras::image_data_generator(rescale = 1/255)
+train_datagen <- keras::image_data_generator(rescale = 1/255)
 
 # Transform validation data 
-val_datagen = keras::image_data_generator(rescale = 1/255)
+val_datagen <- keras::image_data_generator(rescale = 1/255)
 ```
 
 > Remember that we can learn a lot more about our keras variables by using the dollar sign operator `$`. This functions in a similar way to dot notation in Python for calling methods. Press the tab key after the dollar sign in the cell below:
@@ -77,24 +73,20 @@ Before we define the model, we also need to give keras a few more details about 
 
 ```{r}
 # Configure the training model
-train_gen =
+train_gen <-
                                     # specify the file path to the training images
   train_datagen$flow_from_directory(train_path,
-                                    
                                     # image shape
                                     target_size = c(img_width, img_height),
-                                    
                                     # batch size 
                                     batch_size = batch_size,
-                                    
                                     # dog or human? 
                                     class_mode = "binary",
-                                    
                                     # color profile
                                     color_mode = "grayscale")
 
 # Configure the validation model
-val_gen =
+val_gen <-
                                   # repeat for validation images
   val_datagen$flow_from_directory(val_path,
                                   target_size = c(img_width, img_height),
@@ -110,27 +102,21 @@ Define the model.
 ```{r}
 library(dplyr) # %>% come from here (and of course magrittr)
 library(keras) # layer_flatten, layer_dense, layer_dropout
-model = keras::keras_model_sequential()
 
+model <- keras::keras_model_sequential()
 model %>%
-
   # INPUT LAYER
   # layer_flatten will turn our 3D array into a one-dimensional one
   # Note: we did not have to do this in part1 because the data were already flattened
   layer_flatten(input_shape = c(img_width, img_height, 1)) %>%
-
   # HIDDEN LAYER
   # layer_dense allows us to actually add the input layer. What parameters are we specifying?
   layer_dense(units = 96, activation = 'relu', input_shape = c(img_width, img_height)) %>%
-  
   # layer_dropout allows us to apply regularization to our model.
   layer_dropout(rate = 0.4) %>%
-
   # HIDDEN LAYER
   layer_dense(units = 192, activation = 'relu') %>%
-
   layer_dropout(rate = 0.3) %>%
-  
   # OUTPUT LAYER
   # here we can change our activation to a sigmoid function for a binary outcome
   layer_dense(units = 1, activation = 'sigmoid')
@@ -144,16 +130,12 @@ We can use the generic `compile` function to specify our loss and optimizer func
 
 ```{r}
 model %>% compile(
-  
   # Dog or human?
   loss = 'binary_crossentropy',
-  
   # Slow the learning rate a little...
   optimizer = optimizer_adam(lr = 0.000001), 
-  
   # How to evaluate model performance
-  metrics = c('accuracy')
-)
+  metrics = c('accuracy'))
 ```
 
 The `compile` step (loss function, activation function, and performance metric) is also similar to Part 1 except in Part 2 we use ["optimizer_adam"](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Adam) instead of ["optimizer_rmsprop"](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#RMSProp). 
@@ -163,20 +145,10 @@ The `compile` step (loss function, activation function, and performance metric) 
 Note that we have to use `fit_generator` to fit our model this time because we are also using the custom `flow_from_directory` function rather than the simpler format of part1.
 
 ```{r}
-#batch_size = 100
-batch_size = 10
-num_validation_samples
-
-history = model %>%
-  fit_generator(train_gen,
-                steps_per_epoch = as.integer(num_train_samples / batch_size),
-                epochs = epochs,
-                #epochs = 13,
-                validation_data = val_gen,
-                validation_steps = as.integer(num_validation_samples / batch_size))
-
-# Review fitting history.
-plot(history) + theme_bw()
+history <- model %>%
+  fit(train_gen,
+      epochs = epochs,
+      validation_data = val_gen)
 ```
 
 ```{r predict_valdata}
