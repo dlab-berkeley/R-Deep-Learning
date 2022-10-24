@@ -1,69 +1,50 @@
 # Deep Learning in R
 
-This is the repository for D-Lab’s six-hour Introduction to Deep Learning in R workshop. [View the associated slides here](https://dlab-berkeley.github.io/Deep-Learning-in-R/slides.html#1).
+This is the repository for D-Lab’s six-hour Introduction to Deep Learning in R workshop. Participants should be intermediate R users and have had some prior exposure to the concepts in [R-Machine-Learning](https://github.com/dlab-berkeley/R-Machine-Learning).
 
-[![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/dlab-berkeley/Deep-Learning-in-R/master?urlpath=rstudio)
 
-## Objectives
+## Workshop Goals 
 
-Convey the basics of deep learning in R using keras on image datasets. Students are empowered with a general grasp of deep learning, example code that they can modify, a working computational environment, and resources for further study.
+In this workshop, we provide an introduction to Deep Learning using TensorFlow and keras in R. First, we will cover the basics of what makes deep learning "deep." Then, we will explore using code to classify images. Along the way, we will build a workflow of a deep learning project. 
 
-## Content outline
+## Installation Instructions
 
-* Installation
-  * R and RStudio
-  * Keras and Tensorflow
-  * Helper packages
-* What is “deep” learning? 
-* Understanding the dataset
-* Dataset splitting: training, test, cross-validation
-  * Defining moving parts of a deep learning model 
-  * Understanding a loss function, activation function, and metrics
-  * Performance evaluation
-* Part 1-2
-  * MNIST 0-9 hand-written digit example 
-  * Dogs or humans?
-* Part 3-4
-  * Pre-trained models + fine-tuning
-  * X-ray classification: abdominal vs. chest classification
-  * Google Cloud Machine Learning
+We will use RStudio to go through the workshop materials, which requires installation of R, RStudio, and TensorFlow. Complete the following steps if you want to work locally. 
 
-## Prerequisites
+1. Download [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/)
 
-This is an advanced level workshop. Participants should be intermediate R users and have had some prior exposure to machine learning.
+2. Within the R console, run the following commands 
 
-We assume the following background:
+```
+install.packages(c("tensorflow", "keras", "reticulate")) # Pulls in all R dependencies necessary for TensorFlow in R
 
-* D-Lab's [Machine Learning in R introduction](https://github.com/dlab-berkeley/Machine-Learning-in-R) (6 hours) or its [tidymodels adaptation](https://github.com/dlab-berkeley/Machine-Learning-with-tidymodels)
-* Or, comparable experience/training, assuming familiarity with:
-  * Basic R syntax
-  * statistical concepts such as mean and standard deviation
-  * Train/test splitting and cross-validation
-  * Dataset cleaning
-  * Overfitting / underfitting
-  * Hyperparameter customization
+library(reticulate)
 
-If you are not comfortable installing packages, writing your own R code, and using RStudio, this will not be a good workshop for you.
+# Set up R with a Python installation it can use
+virtualenv_create("r-reticulate", python = install_python()) 
 
-## Technology requirements
+library(keras)
+install_keras(envname = "r-reticulate") # Install TensorFlow and Keras python modules
+```
 
-Please bring a laptop with the following:
+After these steps you will have a working Keras and TensorFlow installation. This process will take some time if you decide to download to your local machine. To determine the TensorFlow version installed on your machine, run in the console
 
-* [R version](https://cloud.r-project.org/)
-3.4 or greater
-* [RStudio editor](https://www.rstudio.com/products/rstudio/download/#download) is
-highly recommended but not required.
+```
+library(tensorflow)
+tf$constant("Hello Tensorflow!")
+```
 
-## Getting Started
+Alternatively, you can use the following links to open up the notebooks in a Google Colab session. 
 
-Be sure to [follow the install instructions](https://github.com/dlab-berkeley/Deep-Learning-in-R/blob/master/participant-instructions.md) to get started. This process can take about 30 minutes, so be sure to try and do this before class. 
+
+## About the UC Berkeley D-Lab
+
+D-Lab works with Berkeley faculty, research staff, and students to advance data-intensive social science and humanities research. Our goal at D-Lab is to provide practical training, staff support, resources, and space to enable you to use R for your own research applications. Our services cater to all skill levels and no programming, statistical, or computer science backgrounds are necessary. We offer these services in the form of workshops, one-to-one consulting, and working groups that cover a variety of research topics, digital tools, and programming languages.  
+
+Visit the [D-Lab homepage](https://dlab.berkeley.edu/) to learn more about us. You can view our [calendar](https://dlab.berkeley.edu/events/calendar) for upcoming events, learn about how to utilize our [consulting](https://dlab.berkeley.edu/consulting) and [data](https://dlab.berkeley.edu/data) services, and check out upcoming [workshops](https://dlab.berkeley.edu/events/workshops).
+
+
 ## Resources
-
-* D-Lab [Machine Learning Working Group](http://dlab.berkeley.edu/working-groups/machine-learning-working-group-0)
-
-* Websites
-    * RStudio [Keras](https://keras.rstudio.com/)
-    * Supplementary [notebook materials](https://github.com/jjallaire/deep-learning-with-r-notebooks)
 
 * Massive open online courses
     * [fast.ai - Practical Deep Learning for Coders](https://course.fast.ai/)
@@ -97,6 +78,4 @@ Be sure to [follow the install instructions](https://github.com/dlab-berkeley/De
     * I. Goodfellow, Y. Bengio, A. Courville - [www.deeplearningbook.org](https://www.deeplearningbook.org/)
     * Zhang et al. - [Dive into Deep Learning](http://en.diveintodeeplearning.org/) 
     
-* Python
-    * [Qingkai Kong's Artificial Neural Network Fundamentals in Python](https://github.com/dlab-berkeley/ANN-Fundamentals)
 
