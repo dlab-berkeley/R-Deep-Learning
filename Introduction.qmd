@@ -1,0 +1,128 @@
+---
+title: "Deep Learning in R (Part 1)"
+author: "D-Lab"
+format: html
+editor: visual
+---
+
+## Libraries 
+
+Make sure to load the following libraries
+
+```{r}
+options(scipen = 999)
+library(tensorflow)
+library(keras)
+```
+
+## What is Deep Learning 
+
+In any kind of machine learning, we are interested in mapping inputs (pictures of Oski the Bear) to targets (the label "Oski the Bear"). The machine part means a computer. The learning part means some type of automatic search process to transform data in such a way as to produce useful representations guided by a feedback signal.
+
+It turns out that this idea of searching for useful representations of data (such as histograms of the pixels in a picture) within a specified set of possibilities and some rule for how good the representation is, solves a remarkably large set of tasks.
+
+The "Deep" in deep learning means that the models we build are layered representations of data. Modern deep learning in production can have many layers, and all of these layers are learned automatically from training data. GPT-3's model has 96.
+
+## How to Build a Neural Network
+
+The representations of layers are learned by models called *neural networks*, where information goes through successive hierarchies to produce something (hopefully) useful at the end. We call what the layer does to input data its *weight* and each transformation implemented the *paramaterization* of a layer.
+
+A model learns by finding values for the weights of all layers in the network so that there will be a correct mapping from example inputs to associated targets. We evaluate the correctness with a loss function which determines the distance between our model predictions and the true values. While training the model,
+
+## What is TensorFlow 
+
+### Describe the concept of tensors and other terminology 
+
+The problem we will try to solve is to classify grayscale images of handwritten digits into their numeric categorizations. Each of these images is 28 x 28 pixels and is one of the first ten digits 0-9.
+
+```{r}
+library(tensorflow)
+library(keras)
+mnist = dataset_mnist()
+```
+
+The MNIST dataset is in some sense the "Hello World!" of Deep Learning, so we will use it to explain various properties. The dataset comes preloaded in Keras in four R arrays, which are organized into two lists named `train` and `test`.
+
+```{r}
+train_images = mnist$train$x
+train_labels = mnist$train$y
+
+test_images = mnist$test$x
+test_labels = mnist$test$y
+
+str(train_images)
+str(train_labels)
+```
+
+To solve our problem, we will make a neural network with keras. Then we'll feed the neural network our training data and produce predictions for test images and see how accurate our predictions match the test labels.
+
+Let's set up the model architecture.
+
+```{r}
+first_model = keras_model_sequential(
+  list(
+    layer_dense(units = 512, activation = "relu"),
+    layer_dense(units = 10, activation = "softmax")
+    )
+)
+```
+
+What have we done here? We have set up a model with a linear stack of layers with `keras_model_sequential()`. We have two layers in this model, which are both *fully connected* or dense. The second layer sequentially will return an array of 10 probability scores where each will be the probability that the current digit image is one of the 10 digit classes.
+
+Now that we have a model, we compile it and pick three things:
+
+1.  How to optimize the model with `optimizer` (here the default rmsprop)
+2.  How to evaluate how good our prediction are with `loss`
+3.  What metrics we should care about with `metrics`
+
+```{r}
+## We don't save this to a variable because 
+## it works in place
+compile(first_model,
+        optimizer = "rmsprop",
+        loss = "sparse_categorical_crossentropy",
+        metrics = "accuracy")
+```
+
+Now that we have a compiled model, we need to make sure that our data is appropriate for the model. This is a *preprocessing* step. To prepare our image data, we will transform them into the shape that our model expects and scale the data so all values are between 0 and 1.
+
+```{r}
+train_images = array_reshape(train_images, c(60000, 28 * 28))
+train_images = train_images / 255 
+
+test_images = array_reshape(test_images, c(10000, 28 * 28))
+test_images = test_images /255 
+```
+
+Now we fit our model to the training data
+
+```{r}
+fit(first_model, 
+    train_images, 
+    train_labels, 
+    epochs = 5,
+    batch_size = 128)
+```
+
+Very quickly we see that our model's accuracy gets very close to perfect. This has to do with the nature of this problem. Other deep learning problems may take much longer to train, and produce far less accuracy. We can now use our model to predict the probabilities of new digits from our test set.
+
+```{r}
+test_digits = test_images[1:10,]
+predictions = predict(first_model, test_digits)
+round(predictions[1,],5)
+```
+
+Our model's highest probability score is that this image is a "7" (it's in the 8th place because the first possible digit is 0). What does our test data say?
+
+```{r}
+test_labels[1]
+```
+
+Our model is correct! How good is it on the entire dataset? To find out, we use `evaluate` to compute our metrics over the entire test dataset.
+
+```{r}
+metrics = evaluate(first_model, test_images, test_labels)
+metrics["accuracy"]
+```
+
+It happens to be the case here that our accuracy on the test dataset is a bit lower than our accuracy on the training set, which is a sign of overfitting.
