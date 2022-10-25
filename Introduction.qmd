@@ -29,9 +29,7 @@ The representations of layers are learned by models called *neural networks*, wh
 
 A model learns by finding values for the weights of all layers in the network so that there will be a correct mapping from example inputs to associated targets. We evaluate the correctness with a loss function which determines the distance between our model predictions and the true values. While training the model,
 
-## What is TensorFlow 
-
-### Describe the concept of tensors and other terminology 
+## Our First Model: Handwriting Digits 
 
 The problem we will try to solve is to classify grayscale images of handwritten digits into their numeric categorizations. Each of these images is 28 x 28 pixels and is one of the first ten digits 0-9.
 
@@ -84,7 +82,9 @@ compile(first_model,
         metrics = "accuracy")
 ```
 
-Now that we have a compiled model, we need to make sure that our data is appropriate for the model. This is a *preprocessing* step. To prepare our image data, we will transform them into the shape that our model expects and scale the data so all values are between 0 and 1.
+Now that we have a compiled model, we need to make sure that our data is appropriate for the model. This is a *preprocessing* step. To prepare our image data, we will transform them into the shape that our model expects and scale the data so all values are between 0 and 1 instead of a pixel value between 0 and 255. This can help the neural network optimize its weights by removing the scale factor of the pixel intensities.
+
+The `array_reshape` function allows us to reshape a three-dimensional array like those found in our `mnist` dataset into matrices.
 
 ```{r}
 train_images = array_reshape(train_images, c(60000, 28 * 28))
@@ -94,13 +94,14 @@ test_images = array_reshape(test_images, c(10000, 28 * 28))
 test_images = test_images /255 
 ```
 
-Now we fit our model to the training data
+Now we fit our model to the training data. We take our model architecture, the training data, and provide the number of iterations through the training data (`epoch`) and the batch size (128 observations here).
 
 ```{r}
 fit(first_model, 
     train_images, 
     train_labels, 
     epochs = 5,
+    # What size should the model break up the data into?
     batch_size = 128)
 ```
 
@@ -126,3 +127,57 @@ metrics["accuracy"]
 ```
 
 It happens to be the case here that our accuracy on the test dataset is a bit lower than our accuracy on the training set, which is a sign of overfitting.
+
+## TensorFlow 
+
+TensorFlow is an end-to-end open source machine learning platform, which focuses on simplicity and ease of use. Keras is a deep learning API built on top of TensorFlow. At its heart, TensorFlow is based on the concept of *tensors.*
+
+A tensor is defined by:
+
+-   the number of axes. A rank 2 tensor is a matrix.
+
+-   The number of dimensions. Also known as its shape
+
+-   What kind of data is in the tensor.
+
+Let's look at the data we have loaded for the images dataset for examples.
+
+```{r}
+## number of axes 
+
+length(dim(mnist$train$x))
+
+## shape 
+dim(mnist$train$x)
+
+## Datatype 
+typeof(mnist$train$x)
+
+## Here's what that image representation looks like for the 
+## second training example
+plot(as.raster(abs(255-mnist$train$x[2, , ]), max = 255))
+```
+
+Tensors are immutable. We create them by putting in an initial value.
+
+```{r}
+exampleTensor = tf$Variable(initial_value = tf$random$normal(shape(3,1)))
+exampleTensor
+
+## Assign values 
+exampleTensor2 = tf$Variable(initial_value = tf$random$normal(shape(3,1)))
+exampleTensor2 = exampleTensor2$assign(tf$ones(shape(3,1)))
+exampleTensor2
+```
+
+TensorFlow offers a large number of mathematical operations. Here's some examples.
+
+```{r}
+a = tf$ones(c(2L,2L))
+b = tf$square(a)
+c = a + b
+d = tf$sqrt(c)
+e = tf$matmul(a,b)
+f = e * d
+```
+
