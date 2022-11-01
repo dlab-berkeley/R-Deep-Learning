@@ -34,7 +34,10 @@ library(tensorflow)
 tf$constant("Hello Tensorflow!")
 ```
 
-Alternatively, you can use the following links to open up the notebooks in a Google Colab session. 
+3. Install additional packages required for this workshop
+
+```
+install.packages(c("tfhub", "tfdatasets")
 
 
 ## About the UC Berkeley D-Lab
