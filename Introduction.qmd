@@ -13,6 +13,9 @@ Make sure to load the following libraries
 options(scipen = 999)
 library(tensorflow)
 library(keras)
+library(tfdatasets)
+library(tidyverse)
+library(fs)
 ```
 
 ## What is Deep Learning 
@@ -164,7 +167,8 @@ Tensors are immutable. We create them by putting in an initial value.
 exampleTensor = tf$Variable(initial_value = tf$random$normal(shape(3,1)))
 exampleTensor
 
-## Assign values 
+## If we want to change our tensor we have to 
+## explicitly assign values
 exampleTensor2 = tf$Variable(initial_value = tf$random$normal(shape(3,1)))
 exampleTensor2 = exampleTensor2$assign(tf$ones(shape(3,1)))
 exampleTensor2
@@ -181,3 +185,239 @@ e = tf$matmul(a,b)
 f = e * d
 ```
 
+## Challenge Ideas 
+We have used two representation layers before the final classification layer. Try building a model with one representation layer and a model with three representation layers. What is the effect on the validation and test accuracy? 
+What happens if we double the number of units?  What happens if we halve the number of units? 
+
+What happens if we use a different loss function? Try using `mse` instead of `binary_crossentropy` 
+
+## Universal Workflow for Machine Learning 
+
+For every Deep Learning or Machine Learning project, there is a universal workflow. This is high level, but useful when considering whether a Deep learning solution can be useful for your project. 
+
+First, define the problem. What is your end goal? Can you get a dataset that is annotated with appropriate labels for supervised learning tasks? 
+
+Second, prepare your data. Use feature normalization to make sure that your data is appropriate for a deep learning algorithm. 
+
+Third, pick your evaluation protocol. If you have small data, K-fold validation is a useful protocol. If you have large data, leave aside about 20% of the training data for validation as a rule of thumb. 
+
+Fourth, start by achieving statistical power by setting an appropriate baseline (e.g. random guessing). If your model cannot beat a random guess, than deep learning might not be the right paradigm for the problem. 
+
+Fifth, develop a model that can overfit. With appropriate minimal tuning such as dropout and feature engineering, overfitting indicates that your model can learn. It is much easier to break off learning from an appropriately scaled model than the reverse. 
+
+## Using Keras 
+
+## Deep Learning for Text and Natural Language Processing
+
+Language in texts underpin most of our communication and human experience. A natural language is a human created language that is shaped by evolutionary and historical processes. In contrast, a machine readable language is highly structured, with precise syntax from a fixed vocabulary. 
+
+Modern Natural Language Processing (NLP) uses machine learning and large datasets to ingest pieces of text as inputs and return some type of prediction.
+
+In this section, we cover how to prepare text data for deep learning and the Transformer architecture for NLP. 
+
+### Preparing text data 
+
+Deep Learning models rely fundamentally on differentiable functions, which means that we need to convert raw text into numeric tensors. *Text Vectorization* is the process of taking text and turning it into numeric tensors. Any text vectorization process follows the same template. 
+
+1. Standardize the text to make it easy to process. Normally we convert it to lowercase and remove punctuation. Here is a simple example of what we mean. 
+
+```{r, standardize_example}
+sentence_1 = "d-lab is A great PLACE To LEarn deep learning!!"
+sentence_2 = "D-Lab is a great place TO learn Deep Learning!"
+
+## Convert to lowercase and remove punctuation 
+sentence_1 |>
+  str_to_lower() |>
+  str_replace_all(pattern = "[:punct:]", "") |>
+  trimws()
+
+sentence_2 |>
+  str_to_lower() |>
+  str_replace_all(pattern = "[:punct:]", "") |>
+  trimws()
+```
+
+2. Split the text into tokens, usually characters, words, or small groups of words. Most machine learning workflows tend to avoid character splitting. The more common tokenizations are N-gram tokenizers and word-level tokenizers. N-grams are also referred to as bag of words. 
+
+When we care about word order, we will use word-level tokenizers. When we do not care about the order, but rather words as a set, we will use N-gram tokenizers. 
+
+3. Convert each token into a numeric vector, usually after indexing all tokens present in the data. 
+
+```{r, eval = F}
+## Use layer_text_vectorization in keras 
+## Have layer return sequences of words encoded as integer indices
+text_vec = layer_text_vectorization(output_mode = "int")
+```
+
+The layer will convert to lowercase and remove punctuation and split on whitespace for tokenization. 
+
+We will demonstrate how to model with IMDB Movie reviews dataset from [Maas et al 2011](Andrew L. Maas, Raymond E. Daly, Peter T. Pham, Dan Huang, Andrew Y. Ng, and Christopher Potts. (2011). Learning Word Vectors for Sentiment Analysis. The 49th Annual Meeting of the Association for Computational Linguistics (ACL 2011)). 
+
+```{r}
+set.seed(1337)
+url = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz"
+
+dataset = get_file(
+  "aclImdb_v1",
+  url,
+  untar = TRUE,
+  cache_dir = ".",
+  cache_subdir = ""
+)
+
+dataset_dir = file.path("aclImdb/")
+list.files(dataset_dir)
+
+## Look at the training example directory 
+train_dir = file.path(dataset_dir, "train")
+list.files(train_dir)
+
+## Prepare data to be suitable for training 
+remove_dir = file.path(train_dir, "unsup")
+unlink(remove_dir, recursive = TRUE)
+
+### Create a validation split with 20% of training for validation 
+### the default batch_size is 32. We put it here to be explicit
+batch_size = 32 
+
+## We need a random seed so that the validation and training splits do not have overlap 
+seed = 1337 
+raw_train_dataset = text_dataset_from_directory(
+  "aclImdb/train",
+  batch_size = batch_size,
+  validation_split = 0.2,
+  subset = "training",
+  seed = seed
+)
+
+raw_val_dataset = text_dataset_from_directory(
+  "aclImdb/train",
+  batch_size = batch_size, 
+  validation_split = 0.2, 
+  subset = "validation",
+  seed = seed
+)
+
+raw_test_dataset = text_dataset_from_directory(
+  "aclImdb/test",
+  batch_size = batch_size
+)
+```
+
+### Bag of Words Approach 
+
+```{r}
+## Unigrams approach 
+## Use multi-hot encoding for binary vectors 
+text_vec = layer_text_vectorization(ngrams = 1,
+                                    max_tokens = 20000,
+                                    output_mode = "multi_hot")
+
+## Get only raw text inputs 
+raw_text_train = raw_train_dataset |>
+  dataset_map(function(x,y) x)
+
+## Index dataset vocabulary with keras::adapt()
+adapt(text_vec, raw_text_train)
+
+binary_unigram_train_data = raw_train_dataset |>
+  dataset_map(~list(text_vec(.x),.y))
+binary_unigram_val_data = raw_val_dataset |>
+  dataset_map(~list(text_vec(.x), .y))
+binary_unigram_test_data = raw_test_dataset |>
+  dataset_map(~list(text_vec(.x), .y))
+```
+
+We can write a reusable model constructor to test out different bigrams. 
+
+```{r}
+nlp_model_constructor = function(max_tokens = 20000,
+                                 hidden_dimensions = 16){
+  inputs = layer_input(shape = c(max_tokens))
+  outputs = inputs |>
+    layer_dense(hidden_dimensions, activation = "relu") |>
+    ## Include dropout
+    layer_dropout(0.5) |>
+    ## Predicting a single class so sigmoid is appropriate
+    layer_dense(1, activation = "sigmoid")
+  
+  model = keras_model(inputs, outputs)
+  model |>
+    compile(
+      optimizer = "rmsprop",
+      loss = "binary_crossentropy",
+      metrics = "accuracy"
+    )
+  model 
+}
+```
+
+Train and Test our basic model
+
+```{r}
+basic_model = nlp_model_constructor()
+basic_model
+
+callbacks = list(
+  callback_model_checkpoint("binary_unigram.keras", save_best_only = TRUE)
+)
+
+basic_model |>
+  fit(
+    dataset_cache(binary_unigram_train_data),
+    validation_data = dataset_cache(binary_unigram_val_data),
+    epochs = 5,
+    callbacks = callbacks
+  )
+
+model = load_model_tf("binary_unigram.keras")
+cat(sprintf("Test accuracy: %.3f\n", evaluate(model, binary_unigram_test_data)["accuracy"]))
+
+```
+
+88% is a strong start. We can compare to a random baseline that just sorts reviews to positive or negative at random to have a top prediction of 50%, so our model definitely learns something from the data relative to baseline. We can return arbitrary N-grams by changing the ngrams argument to a different value. Let's try 3 
+
+```{r}
+text_vec3 = layer_text_vectorization(ngrams = 3,
+                                    max_tokens = 20000,
+                                    output_mode = "multi_hot")
+adapt(text_vec3, raw_text_train)
+
+## Wrapper function for vectorization 
+dataset_vectorize = function(dat){
+  dat |>
+    dataset_map(~list(text_vec3(.x), .y))
+}
+
+binary_3grams_train = raw_train_dataset |>
+  dataset_vectorize()
+binary_3grams_valid = raw_val_dataset |>
+  dataset_vectorize()
+binary_3grams_test = raw_test_dataset |>
+  dataset_vectorize()
+
+model_3gram = nlp_model_constructor()
+model_3gram
+
+callbacks = list(
+  callback_model_checkpoint("binary_3gram.keras", save_best_only = TRUE)
+)
+
+model_3gram |>
+  fit(
+    dataset_cache(binary_3grams_train),
+    validation_data = dataset_cache(binary_3grams_valid),
+    ## Setting for time reasons. We'd want to start with more epochs
+    epochs = 5,
+    callbacks = callbacks
+  )
+
+result = load_model_tf("binary_3gram.keras")
+cat(sprintf("Test accuracy: %.3f\n", evaluate(result, binary_3grams_test)["accuracy"]))
+```
+
+The increase in test accuracy suggests that the ordering immediately around words is pretty important. 
+
+### The Transformer Architecture 
+
+A transformer is a sequence to sequence model, meaning that it is designed to convert one sequence into another. Transformers were originally developed for machine translation. Conceptually, a transformer takes a reference sequence that describes something we are interested in. Each value in the sequence is given a key that describes its value such that we can compare to a query. Then we match the query to the keys and return a weighted sum of values (usually a dot product with a scaling function and a softmax as well). 
