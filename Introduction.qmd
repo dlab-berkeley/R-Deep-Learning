@@ -16,6 +16,8 @@ library(keras)
 library(tfdatasets)
 library(tidyverse)
 library(fs)
+library(reticulate)
+use_virtualenv("r-reticulate")
 ```
 
 ## What is Deep Learning 
@@ -206,6 +208,116 @@ Fourth, start by achieving statistical power by setting an appropriate baseline 
 Fifth, develop a model that can overfit. With appropriate minimal tuning such as dropout and feature engineering, overfitting indicates that your model can learn. It is much easier to break off learning from an appropriately scaled model than the reverse. 
 
 ## Using Keras 
+
+In this section, we will walk through how to build a deep learning model with Keras. So far we have used the "sequential" API, which is easy to use but is also limited. In practice, we build models with Keras using the Functional API. The creator, Francois Chollet describes this API as like playing with LEGO bricks. 
+
+First, let's covert our previous model example into the functional api. 
+
+```{r}
+## Naming layers isn't required, but is an option 
+## Declare a layer input that holds info about shape and 
+## datatype of the data model will use. Here the model will process batches where each sample has a shape of size 3
+simple_inputs = layer_input(shape = c(3), name = "first_input")
+
+## Create a layer and compose with the inputs
+features = simple_inputs |>
+  layer_dense(64, activation = "relu")
+
+## Obtain final outputs by chaining together an additional layer
+outputs = features |>
+  layer_dense(10, activation = "softmax")
+
+## Instantiate the model by specifying the inputs and outputs with keras_model()
+simple_model = keras_model(inputs = simple_inputs, outputs = outputs)
+```
+
+Most models have multiple inputs and multiple outputs. For example, we might want to process different types of information and output different results for each. Consider a research queue on text data with the following structure: the title of an article, the abstract text, and some tagged information about the article added by a research assistant. The first two inputs are text input, and the latter is a categorical input. 
+
+Suppose we want our model to determine how close an article is to our research project, and which research assistant we should send it to for additional processing. We can build a model like this in a few lines of code with Keras. 
+
+```{r}
+## The following is made up data to demonstrate the model 
+## The total number of words that our model knows about
+words = 10000
+num_tags = 100
+gsrs = 3 
+
+title = layer_input(shape = c(words))
+text = layer_input(shape = c(words))
+tags = layer_input(shape = c(num_tags))
+
+## Combine features via concatenation 
+model_features = layer_concatenate(list(
+  title, text, tags
+)) |>
+  layer_dense(64, activation = "relu")
+
+closeness = model_features |>
+  layer_dense(1, activation = "sigmoid")
+
+which_gsr = model_features |>
+  layer_dense(gsrs, activation = "softmax")
+
+queue_model = keras_model(
+  inputs = list(title, text, tags),
+  outputs = list(closeness, which_gsr)
+)
+
+```
+
+Training a model works in a similar way to the Sequential API. We call `fit()` and pass the input and output data. 
+
+```{r}
+samples = 1280 
+
+# random_unif_array = function(dim){
+#   ## Helper function to generate a random uniform array of data
+#   array(runif(prod(dim)), dim)
+# }
+
+random_vectorized_array = function(dim){
+  ## Helper function to create a random vectorized array 
+  array(sample(0:1, prod(dim), replace = TRUE), dim)
+}
+
+## Create fake input and output data 
+title_data = random_vectorized_array(c(samples, words))
+text_data = random_vectorized_array(c(samples, words))
+tags_data = random_vectorized_array(c(samples, num_tags))
+
+closeness_data = random_vectorized_array(c(samples,1))
+ra_data = random_vectorized_array(c(samples, gsrs))
+
+## Compile and fit the model 
+queue_model |>
+  compile(
+    optimizer = "rmsprop",
+    ## Examples of having multiple loss and accuracy functions
+    loss = c("mse", "categorical_crossentropy"),
+    metrics = c("mse", "accuracy")
+  )
+
+queue_model %>%
+  fit(
+    x = list(title_data, text_data, tags_data), 
+    y = list(closeness_data, ra_data), 
+    epochs = 1
+  )
+
+## Evaluate the model metrics 
+queue_model |>
+  evaluate(x = list(title_data, text_data, tags_data),
+           y = list(closeness_data, ra_data))
+
+## Make predictions 
+c(closeness_predictions, ra_predictions) %<-% {
+  queue_model |> predict(
+    list(title_data, text_data, tags_data)
+  )
+}
+
+```
+
 
 ## Deep Learning for Text and Natural Language Processing
 
