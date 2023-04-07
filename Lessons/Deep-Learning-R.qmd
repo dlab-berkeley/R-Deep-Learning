@@ -1,0 +1,584 @@
+---
+title: "Deep Learning in R"
+author: "D-Lab"
+format: html
+editor: visual
+---
+
+## Libraries
+
+Make sure to load the following libraries
+
+```{r, message = F, warning = F}
+library(tensorflow)
+library(keras)
+library(tfdatasets)
+library(tfhub)
+library(tidyverse)
+library(reticulate)
+
+```
+
+## What is Deep Learning
+
+In any kind of machine learning, we are interested in mapping inputs (pictures of Oski the Bear) to targets (the label "Oski the Bear"). The machine part means a computer. The learning part means some type of automatic search process to transform data in such a way as to produce useful representations guided by a feedback signal.
+
+It turns out that this idea of searching for useful representations of data (such as histograms of the pixels in a picture) within a specified set of possibilities and some rule for how good the representation is, solves a remarkably large set of tasks.
+
+The "Deep" in deep learning means that the models we build are layered representations of data. Modern deep learning in production can have many layers, and all of these layers are learned automatically from training data. GPT-3's model has 96.
+
+## How to Build a Neural Network
+
+The representations of layers are learned by models called *neural networks*, where information goes through successive hierarchies to produce something (hopefully) useful at the end. We call what the layer does to input data its *weight* and each transformation implemented the *paramaterization* of a layer.
+
+A model learns by finding values for the weights of all layers in the network so that there will be a correct mapping from example inputs to associated targets. We evaluate the correctness with a loss function which determines the distance between our model predictions and the true values.
+
+Error is computed as target value minus our estimation. The weights delta metric (how much the errors should change) is calculated as the error times the slope of the point on the activation function times the vector of input features.
+
+The vector of original weights is added to the vector of updated weights and are "backpropagated" (used as the recycled input) and passed through the model for another epoch.
+
+With deep networks, the process also takes places between **hidden layers**, or areas of *nonlinear* transformations connected only to the layers before and after them. They are referred to as "hidden" because they are not show as the final output.
+
+## Our First Model: Handwriting Digits
+
+The problem we will try to solve is to classify grayscale images of handwritten digits into their numeric categorizations. Each of these images is 28 x 28 pixels and is one of the first ten digits 0-9.
+
+```{r}
+library(tensorflow)
+library(keras)
+mnist = dataset_mnist()
+```
+
+The MNIST dataset is in some sense the "Hello World!" of Deep Learning, so we will use it to explain various properties. The dataset comes preloaded in Keras in four R arrays, which are organized into two lists named `train` and `test`.
+
+```{r}
+train_images = mnist$train$x
+train_labels = mnist$train$y
+
+test_images = mnist$test$x
+test_labels = mnist$test$y
+
+str(train_images)
+str(train_labels)
+```
+
+To solve our problem, we will make a neural network with keras. Then we'll feed the neural network our training data and produce predictions for test images and see how accurate our predictions match the test labels.
+
+Let's set up the model architecture.
+
+```{r}
+first_model = keras_model_sequential(
+  list(
+    layer_dense(units = 512, activation = "relu"),
+    layer_dense(units = 10, activation = "softmax")
+    )
+)
+```
+
+What have we done here? We have set up a model with a linear stack of layers with `keras_model_sequential()`. We have two layers in this model, which are both *fully connected* or dense. The second layer sequentially will return an array of 10 probability scores where each will be the probability that the current digit image is one of the 10 digit classes.
+
+Now that we have a model, we compile it and pick three things:
+
+1.  How to optimize the model with `optimizer` (here the default rmsprop)
+2.  How to evaluate how good our prediction are with `loss`
+3.  What metrics we should care about with `metrics`
+
+```{r}
+## We don't save this to a variable because 
+## it works in place
+compile(first_model,
+        optimizer = "rmsprop",
+        loss = "sparse_categorical_crossentropy",
+        metrics = "accuracy")
+```
+
+Now that we have a compiled model, we need to make sure that our data is appropriate for the model. This is a *preprocessing* step. To prepare our image data, we will transform them into the shape that our model expects and scale the data so all values are between 0 and 1 instead of a pixel value between 0 and 255. This can help the neural network optimize its weights by removing the scale factor of the pixel intensities.
+
+The `array_reshape` function allows us to reshape a three-dimensional array like those found in our `mnist` dataset into matrices.
+
+```{r}
+train_images = array_reshape(train_images, c(60000, 28 * 28))
+train_images = train_images / 255 
+
+test_images = array_reshape(test_images, c(10000, 28 * 28))
+test_images = test_images /255 
+```
+
+Now we fit our model to the training data. We take our model architecture, the training data, and provide the number of iterations through the training data (`epoch`) and the batch size (128 observations here).
+
+```{r}
+fit(first_model, 
+    train_images, 
+    train_labels, 
+    epochs = 5,
+    # What size should the model break up the data into?
+    batch_size = 128)
+```
+
+Very quickly we see that our model's accuracy gets very close to perfect. This has to do with the nature of this problem. Other deep learning problems may take much longer to train, and produce far less accuracy. We can now use our model to predict the probabilities of new digits from our test set.
+
+```{r}
+test_digits = test_images[1:10,]
+predictions = predict(first_model, test_digits)
+round(predictions[1,],5)
+```
+
+Our model's highest probability score is that this image is a "7" (it's in the 8th place because the first possible digit is 0). What does our test data say?
+
+```{r}
+test_labels[1]
+```
+
+Our model is correct! How good is it on the entire dataset? To find out, we use `evaluate` to compute our metrics over the entire test dataset.
+
+```{r}
+metrics = evaluate(first_model, test_images, test_labels)
+metrics["accuracy"]
+```
+
+It happens to be the case here that our accuracy on the test dataset is a bit lower than our accuracy on the training set, which is a sign of overfitting.
+
+## TensorFlow
+
+TensorFlow is an end-to-end open source machine learning platform, which focuses on simplicity and ease of use. Keras is a deep learning API built on top of TensorFlow. At its heart, TensorFlow is based on the concept of *tensors.*
+
+A tensor is defined by:
+
+-   the number of axes. A rank 2 tensor is a matrix.
+
+-   The number of dimensions. Also known as its shape
+
+-   What kind of data is in the tensor.
+
+Let's look at the data we have loaded for the images dataset for examples.
+
+```{r}
+## number of axes 
+
+length(dim(mnist$train$x))
+
+## shape 
+dim(mnist$train$x)
+
+## Datatype 
+typeof(mnist$train$x)
+
+## Here's what that image representation looks like for the 
+## second training example
+plot(as.raster(abs(255-mnist$train$x[2, , ]), max = 255))
+```
+
+Tensors are immutable. We create them by putting in an initial value.
+
+```{r}
+exampleTensor = tf$Variable(initial_value = tf$random$normal(shape(3,1)))
+exampleTensor
+
+## If we want to change our tensor we have to 
+## explicitly assign values
+exampleTensor2 = tf$Variable(initial_value = tf$random$normal(shape(3,1)))
+exampleTensor2 = exampleTensor2$assign(tf$ones(shape(3,1)))
+exampleTensor2
+```
+
+TensorFlow offers a large number of mathematical operations. Here's some examples.
+
+```{r}
+a = tf$ones(c(2L,2L))
+b = tf$square(a)
+c = a + b
+d = tf$sqrt(c)
+e = tf$matmul(a,b)
+f = e * d
+```
+
+## Challenge Ideas
+
+We have used two representation layers before the final classification layer. Try building a model with one representation layer and a model with three representation layers. What is the effect on the validation and test accuracy? What happens if we double the number of units? What happens if we halve the number of units?
+
+What happens if we use a different loss function? Try using `mse` instead of `binary_crossentropy`
+
+## Universal Workflow for Machine Learning
+
+For every Deep Learning or Machine Learning project, there is a universal workflow. This is high level, but useful when considering whether a Deep learning solution can be useful for your project.
+
+First, define the problem. What is your end goal? Can you get a dataset that is annotated with appropriate labels for supervised learning tasks?
+
+Second, prepare your data. Use feature normalization to make sure that your data is appropriate for a deep learning algorithm.
+
+Third, pick your evaluation protocol. If you have small data, K-fold validation is a useful protocol. If you have large data, leave aside about 20% of the training data for validation as a rule of thumb.
+
+Fourth, start by achieving statistical power by setting an appropriate baseline (e.g. random guessing). If your model cannot beat a random guess, than deep learning might not be the right paradigm for the problem.
+
+Fifth, develop a model that can overfit. With appropriate minimal tuning such as dropout and feature engineering, overfitting indicates that your model can learn. It is much easier to break off learning from an appropriately scaled model than the reverse.
+
+## Using Keras
+
+In this section, we will walk through how to build a deep learning model with Keras. So far we have used the "sequential" API, which is easy to use but is also limited. In practice, we build models with Keras using the Functional API. The creator, Francois Chollet describes this API as like playing with LEGO bricks.
+
+First, let's covert our previous model example into the functional api.
+
+```{r}
+## Naming layers isn't required, but is an option 
+## Declare a layer input that holds info about shape and 
+## datatype of the data model will use. Here the model will process batches where each sample has a shape of size 3
+simple_inputs = layer_input(shape = c(3), name = "first_input")
+
+## Create a layer and compose with the inputs
+features = simple_inputs |>
+  layer_dense(64, activation = "relu")
+
+## Obtain final outputs by chaining together an additional layer
+outputs = features |>
+  layer_dense(10, activation = "softmax")
+
+## Instantiate the model by specifying the inputs and outputs with keras_model()
+simple_model = keras_model(inputs = simple_inputs, outputs = outputs)
+```
+
+Most models have multiple inputs and multiple outputs. For example, we might want to process different types of information and output different results for each. Consider a research queue on text data with the following structure: the title of an article, the abstract text, and some tagged information about the article added by a research assistant. The first two inputs are text input, and the latter is a categorical input.
+
+Suppose we want our model to determine how close an article is to our research project, and which research assistant we should send it to for additional processing. We can build a model like this in a few lines of code with Keras.
+
+```{r}
+## The following is made up data to demonstrate the model 
+## The total number of words that our model knows about
+words = 10000
+num_tags = 100
+gsrs = 3 
+
+title = layer_input(shape = c(words))
+text = layer_input(shape = c(words))
+tags = layer_input(shape = c(num_tags))
+
+## Combine features via concatenation 
+model_features = layer_concatenate(list(
+  title, text, tags
+)) |>
+  layer_dense(64, activation = "relu")
+
+closeness = model_features |>
+  layer_dense(1, activation = "sigmoid")
+
+which_gsr = model_features |>
+  layer_dense(gsrs, activation = "softmax")
+
+queue_model = keras_model(
+  inputs = list(title, text, tags),
+  outputs = list(closeness, which_gsr)
+)
+
+```
+
+Training a model works in a similar way to the Sequential API. We call `fit()` and pass the input and output data.
+
+```{r}
+samples = 1280 
+
+# random_unif_array = function(dim){
+#   ## Helper function to generate a random uniform array of data
+#   array(runif(prod(dim)), dim)
+# }
+
+random_vectorized_array = function(dim){
+  ## Helper function to create a random vectorized array 
+  array(sample(0:1, prod(dim), replace = TRUE), dim)
+}
+
+## Create fake input and output data 
+title_data = random_vectorized_array(c(samples, words))
+text_data = random_vectorized_array(c(samples, words))
+tags_data = random_vectorized_array(c(samples, num_tags))
+
+closeness_data = random_vectorized_array(c(samples,1))
+ra_data = random_vectorized_array(c(samples, gsrs))
+
+## Compile and fit the model 
+queue_model |>
+  compile(
+    optimizer = "rmsprop",
+    ## Examples of having multiple loss and accuracy functions
+    loss = c("mse", "categorical_crossentropy"),
+    metrics = c("mse", "accuracy")
+  )
+
+queue_model %>%
+  fit(
+    x = list(title_data, text_data, tags_data), 
+    y = list(closeness_data, ra_data), 
+    epochs = 1
+  )
+
+## Evaluate the model metrics 
+queue_model |>
+  evaluate(x = list(title_data, text_data, tags_data),
+           y = list(closeness_data, ra_data))
+
+## Make predictions 
+c(closeness_predictions, ra_predictions) %<-% {
+  queue_model |> predict(
+    list(title_data, text_data, tags_data)
+  )
+}
+
+```
+
+## Deep Learning for Text and Natural Language Processing
+
+Language in texts underpin most of our communication and human experience. A natural language is a human created language that is shaped by evolutionary and historical processes. In contrast, a machine readable language is highly structured, with precise syntax from a fixed vocabulary.
+
+Modern Natural Language Processing (NLP) uses machine learning and large datasets to ingest pieces of text as inputs and return some type of prediction.
+
+In this section, we cover how to prepare text data for deep learning and the transfer learning for NLP.
+
+### Preparing text data
+
+Deep Learning models rely fundamentally on differentiable functions, which means that we need to convert raw text into numeric tensors. *Text Vectorization* is the process of taking text and turning it into numeric tensors. Any text vectorization process follows the same template.
+
+1.  Standardize the text to make it easy to process. Normally we convert it to lowercase and remove punctuation. Here is a simple example of what we mean.
+
+```{r, standardize_example}
+sentence_1 = "d-lab is A great PLACE To LEarn deep learning!!"
+sentence_2 = "D-Lab is a great place TO learn Deep Learning!"
+
+## Convert to lowercase and remove punctuation 
+sentence_1 |>
+  str_to_lower() |>
+  str_replace_all(pattern = "[:punct:]", "") |>
+  trimws()
+
+sentence_2 |>
+  str_to_lower() |>
+  str_replace_all(pattern = "[:punct:]", "") |>
+  trimws()
+```
+
+2.  Split the text into tokens, usually characters, words, or small groups of words. Most machine learning workflows tend to avoid character splitting. The more common tokenizations are N-gram tokenizers and word-level tokenizers. N-grams are also referred to as bag of words.
+
+When we care about word order, we will use word-level tokenizers. When we do not care about the order, but rather words as a set, we will use N-gram tokenizers.
+
+3.  Convert each token into a numeric vector, usually after indexing all tokens present in the data.
+
+```{r, eval = F}
+## Use layer_text_vectorization in keras 
+## Have layer return sequences of words encoded as integer indices
+text_vec = layer_text_vectorization(output_mode = "int")
+```
+
+The layer will convert to lowercase and remove punctuation and split on whitespace for tokenization.
+
+We will demonstrate how to model with IMDB Movie reviews dataset from [Maas et al 2011](Andrew%20L.%20Maas,%20Raymond%20E.%20Daly,%20Peter%20T.%20Pham,%20Dan%20Huang,%20Andrew%20Y.%20Ng,%20and%20Christopher%20Potts.%20(2011).%20Learning%20Word%20Vectors%20for%20Sentiment%20Analysis.%20The%2049th%20Annual%20Meeting%20of%20the%20Association%20for%20Computational%20Linguistics%20(ACL%202011)).
+
+```{r}
+set.seed(1337)
+url = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz"
+
+dataset = get_file(
+  "aclImdb_v1",
+  url,
+  untar = TRUE,
+  cache_dir = ".",
+  cache_subdir = ""
+)
+
+dataset_dir = file.path("aclImdb/")
+list.files(dataset_dir)
+
+## Look at the training example directory 
+train_dir = file.path(dataset_dir, "train")
+list.files(train_dir)
+
+## Prepare data to be suitable for training 
+remove_dir = file.path(train_dir, "unsup")
+unlink(remove_dir, recursive = TRUE)
+
+### Create a validation split with 20% of training for validation 
+### the default batch_size is 32. We put it here to be explicit
+batch_size = 32 
+
+## We need a random seed so that the validation and training splits do not have overlap 
+seed = 1337 
+raw_train_dataset = text_dataset_from_directory(
+  "aclImdb/train",
+  batch_size = batch_size,
+  validation_split = 0.2,
+  subset = "training",
+  seed = seed
+)
+
+raw_val_dataset = text_dataset_from_directory(
+  "aclImdb/train",
+  batch_size = batch_size, 
+  validation_split = 0.2, 
+  subset = "validation",
+  seed = seed
+)
+
+raw_test_dataset = text_dataset_from_directory(
+  "aclImdb/test",
+  batch_size = batch_size
+)
+```
+
+### Bag of Words Approach
+
+```{r}
+## Unigrams approach 
+## Use multi-hot encoding for binary vectors 
+text_vec = layer_text_vectorization(ngrams = 1,
+                                    max_tokens = 20000,
+                                    output_mode = "multi_hot")
+
+## Get only raw text inputs 
+raw_text_train = raw_train_dataset |>
+  dataset_map(function(x,y) x)
+
+## Index dataset vocabulary with keras::adapt()
+adapt(text_vec, raw_text_train)
+
+binary_unigram_train_data = raw_train_dataset |>
+  dataset_map(~list(text_vec(.x),.y))
+binary_unigram_val_data = raw_val_dataset |>
+  dataset_map(~list(text_vec(.x), .y))
+binary_unigram_test_data = raw_test_dataset |>
+  dataset_map(~list(text_vec(.x), .y))
+```
+
+We can write a reusable model constructor to test out different bigrams.
+
+```{r}
+nlp_model_constructor = function(max_tokens = 20000,
+                                 hidden_dimensions = 16){
+  inputs = layer_input(shape = c(max_tokens))
+  outputs = inputs |>
+    layer_dense(hidden_dimensions, activation = "relu") |>
+    ## Include dropout
+    layer_dropout(0.5) |>
+    ## Predicting a single class so sigmoid is appropriate
+    layer_dense(1, activation = "sigmoid")
+  
+  model = keras_model(inputs, outputs)
+  model |>
+    compile(
+      optimizer = "rmsprop",
+      loss = "binary_crossentropy",
+      metrics = "accuracy"
+    )
+  model 
+}
+```
+
+Train and Test our basic model
+
+```{r}
+basic_model = nlp_model_constructor()
+basic_model
+
+callbacks = list(
+  callback_model_checkpoint("binary_unigram.keras", save_best_only = TRUE)
+)
+
+basic_model |>
+  fit(
+    dataset_cache(binary_unigram_train_data),
+    validation_data = dataset_cache(binary_unigram_val_data),
+    epochs = 5,
+    callbacks = callbacks
+  )
+
+model = load_model_tf("binary_unigram.keras")
+cat(sprintf("Test accuracy: %.3f\n", evaluate(model, binary_unigram_test_data)["accuracy"]))
+
+```
+
+88% is a strong start. We can compare to a random baseline that just sorts reviews to positive or negative at random to have a top prediction of 50%, so our model definitely learns something from the data relative to baseline. We can return arbitrary N-grams by changing the ngrams argument to a different value. Let's try 3
+
+```{r}
+text_vec3 = layer_text_vectorization(ngrams = 3,
+                                    max_tokens = 20000,
+                                    output_mode = "multi_hot")
+adapt(text_vec3, raw_text_train)
+
+## Wrapper function for vectorization 
+dataset_vectorize = function(dat){
+  dat |>
+    dataset_map(~list(text_vec3(.x), .y))
+}
+
+binary_3grams_train = raw_train_dataset |>
+  dataset_vectorize()
+binary_3grams_valid = raw_val_dataset |>
+  dataset_vectorize()
+binary_3grams_test = raw_test_dataset |>
+  dataset_vectorize()
+
+model_3gram = nlp_model_constructor()
+model_3gram
+
+callbacks = list(
+  callback_model_checkpoint("binary_3gram.keras", save_best_only = TRUE)
+)
+
+model_3gram |>
+  fit(
+    dataset_cache(binary_3grams_train),
+    validation_data = dataset_cache(binary_3grams_valid),
+    ## Setting for time reasons. We'd want to start with more epochs
+    epochs = 5,
+    callbacks = callbacks
+  )
+
+result = load_model_tf("binary_3gram.keras")
+cat(sprintf("Test accuracy: %.3f\n", evaluate(result, binary_3grams_test)["accuracy"]))
+```
+
+The increase in test accuracy suggests that the ordering immediately around words is pretty important.
+
+### Transfer Learning
+
+Transfer Learning is the process of storing knowledge gained while solving one problem and applying it to a different problem. Deep learning models can use pre-trained models as layers in order to potentially make large gains in accuracy on solving new problems.
+
+We will use the same IMDB dataset to demonstrate transfer learning with a model called nnlm-en-dim50, a token based text embedding that was trained on Google News's 7B word corpus.
+
+To use the model, we first create a Keras layer that uses the model, downloaded from TensorFlow Hub to embed sentences.
+
+```{r}
+embedding = "https://tfhub.dev/google/nnlm-en-dim50/2"
+nnlm_layer = tfhub::layer_hub(handle = embedding, trainable = TRUE)
+```
+
+We can now build a full model. The first layer is the TensorFlow Hub layer. It uses a pre-trained model to map a sentence into its embedding vector.
+
+```{r}
+## For ease of API use, we will switch back to the Sequential API, but conceptually we could create our own model constructor with the Functional API as before. 
+hub_model = keras_model_sequential() |>
+  nnlm_layer() |>
+  layer_dense(16, activation = "relu") |>
+  layer_dense(1)
+hub_model |>
+  compile(
+    optimizer = "rmsprop",
+    loss = loss_binary_crossentropy(from_logits = TRUE),
+    metrics = "accuracy"
+  )
+
+## On a CPU this can take a long time to run, so we will only run a single epoch since this is a demonstration. 
+history = hub_model |>
+  fit(
+    raw_train_dataset, 
+    epochs = 1, 
+    validation_data = raw_val_dataset,
+  )
+```
+
+Like before we can evaluate the model.
+
+```{r}
+hub_results = hub_model |>
+  evaluate(raw_test_dataset)
+hub_results
+```
+
+Transfer learning can be an excellent tool for deep learning problems. Here without any real fine tuning, we already see a respectable accuracy score.
+
+This concludes the introduction to Deep Learning with R. We strongly encourage you to check out additional TensorFlow resources at [RStudio TensorFlow](https://tensorflow.rstudio.com/) for more ideas.

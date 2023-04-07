@@ -1,4 +1,0 @@
-imagemagick
-python-pip
-python-virtualenv
-libmagick++-dev
