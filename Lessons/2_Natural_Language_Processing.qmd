@@ -1,0 +1,279 @@
+---
+title: "Deep Learning in R: Deep Learning for Text"
+author: "D-Lab"
+format: html
+editor: visual
+---
+
+## Libraries
+
+We will be using the following libraries:
+
+```{r, message = F, warning = F}
+library(tensorflow)
+library(keras)
+library(tfdatasets)
+library(tfhub)
+library(tidyverse)
+library(reticulate)
+```
+
+## Deep Learning for Text and Natural Language Processing
+
+Language in texts underpin most of our communication and human experience. A natural language is a human created language that is shaped by evolutionary and historical processes. In contrast, a machine readable language is highly structured, with precise syntax from a fixed vocabulary.
+
+Modern Natural Language Processing (NLP) uses machine learning and large datasets to ingest pieces of text as inputs and return some type of prediction.
+
+In this section, we cover how to prepare text data for deep learning and the transfer learning for NLP.
+
+### Preparing text data
+
+Deep Learning models rely fundamentally on differentiable functions, which means that we need to convert raw text into numeric tensors. *Text Vectorization* is the process of taking text and turning it into numeric tensors. Any text vectorization process follows the same template.
+
+1.  Standardize the text to make it easy to process. Normally we convert it to lowercase and remove punctuation. Here is a simple example of what we mean.
+
+```{r, standardize_example}
+sentence_1 = "d-lab is A great PLACE To LEarn deep learning!!"
+sentence_2 = "D-Lab is a great place TO learn Deep Learning!"
+
+## Convert to lowercase and remove punctuation 
+sentence_1 |>
+  str_to_lower() |>
+  str_replace_all(pattern = "[:punct:]", "") |>
+  trimws()
+
+sentence_2 |>
+  str_to_lower() |>
+  str_replace_all(pattern = "[:punct:]", "") |>
+  trimws()
+```
+
+2.  Split the text into tokens, usually characters, words, or small groups of words. Most machine learning workflows tend to avoid character splitting. The more common tokenizations are N-gram tokenizers and word-level tokenizers. N-grams are also referred to as bag of words.
+
+When we care about word order, we will use word-level tokenizers. When we do not care about the order, but rather words as a set, we will use N-gram tokenizers.
+
+3.  Convert each token into a numeric vector, usually after indexing all tokens present in the data.
+
+```{r, eval = F}
+## Use layer_text_vectorization in keras 
+## Have layer return sequences of words encoded as integer indices
+text_vec = layer_text_vectorization(output_mode = "int")
+```
+
+The layer will convert to lowercase and remove punctuation and split on whitespace for tokenization.
+
+We will demonstrate how to model with IMDB Movie reviews dataset from [Maas et al 2011](Andrew%20L.%20Maas,%20Raymond%20E.%20Daly,%20Peter%20T.%20Pham,%20Dan%20Huang,%20Andrew%20Y.%20Ng,%20and%20Christopher%20Potts.%20(2011).%20Learning%20Word%20Vectors%20for%20Sentiment%20Analysis.%20The%2049th%20Annual%20Meeting%20of%20the%20Association%20for%20Computational%20Linguistics%20(ACL%202011)).
+
+```{r}
+set.seed(1337)
+url = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz"
+
+dataset = get_file(
+  "aclImdb_v1",
+  url,
+  untar = TRUE,
+  cache_dir = ".",
+  cache_subdir = ""
+)
+
+dataset_dir = file.path("aclImdb/")
+list.files(dataset_dir)
+
+## Look at the training example directory 
+train_dir = file.path(dataset_dir, "train")
+list.files(train_dir)
+
+## Prepare data to be suitable for training 
+remove_dir = file.path(train_dir, "unsup")
+unlink(remove_dir, recursive = TRUE)
+
+### Create a validation split with 20% of training for validation 
+### the default batch_size is 32. We put it here to be explicit
+batch_size = 32 
+
+## We need a random seed so that the validation and training splits do not have overlap 
+seed = 1337 
+raw_train_dataset = text_dataset_from_directory(
+  "aclImdb/train",
+  batch_size = batch_size,
+  validation_split = 0.2,
+  subset = "training",
+  seed = seed
+)
+
+raw_val_dataset = text_dataset_from_directory(
+  "aclImdb/train",
+  batch_size = batch_size, 
+  validation_split = 0.2, 
+  subset = "validation",
+  seed = seed
+)
+
+raw_test_dataset = text_dataset_from_directory(
+  "aclImdb/test",
+  batch_size = batch_size
+)
+```
+
+### Bag of Words Approach
+
+```{r}
+## Unigrams approach 
+## Use multi-hot encoding for binary vectors 
+text_vec = layer_text_vectorization(ngrams = 1,
+                                    max_tokens = 20000,
+                                    output_mode = "multi_hot")
+
+## Get only raw text inputs 
+raw_text_train = raw_train_dataset |>
+  dataset_map(function(x,y) x)
+
+## Index dataset vocabulary with keras::adapt()
+adapt(text_vec, raw_text_train)
+
+binary_unigram_train_data = raw_train_dataset |>
+  dataset_map(~list(text_vec(.x),.y))
+binary_unigram_val_data = raw_val_dataset |>
+  dataset_map(~list(text_vec(.x), .y))
+binary_unigram_test_data = raw_test_dataset |>
+  dataset_map(~list(text_vec(.x), .y))
+```
+
+We can write a reusable model constructor to test out different bigrams.
+
+```{r}
+nlp_model_constructor = function(max_tokens = 20000,
+                                 hidden_dimensions = 16){
+  inputs = layer_input(shape = c(max_tokens))
+  outputs = inputs |>
+    layer_dense(hidden_dimensions, activation = "relu") |>
+    ## Include dropout
+    layer_dropout(0.5) |>
+    ## Predicting a single class so sigmoid is appropriate
+    layer_dense(1, activation = "sigmoid")
+  
+  model = keras_model(inputs, outputs)
+  model |>
+    compile(
+      optimizer = "rmsprop",
+      loss = "binary_crossentropy",
+      metrics = "accuracy"
+    )
+  model 
+}
+```
+
+Train and Test our basic model
+
+```{r}
+basic_model = nlp_model_constructor()
+basic_model
+
+callbacks = list(
+  callback_model_checkpoint("binary_unigram.keras", save_best_only = TRUE)
+)
+
+basic_model |>
+  fit(
+    dataset_cache(binary_unigram_train_data),
+    validation_data = dataset_cache(binary_unigram_val_data),
+    epochs = 5,
+    callbacks = callbacks
+  )
+
+model = load_model_tf("binary_unigram.keras")
+cat(sprintf("Test accuracy: %.3f\n", evaluate(model, binary_unigram_test_data)["accuracy"]))
+
+```
+
+88% is a strong start. We can compare to a random baseline that just sorts reviews to positive or negative at random to have a top prediction of 50%, so our model definitely learns something from the data relative to baseline. We can return arbitrary N-grams by changing the ngrams argument to a different value. Let's try 3:
+
+```{r}
+text_vec3 = layer_text_vectorization(ngrams = 3,
+                                    max_tokens = 20000,
+                                    output_mode = "multi_hot")
+adapt(text_vec3, raw_text_train)
+
+## Wrapper function for vectorization 
+dataset_vectorize = function(dat){
+  dat |>
+    dataset_map(~list(text_vec3(.x), .y))
+}
+
+binary_3grams_train = raw_train_dataset |>
+  dataset_vectorize()
+binary_3grams_valid = raw_val_dataset |>
+  dataset_vectorize()
+binary_3grams_test = raw_test_dataset |>
+  dataset_vectorize()
+
+model_3gram = nlp_model_constructor()
+model_3gram
+
+callbacks = list(
+  callback_model_checkpoint("binary_3gram.keras", save_best_only = TRUE)
+)
+
+model_3gram |>
+  fit(
+    dataset_cache(binary_3grams_train),
+    validation_data = dataset_cache(binary_3grams_valid),
+    ## Setting for time reasons. We'd want to start with more epochs
+    epochs = 5,
+    callbacks = callbacks
+  )
+
+result = load_model_tf("binary_3gram.keras")
+cat(sprintf("Test accuracy: %.3f\n", evaluate(result, binary_3grams_test)["accuracy"]))
+```
+
+The increase in test accuracy suggests that the ordering immediately around words is pretty important.
+
+### Transfer Learning
+
+Transfer Learning is the process of storing knowledge gained while solving one problem and applying it to a different problem. Deep learning models can use pre-trained models as layers in order to potentially make large gains in accuracy on solving new problems.
+
+We will use the same IMDB dataset to demonstrate transfer learning with a model called nnlm-en-dim50, a token based text embedding that was trained on Google News's 7B word corpus.
+
+To use the model, we first create a Keras layer that uses the model, downloaded from TensorFlow Hub to embed sentences.
+
+```{r}
+embedding = "https://tfhub.dev/google/nnlm-en-dim50/2"
+nnlm_layer = tfhub::layer_hub(handle = embedding, trainable = TRUE)
+```
+
+We can now build a full model. The first layer is the TensorFlow Hub layer. It uses a pre-trained model to map a sentence into its embedding vector.
+
+```{r}
+## For ease of API use, we will switch back to the Sequential API, but conceptually we could create our own model constructor with the Functional API as before. 
+hub_model = keras_model_sequential() |>
+  nnlm_layer() |>
+  layer_dense(16, activation = "relu") |>
+  layer_dense(1)
+hub_model |>
+  compile(
+    optimizer = "rmsprop",
+    loss = loss_binary_crossentropy(from_logits = TRUE),
+    metrics = "accuracy"
+  )
+
+## On a CPU this can take a long time to run, so we will only run a single epoch since this is a demonstration. 
+history = hub_model |>
+  fit(
+    raw_train_dataset, 
+    epochs = 1, 
+    validation_data = raw_val_dataset,
+  )
+```
+
+Like before we can evaluate the model.
+
+```{r}
+hub_results = hub_model |>
+  evaluate(raw_test_dataset)
+hub_results
+```
+
+Transfer learning can be an excellent tool for deep learning problems. Here without any real fine tuning, we already see a respectable accuracy score.
+
+This concludes the introduction to Deep Learning with R. We strongly encourage you to check out additional TensorFlow resources at [RStudio TensorFlow](https://tensorflow.rstudio.com/) for more ideas.
