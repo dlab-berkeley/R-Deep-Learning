@@ -1,17 +1,29 @@
-# Deep Learning in R
+# R Deep Learning
 
-This is the repository for D-Lab’s six-hour Introduction to Deep Learning in R workshop. Participants should be intermediate R users and have had some prior exposure to the concepts in [R-Machine-Learning](https://github.com/dlab-berkeley/R-Machine-Learning).
+[![DataHub](https://img.shields.io/badge/launch-datahub-blue)](https://dlab.datahub.berkeley.edu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fdlab-berkeley%2FR-Deep-Learning&urlpath=rstudio%2F&branch=main)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/dlab-berkeley/R-Deep-Learning/HEAD?urlpath=rstudio)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
+This is the repository for D-Lab’s six-hour Introduction to Deep Learning in R
+workshop. We recommend attendees be intermediate R users and have had some prior
+exposure to the concepts in
+[R-Machine-Learning](https://github.com/dlab-berkeley/R-Machine-Learning).
 
 ## Workshop Goals 
 
-In this workshop, we provide an introduction to Deep Learning using TensorFlow and keras in R. First, we will cover the basics of what makes deep learning "deep." Then, we will explore using code to classify images. Along the way, we will build a workflow of a deep learning project. 
+In this workshop, we provide an introduction to Deep Learning using TensorFlow
+and keras in R. First, we will cover the basics of what makes deep learning
+"deep." Then, we will explore using code to classify images. Along the way, we
+will build a workflow of a deep learning project. 
 
 ## Installation Instructions
 
-We will use RStudio to go through the workshop materials, which requires installation of R, RStudio, and TensorFlow. Complete the following steps if you want to work locally. 
+We will use RStudio to go through the workshop materials, which requires
+installation of R, RStudio, and TensorFlow. Complete the following steps if you
+want to work locally. 
 
-1. Download [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/)
+1. Download [R](https://cloud.r-project.org/) and
+   [RStudio](https://www.rstudio.com/products/rstudio/download/)
 
 2. Within the R console, run the following commands 
 
@@ -27,7 +39,10 @@ library(keras)
 install_keras(envname = "r-reticulate") # Install TensorFlow and Keras python modules
 ```
 
-After these steps you will have a working Keras and TensorFlow installation. This process will take some time if you decide to download to your local machine. To determine the TensorFlow version installed on your machine, run in the console
+After these steps you will have a working Keras and TensorFlow installation.
+This process will take some time if you decide to download to your local
+machine. To determine the TensorFlow version installed on your machine, run in
+the console
 
 ```
 library(tensorflow)
@@ -38,16 +53,30 @@ tf$constant("Hello Tensorflow!")
 
 ```
 install.packages(c("tfhub", "tfdatasets")
+```
+
+# About the UC Berkeley D-Lab
+
+D-Lab works with Berkeley faculty, research staff, and students to advance
+data-intensive social science and humanities research. Our goal at D-Lab is to
+provide practical training, staff support, resources, and space to enable you to
+use R for your own research applications. Our services cater to all skill levels
+and no programming, statistical, or computer science backgrounds are necessary.
+We offer these services in the form of workshops, one-to-one consulting, and
+working groups that cover a variety of research topics, digital tools, and
+programming languages.  
+
+Visit the [D-Lab homepage](https://dlab.berkeley.edu/) to learn more about us.
+You can view our [calendar](https://dlab.berkeley.edu/events/calendar) for
+upcoming events, learn about how to utilize our
+[consulting](https://dlab.berkeley.edu/consulting) and [data
+services](https://dlab.berkeley.edu/data), and check out upcoming
+[workshops](https://dlab.berkeley.edu/events/workshops). Subscribe to our
+[newsletter](https://dlab.berkeley.edu/news/weekly-newsletter) to stay up to
+date on D-Lab events, services, and opportunities.
 
 
-## About the UC Berkeley D-Lab
-
-D-Lab works with Berkeley faculty, research staff, and students to advance data-intensive social science and humanities research. Our goal at D-Lab is to provide practical training, staff support, resources, and space to enable you to use R for your own research applications. Our services cater to all skill levels and no programming, statistical, or computer science backgrounds are necessary. We offer these services in the form of workshops, one-to-one consulting, and working groups that cover a variety of research topics, digital tools, and programming languages.  
-
-Visit the [D-Lab homepage](https://dlab.berkeley.edu/) to learn more about us. You can view our [calendar](https://dlab.berkeley.edu/events/calendar) for upcoming events, learn about how to utilize our [consulting](https://dlab.berkeley.edu/consulting) and [data](https://dlab.berkeley.edu/data) services, and check out upcoming [workshops](https://dlab.berkeley.edu/events/workshops).
-
-
-## Resources
+# Additional Resources
 
 * Massive open online courses
     * [fast.ai - Practical Deep Learning for Coders](https://course.fast.ai/)
@@ -80,5 +109,18 @@ Visit the [D-Lab homepage](https://dlab.berkeley.edu/) to learn more about us. Y
     * Charniak E - [Introduction to Deep Learning](https://mitpress.mit.edu/books/introduction-deep-learning)  
     * I. Goodfellow, Y. Bengio, A. Courville - [www.deeplearningbook.org](https://www.deeplearningbook.org/)
     * Zhang et al. - [Dive into Deep Learning](http://en.diveintodeeplearning.org/) 
-    
 
+# Other D-Lab R workshops
+
+D-Lab offers a variety of R workshops, catered toward different levels of
+expertise.
+## Introductory Workshops
+
+* [R Data Wrangling](https://github.com/dlab-berkeley/R-Data-Wrangling)
+* [R Data Visualization](https://github.com/dlab-berkeley/R-Data-Visualization)
+* [R Census Data](https://github.com/dlab-berkeley/Census-Data-in-R)
+
+## Intermediate and Advanced Workshops
+* [R Geospatial Fundamentals](https://github.com/dlab-berkeley/R-Geospatial-Fundamentals)
+* [R Machine Learning](https://github.com/dlab-berkeley/R-Machine-Learning)
+* [R Deep Learning](https://github.com/dlab-berkeley/R-Deep-Learning)
