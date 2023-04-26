@@ -54,13 +54,57 @@ When we care about word order, we will use word-level tokenizers. When we do not
 
 3.  Convert each token into a numeric vector, usually after indexing all tokens present in the data.
 
-```{r, eval = F}
+```{r, eval = T}
 ## Use layer_text_vectorization in keras 
 ## Have layer return sequences of words encoded as integer indices
 text_vec = layer_text_vectorization(output_mode = "int")
 ```
 
 The layer will convert to lowercase and remove punctuation and split on whitespace for tokenization.
+
+We can pass custom functions to this layer if we so choose. Here's an example of the same default layer behavior with custom functions.
+
+```{r, eval = F}
+custom_fn = function(string_tensor){
+  string_tensor |>
+    ## convert strings to lower case 
+    tf$strings$lower() |>
+    ## Replace punctuation with empty string
+    tf$strings$regex_replace("[[:punct:]]", "")
+}
+custom_split_fn = function(string_tensor){
+  ## split strings on whitespace
+  tf$strings$split(string_tensor)
+}
+
+text_vectorization_example = layer_text_vectorization(
+  output_mode = "int",
+  standardize = custom_fn,
+  split = custom_split_fn
+)
+```
+
+To index the vocabulary of a text corpus, we call the `adapt()` method of the layer with a TF Dataset object that yields strings, or a usual character vector. Here is an example drawn from the excellent book "Deep Learning with R" by Francis Chollet, Tomasz Kalinowski, and J.J. Allaire.
+
+```{r}
+dataset = c("I write, erase, rewrite", "Erase again, and then",
+            "A poppy blooms.")
+adapt(text_vectorization_example, dataset)
+
+## retrive the computed vocabulary via get_vocabulary()
+## The first two entries are the mask token and the OOV index 
+get_vocabulary(text_vectorization_example)
+
+### Encode and decode our example 
+vocab = text_vectorization_example |>
+  get_vocabulary()
+test_sent = "I write, rewrite, and still rewrite again."
+encoded_sent = text_vectorization_example(test_sent)
+decoded_sent = paste(vocab[as.integer(encoded_sent) + 1],
+                        collapse = " ")
+encoded_sent 
+decoded_sent
+```
 
 We will demonstrate how to model with IMDB Movie reviews dataset from [Maas et al 2011](Andrew%20L.%20Maas,%20Raymond%20E.%20Daly,%20Peter%20T.%20Pham,%20Dan%20Huang,%20Andrew%20Y.%20Ng,%20and%20Christopher%20Potts.%20(2011).%20Learning%20Word%20Vectors%20for%20Sentiment%20Analysis.%20The%2049th%20Annual%20Meeting%20of%20the%20Association%20for%20Computational%20Linguistics%20(ACL%202011)).
 
