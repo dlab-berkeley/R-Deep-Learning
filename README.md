@@ -10,6 +10,8 @@ workshop. We recommend attendees be intermediate R users and have had some prior
 exposure to the concepts in
 [R-Machine-Learning](https://github.com/dlab-berkeley/R-Machine-Learning).
 
+Check D-Lab's [Learning Pathways](https://dlab-berkeley.github.io/dlab-workshops/R_path.html) to figure out which of our workshops to take!
+
 ## Workshop Goals 
 
 In this workshop, we provide an introduction to Deep Learning using TensorFlow
