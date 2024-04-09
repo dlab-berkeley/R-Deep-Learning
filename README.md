@@ -6,7 +6,10 @@
 [![Workshop Materials](https://img.shields.io/badge/D--Lab-Workshop%20Materials-blue)](https://docs.google.com/presentation/d/1eQsjdzcareMpEK59EJS5gLqOWIcmQpTjDvQnXIBOh_c/edit?usp=sharing)
 
 This is the repository for D-Lab’s six-hour Introduction to Deep Learning in R
-workshop. We recommend attendees be intermediate R users and have had some prior
+workshop. 
+
+### Prerequisites
+We recommend attendees be intermediate R users and have had some prior
 exposure to the concepts in
 [R-Machine-Learning](https://github.com/dlab-berkeley/R-Machine-Learning).
 
